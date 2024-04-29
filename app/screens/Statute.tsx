@@ -20,7 +20,7 @@ const Statute = () => {
         <View className="flex-row justify-center mt-10">
           <Animation source={animationSource} />
         </View>
-        <InfoCard>
+        <InfoCard welcomeScreen={false}>
           <ScrollView
             className="grow-0"
             indicatorStyle={"white"}
@@ -50,7 +50,7 @@ const Statute = () => {
         <View className="flex-row px-2 justify-around items-center">
           <ArrowBack onPress={() => navigation.navigate("PrivacyPolicy")} />
           <ActiveButton
-            onPress={() => navigation.navigate("Login")}
+            onPress={() => navigation.navigate("Registration")}
             text={"Zgadzam się"}
           />
         </View>

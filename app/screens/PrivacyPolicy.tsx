@@ -20,7 +20,7 @@ const PrivacyPolicy = () => {
         <View className="flex-row justify-center mt-10">
           <Animation source={animationSource} />
         </View>
-        <InfoCard>
+        <InfoCard welcomeScreen={false}>
           <ScrollView
             className="grow-0"
             indicatorStyle={"white"}

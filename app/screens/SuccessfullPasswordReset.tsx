@@ -16,7 +16,7 @@ interface RouteParams {
   password: string;
 }
 
-const SuccessfulLoginRegistration = ({
+const SuccessfullPasswordReset = ({
   route,
 }: {
   route: { params: RouteParams };
@@ -41,28 +41,19 @@ const SuccessfulLoginRegistration = ({
         <InfoCard welcomeScreen={true}>
           <Text className="leading-5 text-base text-secondary px-4">
             <Text className="font-bold text-primary">
-              Rejestracja przebiegła pomyślnie!
+              Twoje hasło zostało pomyślnie zresetowane!{" "}
             </Text>{" "}
             {"\n"} {"\n"}
-            Witaj w aplikacji Programming Cards’ Hub! Cieszymy się, że
-            dołączyłeś do naszej społeczności. Już teraz możesz wybrać kurs
-            języka programowania, który chcesz poznać i korzystać z naszych
-            bezpłatnych quizów.{"\n"}
-            {"\n"}
-            Życzymy Ci powodzenia w nauce!{"\n"}
-            <Text className="font-bold text-primary">
-              Zespół Programming Cards’ Hub{" "}
-            </Text>
           </Text>
         </InfoCard>
         <View className="flex-row mt-10 px-2 justify-center items-center">
-          <ActiveButton onPress={login} text={"Rozpocznij"} />
+          <ActiveButton onPress={login} text={"Zaloguj się"} />
         </View>
       </View>
     </SafeAreaView>
   );
 };
 
-export default SuccessfulLoginRegistration;
+export default SuccessfullPasswordReset;
 
 const styles = StyleSheet.create({});

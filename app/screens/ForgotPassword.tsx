@@ -19,14 +19,18 @@ import InfoCard from "../components/InfoCard";
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
+import H2Text from "../components/H2Text";
+import axios from "axios";
 
+export const API_URL = "";
 type FormData = {
   email: string;
   password: string;
 };
 
 const minLength = 8;
-const Registration = () => {
+
+const ForgotPassword = () => {
   const navigation = useNavigation<any>();
   const [hasKeyboard, setHasKeyboard] = useState(false);
 
@@ -68,30 +72,22 @@ const Registration = () => {
   } = useForm<FormData>({
     defaultValues: {
       email: "",
-      password: "",
     },
   });
-  const { onRegister } = useAuth();
+  const [noEmail, setNoEmail] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
 
-  const registerUser = async ({ email, password }: FormData) => {
-    const result = await onRegister!(email, password);
-    if (result && result.error) {
-      alert(result.msg);
-    } else {
-      navigation.navigate("SuccesfullLoginRegistration", {
-        email: email,
-        password: password,
-      });
+  const resetPassword = async () => {
+    try {
+      const result = await axios.post(`${API_URL}/`, { email });
+      console.log(result);
+      return result;
+    } catch (e) {
+      setNoEmail(true);
+      return { error: true, msg: (e as any).response.data.msg };
     }
   };
 
-  const onChange = (arg: any) => {
-    return {
-      value: arg.nativeEvent.text,
-    };
-  };
-
-  console.log("errors", errors);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -104,10 +100,16 @@ const Registration = () => {
         {/* <SafeAreaView className="flex-1 items-center bg-primary"> */}
         <View className="flex-1 flex justify-start items-center py-12 ">
           <Image source={logo} className="w-64 h-12" />
-
           <View
-            className={`flex-row justify-center ${!hasKeyboard ? "py-10" : errors.password || errors.email ? "py-0" : "py-3"}  `}
+            className={`mx-4 mt-5 items-center ${hasKeyboard ? "py-0" : errors.password || errors.email ? "py-0" : "py-3"}`}
           >
+            <H2Text text={"Zresetuj hasło"} />
+            <Text className="leading-5 px-4 mt-1 text-base text-secondary text-center">
+              Wpisz adres e-mail, którego użyłeś do rejestracji w aplikacji,
+              wyślemy tam wiadomość z linkiem do resetowania hasła{" "}
+            </Text>
+          </View>
+          <View className={`flex-row justify-center`}>
             <InfoCard welcomeScreen={false}>
               <View className="mb-5">
                 <Text className="leading-5 px-5 text-sm text-secondary mb-2 ">
@@ -139,46 +141,9 @@ const Registration = () => {
                     {errors.email.message}
                   </Text>
                 )}
-              </View>
-              <View>
-                <Text className="leading-5 px-5 text-sm text-secondary mb-2">
-                  Hasło
-                </Text>
-                <View className="items-center justify-center flex flex-row relative">
-                  <Controller
-                    control={control}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <TextInput
-                        className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errors.password && "border border-redError"} ${value.length >= minLength && "border border-greanColor"}`}
-                        onBlur={onBlur}
-                        onChangeText={(value) => onChange(value)}
-                        value={value}
-                        secureTextEntry={showPasword}
-                      />
-                    )}
-                    name="password"
-                    rules={{
-                      required: "Pole wymagane",
-                      minLength: {
-                        value: 8,
-                        message: "Min 8 znaków",
-                      },
-                    }}
-                  />
-                  <TouchableOpacity
-                    onPress={togglePassword}
-                    className="absolute right-8"
-                  >
-                    {showPasword ? (
-                      <Entypo name="eye" size={22} color="white" />
-                    ) : (
-                      <Entypo name="eye-with-line" size={22} color="white" />
-                    )}
-                  </TouchableOpacity>
-                </View>
-                {errors.password && (
+                {noEmail && (
                   <Text className="text-red-600 pt-2 pl-5">
-                    {errors.password.message}
+                    Nie odnaleziono konta powiązanego z podanym adresem e-mail.
                   </Text>
                 )}
               </View>
@@ -186,9 +151,10 @@ const Registration = () => {
           </View>
           <View>
             {/* <ActiveButton text="Załóż konto"  onPress={() => navigation.navigate("SuccesfullLoginRegistration")} /> */}
+            {/* <ActiveButton text="Resetuj hasło" onPress={handleSubmit(resetPassword)} /> */}
             <ActiveButton
-              text="Załóż konto"
-              onPress={handleSubmit(registerUser)}
+              text="Resetuj hasło"
+              onPress={() => navigation.navigate("NewPassword")}
             />
           </View>
         </View>
@@ -198,6 +164,6 @@ const Registration = () => {
   );
 };
 
-export default Registration;
+export default ForgotPassword;
 
 const styles = StyleSheet.create({});

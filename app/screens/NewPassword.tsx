@@ -12,21 +12,25 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import ActiveButton from "../components/ActiveButton";
 import InfoCard from "../components/InfoCard";
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
+import H2Text from "../components/H2Text";
+import axios from "axios";
 
+export const API_URL = "";
 type FormData = {
-  email: string;
+  password_repeat: string;
   password: string;
 };
 
 const minLength = 8;
-const Registration = () => {
+
+const NewPassword = () => {
   const navigation = useNavigation<any>();
   const [hasKeyboard, setHasKeyboard] = useState(false);
 
@@ -56,7 +60,10 @@ const Registration = () => {
   const togglePassword = () => {
     setShowPassword(!showPasword);
   };
-
+  const [showRepeatPasword, setShowReapeatPassword] = useState<boolean>(true);
+  const toggleReapeatPassword = () => {
+    setShowReapeatPassword(!showRepeatPasword);
+  };
   const logo = require("../../assets/logo.png");
   const {
     register,
@@ -64,34 +71,20 @@ const Registration = () => {
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      email: "",
+      password_repeat: "",
       password: "",
     },
   });
-  const { onRegister } = useAuth();
+  // const [password_repeat, setPassword_repeat] = useState("");
+  // const [password, setPassword] = useState<any>("");
+  const password = useRef({});
+  password.current = watch("password", "");
+  const createNewPassword = async () => {};
 
-  const registerUser = async ({ email, password }: FormData) => {
-    const result = await onRegister!(email, password);
-    if (result && result.error) {
-      alert(result.msg);
-    } else {
-      navigation.navigate("SuccesfullLoginRegistration", {
-        email: email,
-        password: password,
-      });
-    }
-  };
-
-  const onChange = (arg: any) => {
-    return {
-      value: arg.nativeEvent.text,
-    };
-  };
-
-  console.log("errors", errors);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -106,50 +99,22 @@ const Registration = () => {
           <Image source={logo} className="w-64 h-12" />
 
           <View
-            className={`flex-row justify-center ${!hasKeyboard ? "py-10" : errors.password || errors.email ? "py-0" : "py-3"}  `}
+            className={`mx-4  items-center ${hasKeyboard ? "pt-4" : errors.password || errors.password_repeat ? "pt-4" : "pt-9 pb-2"}`}
           >
+            <H2Text text={"Ustaw nowe hasło"} />
+          </View>
+          <View className={`flex-row justify-center`}>
             <InfoCard welcomeScreen={false}>
-              <View className="mb-5">
-                <Text className="leading-5 px-5 text-sm text-secondary mb-2 ">
-                  Email
-                </Text>
-                <View className="items-center">
-                  <Controller
-                    control={control}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <TextInput
-                        className={`bg-primary rounded-2xl h-12 w-80 px-5 text-primary ${errors.email && "border border-redError"}`}
-                        onBlur={onBlur}
-                        onChangeText={(value) => onChange(value)}
-                        value={value}
-                      />
-                    )}
-                    name="email"
-                    rules={{
-                      required: "Pole wymagane",
-                      pattern: {
-                        value: /^\S+@\S+$/i,
-                        message: "Podaj poprawny format email",
-                      },
-                    }}
-                  />
-                </View>
-                {errors.email && (
-                  <Text className="text-red-600 pt-2 pl-5">
-                    {errors.email.message}
-                  </Text>
-                )}
-              </View>
               <View>
                 <Text className="leading-5 px-5 text-sm text-secondary mb-2">
-                  Hasło
+                  Nowe hasło
                 </Text>
                 <View className="items-center justify-center flex flex-row relative">
                   <Controller
                     control={control}
                     render={({ field: { onChange, onBlur, value } }) => (
                       <TextInput
-                        className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errors.password && "border border-redError"} ${value.length >= minLength && "border border-greanColor"}`}
+                        className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errors.password && "border border-redError"} ${value?.length >= minLength && "border border-greanColor"}`}
                         onBlur={onBlur}
                         onChangeText={(value) => onChange(value)}
                         value={value}
@@ -182,13 +147,53 @@ const Registration = () => {
                   </Text>
                 )}
               </View>
+              <View className="pt-5">
+                <Text className="leading-5 px-5 text-sm text-secondary mb-2">
+                  Powtórz Hasło
+                </Text>
+                <View className="items-center justify-center flex flex-row relative">
+                  <Controller
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInput
+                        className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errors.password_repeat && "border border-redError"} ${value?.length >= minLength && "border border-greanColor"}`}
+                        onBlur={onBlur}
+                        onChangeText={(value) => onChange(value)}
+                        value={value}
+                        secureTextEntry={showRepeatPasword}
+                      />
+                    )}
+                    name="password_repeat"
+                    rules={{
+                      required: "Pole wymagane",
+                      validate: (value) =>
+                        value === password.current || "Podane hasła różnią się",
+                    }}
+                  />
+                  <TouchableOpacity
+                    onPress={toggleReapeatPassword}
+                    className="absolute right-8"
+                  >
+                    {showPasword ? (
+                      <Entypo name="eye" size={22} color="white" />
+                    ) : (
+                      <Entypo name="eye-with-line" size={22} color="white" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+                {errors.password_repeat && (
+                  <Text className="text-red-600 pt-2 pl-5">
+                    {errors.password_repeat.message}
+                  </Text>
+                )}
+              </View>
             </InfoCard>
           </View>
           <View>
-            {/* <ActiveButton text="Załóż konto"  onPress={() => navigation.navigate("SuccesfullLoginRegistration")} /> */}
+            {/* <ActiveButton text="Resetuj hasło" onPress={handleSubmit(createNewPassword)} /> */}
             <ActiveButton
-              text="Załóż konto"
-              onPress={handleSubmit(registerUser)}
+              text="Zaloguj się"
+              onPress={() => navigation.navigate("SuccessfullPasswordReset")}
             />
           </View>
         </View>
@@ -198,6 +203,6 @@ const Registration = () => {
   );
 };
 
-export default Registration;
+export default NewPassword;
 
 const styles = StyleSheet.create({});
