@@ -98,38 +98,48 @@ const Account = () => {
             <ModalPopup
               modalVisible={modalUploadPhotoVisible}
               setModalVisible={setModalUploadPhotoVisible}
+              hideModal={() => setModalUploadPhotoVisible(false)}
             >
               <View style={styles.centeredView}>
-                <LinearGradient
-                  style={styles.modalView}
-                  className="border border-lightborderColor items-center"
-                  colors={["rgba(82,78,155,255)", "rgba(54,52,133,255)"]}
+                <TouchableWithoutFeedback
+                  onPress={() => setModalUploadPhotoVisible(true)}
                 >
-                  <Text className="text-white font-bold text-base mr-48 mb-6">
-                    Prześlij zdjęcie
-                  </Text>
-                  <View className="flex w-64 py-7 mb-6 justify-center items-center border-dashed border-2 border-whiteColor rounded-xl">
-                    <Feather name="upload" size={36} color="white" />
-                    <Text
-                      style={styles.modalText}
-                      className="text-whiteColor mt-4"
-                    >
-                      <Text className="text-activeColor font-bold">
-                        Wybierz
-                      </Text>{" "}
-                      zdjęcie
+                  <LinearGradient
+                    style={styles.modalView}
+                    className="border border-lightborderColor items-center"
+                    colors={["rgba(82,78,155,255)", "rgba(54,52,133,255)"]}
+                  >
+                    <Text className="text-white font-bold text-base mr-48 mb-6">
+                      Prześlij zdjęcie
                     </Text>
-                    <Text style={styles.modalText} className="text-whiteColor">
-                      Dozwolone formaty: {"\n"} zip, image, pdf lub ms.word
-                    </Text>
-                  </View>
-                  <View className="flex flex-row justify-center">
-                    <ActiveButton
-                      onPress={() => setModalVisible(!modalVisible)}
-                      text={"Usuń"}
-                    ></ActiveButton>
-                  </View>
-                </LinearGradient>
+                    <View className="flex w-64 py-7 mb-6 justify-center items-center border-dashed border-2 border-whiteColor rounded-xl">
+                      <Feather name="upload" size={36} color="white" />
+                      <Text
+                        style={styles.modalText}
+                        className="text-whiteColor mt-4"
+                      >
+                        <Text className="text-activeColor font-bold">
+                          Wybierz
+                        </Text>{" "}
+                        zdjęcie
+                      </Text>
+                      <Text
+                        style={styles.modalText}
+                        className="text-whiteColor"
+                      >
+                        Dozwolone formaty: {"\n"} zip, image, pdf lub ms.word
+                      </Text>
+                    </View>
+                    <View className="flex flex-row justify-center">
+                      <ActiveButton
+                        onPress={() =>
+                          setModalUploadPhotoVisible(!modalUploadPhotoVisible)
+                        }
+                        text={"Prześlij"}
+                      ></ActiveButton>
+                    </View>
+                  </LinearGradient>
+                </TouchableWithoutFeedback>
               </View>
             </ModalPopup>
             <Text className="text-white font-bold text-lg mr-48 mt-7">
@@ -263,30 +273,33 @@ const Account = () => {
             <ModalPopup
               modalVisible={modalVisible}
               setModalVisible={setModalVisible}
+              hideModal={() => setModalVisible(false)}
             >
               <View style={styles.centeredView}>
-                <LinearGradient
-                  style={styles.modalView}
-                  className="border border-lightborderColor"
-                  colors={["rgba(82,78,155,255)", "rgba(54,52,133,255)"]}
-                >
-                  <Text style={styles.modalText} className="text-whiteColor">
-                    Czy jesteś pewien, że chcesz usunąć konto?
-                  </Text>
-                  <View className="flex flex-row">
-                    <TouchableOpacity
-                      onPress={() => setModalVisible(!modalVisible)}
-                      className="items-center w-40 p-3 rounded-2xl  bg-light-semi-transparentborder border border-lightborderColor"
-                    >
-                      <Text className="text-base  text-primary">Cofnij</Text>
-                    </TouchableOpacity>
-                    <View className="w-2"></View>
-                    <ActiveButton
-                      onPress={() => setModalVisible(!modalVisible)}
-                      text={"Usuń"}
-                    ></ActiveButton>
-                  </View>
-                </LinearGradient>
+                <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
+                  <LinearGradient
+                    style={styles.modalView}
+                    className="border border-lightborderColor"
+                    colors={["rgba(82,78,155,255)", "rgba(54,52,133,255)"]}
+                  >
+                    <Text style={styles.modalText} className="text-whiteColor">
+                      Czy jesteś pewien, że chcesz usunąć konto?
+                    </Text>
+                    <View className="flex flex-row">
+                      <TouchableOpacity
+                        onPress={() => setModalVisible(!modalVisible)}
+                        className="items-center w-40 p-3 rounded-2xl  bg-light-semi-transparentborder border border-lightborderColor"
+                      >
+                        <Text className="text-base  text-primary">Cofnij</Text>
+                      </TouchableOpacity>
+                      <View className="w-2"></View>
+                      <ActiveButton
+                        onPress={() => setModalVisible(!modalVisible)}
+                        text={"Usuń"}
+                      ></ActiveButton>
+                    </View>
+                  </LinearGradient>
+                </TouchableWithoutFeedback>
               </View>
             </ModalPopup>
             <View className="flex-row flex-1 flex justify-between w-full px-6">

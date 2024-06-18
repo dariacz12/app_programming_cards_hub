@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from "react";
-import { Alert, Modal, View } from "react-native";
+import { Alert, Modal, TouchableOpacity, View } from "react-native";
 
 type Props = {};
 
@@ -7,10 +7,12 @@ const ModalPopup = ({
   children,
   modalVisible,
   setModalVisible,
+  hideModal,
 }: {
   children: ReactNode;
   modalVisible: boolean;
   setModalVisible: any;
+  hideModal: any;
 }) => {
   return (
     <Modal
@@ -23,7 +25,13 @@ const ModalPopup = ({
         setModalVisible(!modalVisible);
       }}
     >
-      {children}
+      <TouchableOpacity
+        className="flex-1"
+        onPress={() => hideModal()}
+        activeOpacity={1}
+      >
+        {children}
+      </TouchableOpacity>
     </Modal>
   );
 };
