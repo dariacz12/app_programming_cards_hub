@@ -21,7 +21,7 @@ const WelcomeScreen = () => {
         <View className="flex-row justify-center mt-10">
           <Animation source={animationSource} />
         </View>
-        <InfoCard>
+        <InfoCard welcomeScreen={false}>
           <Text className="leading-5 text-base text-secondary px-4">
             Otwórz drzwi do świata programowania!{"\n"}
             {"\n"}

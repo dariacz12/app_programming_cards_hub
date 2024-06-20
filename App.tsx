@@ -38,15 +38,16 @@ export const Layout = () => {
             <Stack.Screen
               name="Home"
               component={Home}
-              options={{
-                headerRight: () => (
-                  <Button onPress={onLogout} title="Sign Out" />
-                ),
-              }}
+              options={{ headerShown: false }}
             ></Stack.Screen>
           </React.Fragment>
         ) : (
           <React.Fragment>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{ headerShown: false }}
+            ></Stack.Screen>
             <Stack.Screen
               name="Account"
               component={Account}

@@ -87,7 +87,7 @@ const Account = () => {
           <View className="flex-1 flex items-center justify-start pt-12 pb-32 ">
             <Image source={logo} className="w-64 h-12" />
             <View className="mt-6 relative">
-              <Avatar />
+              <Avatar homeScreen={false} />
               <TouchableOpacity
                 className="absolute left-20 top-20"
                 onPress={() => setModalUploadPhotoVisible(true)}
