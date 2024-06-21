@@ -6,10 +6,18 @@ import H4Text from "../components/H4Text";
 import Avatar from "../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Rings } from "../components/SkiaProgressComponents/Rings";
 
 const Home = () => {
   const navigation = useNavigation<any>();
   const [notifications, setNotifications] = useState<boolean>(false);
+
+  return (
+    <View className="h-full">
+      <Rings />
+    </View>
+  );
+
   return (
     <SafeAreaView className="flex-1  bg-primary">
       <View className="flex-row my-5 mx-10">
@@ -41,7 +49,9 @@ const Home = () => {
             </View>
           </TouchableOpacity>
         </View>
-        <View className="flex-row justify-center mt-10"></View>
+        <View className="flex-row justify-center mt-10 bg-white h-64 w-64">
+          <Rings />
+        </View>
       </View>
     </SafeAreaView>
   );
