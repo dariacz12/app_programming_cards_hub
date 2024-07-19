@@ -8,6 +8,9 @@ import {
   PathOp,
   Shader,
   Fill,
+  Text,
+  matchFont,
+  TextPath,
 } from "@shopify/react-native-skia";
 import React, { useEffect, useMemo } from "react";
 import {
@@ -16,6 +19,7 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { frag } from "./ShaderLib/Tags";
+import { Platform } from "react-native";
 
 const source = frag`
   uniform shader image;
@@ -57,6 +61,7 @@ interface Ring {
   background: string;
   size: number;
   totalProgress: number;
+  name: string;
 }
 
 interface RingProps {
@@ -64,11 +69,21 @@ interface RingProps {
   center: Vector;
   strokeWidth: number;
 }
+const fontFamily = Platform.select({ ios: "Helvetica", default: "serif" });
 
+const font = matchFont({
+  fontFamily: fontFamily,
+  fontSize: 14,
+  fontStyle: "italic",
+  fontWeight: "bold",
+});
+const size = 128;
+const path = Skia.Path.Make();
+path.addCircle(size, size, size / 2);
 export const Ring = ({
   center,
   strokeWidth,
-  ring: { size, background, totalProgress, colors },
+  ring: { size, background, totalProgress, colors, name },
 }: RingProps) => {
   const trim = useSharedValue(0);
   const r = size / 2 - strokeWidth / 2;
@@ -141,6 +156,17 @@ export const Ring = ({
           </Shader>
         </Fill>
       </Group>
+      {/* <Text
+        text={name} // Add text content
+        x={32}
+        y={center.y}
+        font={font}
+        // textAlign="center"
+        // textBaseline="middle"
+        // fontSize={24} // Adjust font size as needed
+        color="white" // Adjust text color as needed
+      /> */}
+      <TextPath font={font} path={path} text={name} />
     </Group>
   );
 };
