@@ -11,6 +11,9 @@ import {
   Text,
   matchFont,
   TextPath,
+  vec,
+  TextBlob,
+  useFont,
 } from "@shopify/react-native-skia";
 import React, { useEffect, useMemo } from "react";
 import {
@@ -19,7 +22,7 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { frag } from "./ShaderLib/Tags";
-import { Platform } from "react-native";
+import { Platform, View } from "react-native";
 
 const source = frag`
   uniform shader image;
@@ -133,6 +136,7 @@ export const Ring = ({
   useEffect(() => {
     trim.value = withTiming(1, { duration: 3000 });
   }, [trim]);
+
   return (
     <Group transform={[{ rotate: -Math.PI / 2 }]} origin={center}>
       <Group clip={clip}>
@@ -156,16 +160,7 @@ export const Ring = ({
           </Shader>
         </Fill>
       </Group>
-      {/* <Text
-        text={name} // Add text content
-        x={32}
-        y={center.y}
-        font={font}
-        // textAlign="center"
-        // textBaseline="middle"
-        // fontSize={24} // Adjust font size as needed
-        color="white" // Adjust text color as needed
-      /> */}
+
       <TextPath font={font} path={path} text={name} />
     </Group>
   );

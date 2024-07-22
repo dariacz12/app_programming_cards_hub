@@ -9,6 +9,7 @@ module.exports = {
         borderColorActive: "#02E2F4",
         secondary: "#B6B4CA",
         primary: "rgba(255, 255, 255, 0.87)",
+        primaryBorder: "#19173D",
         redError: "#E7042C",
         greanColor: "#62DE71",
         whiteColor: "#FFFFFF",
