@@ -17,10 +17,12 @@ module.exports = {
       },
       backgroundColor: {
         primary: "#19173D",
+        block: "#444065",
         yellowColor: "#FEAD1D",
         "semi-transparent": "#262450",
         "light-semi-transparent": "#403a98",
         active: "#0DA6C2",
+        lightGray: "#D9D9D9",
       },
     },
   },

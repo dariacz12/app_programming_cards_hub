@@ -17,15 +17,65 @@ import { Rings } from "../components/SkiaProgressComponents/Rings";
 import H2Text from "../components/H2Text";
 import H3Text from "../components/H3Text";
 import QuizeBlock from "../components/QuizeBlock";
+import CardBlock from "../components/CardBlock";
 
+const quizes = [
+  {
+    logo: require("../../assets/react.png"),
+    level: [1, 2, 3],
+    name: "React",
+  },
+  {
+    logo: require("../../assets/css.png"),
+    level: [1],
+    name: "CSS",
+  },
+  {
+    logo: require("../../assets/php.png"),
+    level: [1, 2, 3],
+    name: "PHP",
+  },
+  {
+    logo: require("../../assets/html.png"),
+    level: [1],
+    name: "HTML",
+  },
+  {
+    logo: require("../../assets/java.png"),
+    level: [1, 2],
+    name: "Java",
+  },
+];
+const blockes = [
+  {
+    logo: require("../../assets/javascript.png"),
+    access: true,
+    name: "JavaScript",
+  },
+  {
+    logo: require("../../assets/css.png"),
+    access: false,
+    name: "CSS",
+  },
+  {
+    logo: require("../../assets/react.png"),
+    access: false,
+    name: "React",
+  },
+  {
+    logo: require("../../assets/java.png"),
+    access: false,
+    name: "Java",
+  },
+];
 const Home = () => {
   const navigation = useNavigation<any>();
   const [notifications, setNotifications] = useState<boolean>(false);
 
   return (
     <ScrollView className="bg-primary">
-      <View className="flex-1 h-screen w-screen pt-[93]  bg-primary">
-        <View className="flex-row my-5 mx-10">
+      <View className="flex-1 h-screen w-screen pt-[60]  bg-primary">
+        <View className="flex-row mb-5 mx-10">
           <View className="flex-row flex-1">
             <View className="">
               <TouchableOpacity
@@ -55,8 +105,8 @@ const Home = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <View className="mt-32 bg-semi-transparent   flex-1 items-center justify-center  relative border border-t-borderColorSemiTransparent">
-          <View className="absolute bottom-9">
+        <View className="mt-32 bg-semi-transparent h-full  flex items-center justify-center  relative border border-t-borderColorSemiTransparent">
+          <View className="absolute bottom-[301]">
             <View className="relative flex-1 justify-center items-center h-screen w-screen">
               <View
                 className="h-32 w-64 bg-primary border absolute border-b-borderColorSemiTransparent border-l-borderColorSemiTransparent  border-r-borderColorSemiTransparent  border-t-primaryBorder
@@ -65,12 +115,24 @@ const Home = () => {
             </View>
           </View>
           <View className="flex-1 top-28">
-            <View className="right-24 my-7">
-              <H3Text text={"Bezpłatne quizy:"} />
+            {/* <View>
+            <View className="right-24 mt-7">
+              <H3Text text={"Bezpłatne quizy"} />
             </View>
-
-            <View className="flex-1 flex-row items-center justify-start">
-              <QuizeBlock />
+           {quizes.map((quize, index) => {
+        return (
+             <View className="flex mt-7 mx-4 flex-row items-center justify-start">
+              <QuizeBlock key={index} quize={quize} />
+             </View>
+        )})}
+        </View> */}
+            <View className="right-[104] mt-7">
+              <H3Text text={"Karty fizyczne"} />
+            </View>
+            <View className="flex-wrap flex-row flex w-full m-4">
+              {blockes.map((block, index) => {
+                return <CardBlock key={index} block={block} />;
+              })}
             </View>
           </View>
         </View>
