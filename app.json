@@ -11,8 +11,20 @@
       "resizeMode": "contain",
       "backgroundColor": "#19173D"
     },
+    "assets": [
+      "./assets/fonts/FontAwesome.ttf",
+      "./assets/fonts/Feather.ttf",
+      "./assets/fonts/AntDesign.ttf",
+      "./assets/fonts/Entypo.ttf",
+      "./assets/fonts/MaterialCommunityIcons.ttf"
+    ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "fonts": [
+        {
+          "src": "./assets/fonts/FontAwesome.ttf"
+        }
+      ],
       "supportsTablet": true,
       "config": {
         "usesNonExemptEncryption": false

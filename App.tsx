@@ -1,6 +1,13 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, Text, View } from "react-native";
+import {
+  AppRegistry,
+  Button,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { AuthProvider, useAuth } from "./app/context/AuthContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./app/screens/Login";
@@ -17,6 +24,14 @@ import NewPassword from "./app/screens/NewPassword";
 import SuccessfullPasswordRegistration from "./app/screens/SuccessfullPasswordReset";
 import SuccessfullPasswordReset from "./app/screens/SuccessfullPasswordReset";
 import Account from "./app/screens/Account";
+import Tabbar from "./app/components/Tabbar";
+
+AppRegistry.registerComponent("main", () => App);
+if (Platform.OS === "web") {
+  const rootTag =
+    document.getElementById("root") || document.getElementById("X");
+  AppRegistry.runApplication("main", { rootTag });
+}
 
 const Stack = createNativeStackNavigator();
 
@@ -45,7 +60,7 @@ export const Layout = () => {
           <React.Fragment>
             <Stack.Screen
               name="Home"
-              component={Home}
+              component={Tabbar}
               options={{ headerShown: false }}
             ></Stack.Screen>
             <Stack.Screen
