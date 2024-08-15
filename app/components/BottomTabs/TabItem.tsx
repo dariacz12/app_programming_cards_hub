@@ -34,9 +34,15 @@ const TabItem: FC<TabProps> = ({
   const labelPosition = getPathXCenterByIndex(curvedPaths, index);
 
   const tabStyle = useAnimatedStyle(() => {
-    const translateY = animatedActiveIndex.value - 1 === index ? -35 : 20;
+    
+    const translateY = animatedActiveIndex.value+30;
     const iconPositionX = iconPosition - index * ICON_SIZE;
     return {
+      // borderBlockColor: "red",
+      // borderCurve: 22,
+      // borderColor: "red",
+      // tintColor: "red",
+      
       width: ICON_SIZE,
       height: ICON_SIZE,
       transform: [
@@ -55,14 +61,14 @@ const TabItem: FC<TabProps> = ({
     };
   });
   const iconColor = useSharedValue(
-    activeIndex === index + 1 ? "white" : "rgba(128,128,128,0.8)",
+    activeIndex === index + 1 ? "rgba(0, 215, 255, 1)" : "rgba(128,128,128,0.8)",
   );
 
   //Adjust Icon color for this first render
   useEffect(() => {
     animatedActiveIndex.value = activeIndex;
     if (activeIndex === index + 1) {
-      iconColor.value = withTiming("white");
+      iconColor.value = withTiming("rgba(0, 215, 255, 1)");
     } else {
       iconColor.value = withTiming("rgba(128,128,128,0.8)");
     }
@@ -73,7 +79,7 @@ const TabItem: FC<TabProps> = ({
   }));
   return (
     <>
-      <Animated.View style={[tabStyle]}>
+      <Animated.View style={[tabStyle]} >
         <Pressable
           testID={`tab${label}`}
           //Increasing touchable Area
@@ -87,9 +93,9 @@ const TabItem: FC<TabProps> = ({
           />
         </Pressable>
       </Animated.View>
-      <Animated.View style={[labelContainerStyle, styles.labelContainer]}>
+      {/* <Animated.View style={[labelContainerStyle, styles.labelContainer]}>
         <Text style={styles.label}>{label}</Text>
-      </Animated.View>
+      </Animated.View> */}
     </>
   );
 };
@@ -103,7 +109,8 @@ const styles = StyleSheet.create({
     width: LABEL_WIDTH,
   },
   label: {
-    color: "rgba(128,128,128,0.8)",
+    color: "rgba(128,128,128,0.8",
     fontSize: 17,
   },
+  
 });

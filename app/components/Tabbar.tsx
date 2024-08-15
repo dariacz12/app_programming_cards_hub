@@ -21,7 +21,7 @@ export default function Tabbar() {
           name="Account"
           component={Account}
         />
-        <Tab.Screen
+        {/* <Tab.Screen
           options={{ tabBarLabel: "Login" }}
           name="Login"
           component={Login}
@@ -30,7 +30,7 @@ export default function Tabbar() {
           options={{ tabBarLabel: "Registration" }}
           name="Registration"
           component={Registration}
-        />
+        /> */}
       </Tab.Group>
     </Tab.Navigator>
   );

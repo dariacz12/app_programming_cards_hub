@@ -2,8 +2,10 @@ import React, { FC, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
+    interpolateColor,
   runOnJS,
   useAnimatedProps,
+  useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
@@ -15,6 +17,8 @@ import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import usePath from "../../hooks/usePath";
 import { getPathXCenter } from "../../utils/Path";
 import { SCREEN_WIDTH } from "../../constants/Screen";
+
+import { BlurView } from 'expo-blur';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 export const CustomBottomTab: FC<BottomTabBarProps> = ({
@@ -30,13 +34,9 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   };
   const selectIcon = (routeName: string) => {
     switch (routeName) {
-      case "Products":
+      case "Home":
         return "home";
-      case "Cart":
-        return "shopping-bag";
-      case "Favourites":
-        return "star";
-      case "Profile":
+      case "Account":
         return "user";
       default:
         return "home";
@@ -50,7 +50,11 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
     );
     runOnJS(handleMoveCircle)(currentPath);
     return {
-      d: `${containerPath} ${currentPath}`,
+     d: `${containerPath} ${currentPath}`,
+    //  stroke: 'red', // Your desired border color
+    //  strokeWidth: 2, // Your desired border width
+    //  borderTopWidth: 22, // Use the shared value
+    //   borderTopColor: "#ff2200", // Set the border color
     };
   });
 
@@ -58,13 +62,35 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
     navigation.navigate(tab);
     progress.value = withTiming(index);
   };
-
+  const opacity = useSharedValue(0.9); 
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: 0.5
+    
+    
+    
+  }));
   return (
     <View style={styles.tabBarContainer}>
-      <Svg width={SCREEN_WIDTH} height={tHeight} style={styles.shadowMd}>
-        <AnimatedPath fill={"white"} animatedProps={animatedProps} />
-      </Svg>
-      <AnimatedCircle circleX={circleXCoordinate} />
+    <Animated.View style={[ animatedStyle, {
+      shadowColor: '#48D9F4',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 5}]}>
+      <Svg width={SCREEN_WIDTH} height={tHeight} style={[styles.shadowMd, {borderTopColor: "green", borderTopWidth: 9}]}>
+        <AnimatedPath  fill={"#262450"}
+            
+            
+          // stroke="red"
+          // strokeWidth={2}
+                        animatedProps={animatedProps}
+                        // style={[ styles.box]}
+        />
+
+        
+      </Svg> 
+    </Animated.View>
+      {/* <AnimatedCircle circleX={circleXCoordinate} /> */}
+     {/* <BlurView intensity={100}  tint="light" style={styles.blurContainer}> */}
       <View
         style={[
           styles.tabItemsContainer,
@@ -88,6 +114,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
           );
         })}
       </View>
+          {/*  </BlurView>  */}
     </View>
   );
 };
@@ -113,4 +140,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 3 },
   },
+  box: {
+    borderWidth: 1,
+    borderColor: '#00c3ff',
+  },
+  
 });
