@@ -59,7 +59,7 @@ export const Layout = () => {
         ) : (
           <React.Fragment>
             <Stack.Screen
-              name="Home"
+              name="Tabbar"
               component={Tabbar}
               options={{ headerShown: false }}
             ></Stack.Screen>

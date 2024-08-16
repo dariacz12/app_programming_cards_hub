@@ -1,8 +1,8 @@
 import React, { FC, useMemo, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import { StyleSheet, View, Image, ImageBackground } from "react-native";
+import Svg, { Path, Mask } from "react-native-svg";
 import Animated, {
-    interpolateColor,
+  interpolateColor,
   runOnJS,
   useAnimatedProps,
   useAnimatedStyle,
@@ -18,7 +18,8 @@ import usePath from "../../hooks/usePath";
 import { getPathXCenter } from "../../utils/Path";
 import { SCREEN_WIDTH } from "../../constants/Screen";
 
-import { BlurView } from 'expo-blur';
+import { BlurView } from "expo-blur";
+import { center } from "@shopify/react-native-skia";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 export const CustomBottomTab: FC<BottomTabBarProps> = ({
@@ -50,11 +51,11 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
     );
     runOnJS(handleMoveCircle)(currentPath);
     return {
-     d: `${containerPath} ${currentPath}`,
-    //  stroke: 'red', // Your desired border color
-    //  strokeWidth: 2, // Your desired border width
-    //  borderTopWidth: 22, // Use the shared value
-    //   borderTopColor: "#ff2200", // Set the border color
+      d: `${containerPath} ${currentPath}`,
+      //  stroke: 'red', // Your desired border color
+      //  strokeWidth: 2, // Your desired border width
+      //  borderTopWidth: 22, // Use the shared value
+      //   borderTopColor: "#ff2200", // Set the border color
     };
   });
 
@@ -62,40 +63,59 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
     navigation.navigate(tab);
     progress.value = withTiming(index);
   };
-  const opacity = useSharedValue(0.9); 
+  const opacity = useSharedValue(0.9);
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: 0.5
-    
-    
-    
+    opacity: 1,
   }));
+
+  const blurredStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value, // Adjust opacity for desired blur level
+  }));
+
   return (
     <View style={styles.tabBarContainer}>
-    <Animated.View style={[ animatedStyle, {
-      shadowColor: '#48D9F4',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 5}]}>
-      <Svg width={SCREEN_WIDTH} height={tHeight} style={[styles.shadowMd, {borderTopColor: "green", borderTopWidth: 9}]}>
-        <AnimatedPath  fill={"#262450"}
-            
-            
-          // stroke="red"
-          // strokeWidth={2}
-                        animatedProps={animatedProps}
-                        // style={[ styles.box]}
-        />
+      <Image
+        resizeMode="repeat"
+        style={{
+          bottom: 0,
+          height: 98,
+          position: "absolute",
+          zIndex: 2,
+        }}
+        source={require("../../../assets/bbblurry.png")}
+        preserveAspectRatio="xMidYMid slice"
+      />
 
-        
-      </Svg> 
-    </Animated.View>
+      {/* <Animated.View style={[blurredStyle, styles.blurredBackground]}>
+       
+      </Animated.View> */}
+      <Animated.View
+        style={[
+          animatedStyle,
+          {
+            shadowColor: "#48D9F4",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 1,
+            shadowRadius: 5,
+          },
+        ]}
+      >
+        <Svg width={SCREEN_WIDTH} height={tHeight} style={[styles.shadowMd]}>
+          <AnimatedPath
+            fill={"#262450"}
+            animatedProps={animatedProps}
+            // style={[ styles.box]}
+          />
+        </Svg>
+      </Animated.View>
       {/* <AnimatedCircle circleX={circleXCoordinate} /> */}
-     {/* <BlurView intensity={100}  tint="light" style={styles.blurContainer}> */}
+      {/* <BlurView intensity={100}  tint="light" style={styles.blurContainer}> */}
       <View
         style={[
           styles.tabItemsContainer,
           {
             height: tHeight,
+            zIndex: 3,
           },
         ]}
       >
@@ -114,7 +134,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
           );
         })}
       </View>
-          {/*  </BlurView>  */}
+      {/*  </BlurView>  */}
     </View>
   );
 };
@@ -142,7 +162,13 @@ const styles = StyleSheet.create({
   },
   box: {
     borderWidth: 1,
-    borderColor: '#00c3ff',
+    borderColor: "#00c3ff",
   },
-  
+  blurredBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0, // Ensure it covers the entire content area
+  },
 });

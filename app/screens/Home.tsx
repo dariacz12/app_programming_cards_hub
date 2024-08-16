@@ -76,7 +76,7 @@ const Home = () => {
   return (
     <>
       <ScrollView className="bg-primary">
-        <View className="flex-1  pt-[60] pb-[140] mb-14 bg-primary">
+        <View className="flex-1  py-[60] mb-14 bg-primary">
           <View className="flex-row mb-5 mx-10">
             <View className="flex-row flex-1">
               <View className="">
