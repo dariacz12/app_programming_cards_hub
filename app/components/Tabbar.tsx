@@ -12,15 +12,16 @@ export default function Tabbar() {
     <Tab.Navigator tabBar={(props) => <CustomBottomTab {...props} />}>
       <Tab.Group screenOptions={{ headerShown: false }}>
         <Tab.Screen
-          options={{ tabBarLabel: "Home" }}
-          name="Home"
-          component={Home}
-        />
-        <Tab.Screen
           options={{ tabBarLabel: "Account" }}
           name="Account"
           component={Account}
         />
+         <Tab.Screen
+          options={{ tabBarLabel: "Home" }}
+          name="Home"
+          component={Home}
+        />
+       
         {/* <Tab.Screen
           options={{ tabBarLabel: "Login" }}
           name="Login"

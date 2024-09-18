@@ -19,10 +19,9 @@ const QuizeBlock = ({ quize: { logo, level, name } }: QuizeProps) => {
   const navigation = useNavigation<any>();
   return (
     <View className="flex-row  mx-4 p-3 px-6 bg-primary rounded-full">
-      <TouchableOpacity
+      {/* <TouchableOpacity
         className="flex-row"
-        onPress={() => navigation.navigate("")}
-      >
+      > */}
         <View className="flex-row flex-1">
           <View>
             <LanguageLogo isQuize={true} logo={logo} />
@@ -46,7 +45,7 @@ const QuizeBlock = ({ quize: { logo, level, name } }: QuizeProps) => {
             })}
           </View>
         </View>
-      </TouchableOpacity>
+      {/* </TouchableOpacity> */}
     </View>
   );
 };

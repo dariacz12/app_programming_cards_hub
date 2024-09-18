@@ -14,7 +14,6 @@ import Avatar from "../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Rings } from "../components/SkiaProgressComponents/Rings";
-import H2Text from "../components/H2Text";
 import H3Text from "../components/H3Text";
 import QuizeBlock from "../components/QuizeBlock";
 import CardBlock from "../components/CardBlock";
@@ -76,24 +75,28 @@ const Home = () => {
   return (
     <>
       <ScrollView className="bg-primary">
-        <View className="flex-1  py-[60] mb-14 bg-primary">
+        <View className=" py-[60] mb-14 bg-primary">
           <View className="flex-row mb-5 mx-10">
-            <View className="flex-row flex-1">
-              <View className="">
+            <View style={{flexDirection: "row", height: 60, width:156}}>
+              <View className="flex-1 ">
                 <TouchableOpacity
                   className=""
-                  onPress={() => navigation.navigate("Account")}
+                  onPress={() => navigation.navigate("Tabbar", {
+                    screen: "Account"
+                  })}
                 >
                   <Avatar homeScreen={true} />
                 </TouchableOpacity>
               </View>
-              <View className="justify-center ml-3">
+              <View className="justify-center ml-3 bg-red-300">
                 <H4Text text={"Dzień dobry!"} />
                 <Text className="text-sm  text-secondary">Ruby</Text>
               </View>
             </View>
-            <View className="justify-center ">
-              <TouchableOpacity onPress={() => navigation.navigate("Account")}>
+            <View className="justify-center">
+              <TouchableOpacity  onPress={() => navigation.navigate("Tabbar", {
+                    screen: "Account"
+                  })}>
                 <View className="relative">
                   <MaterialIcons
                     name="notifications"
@@ -101,31 +104,28 @@ const Home = () => {
                     color="ghostwhite"
                   />
                   {notifications && (
-                    <View className="absolute top-0.5 right-0.5  rounded-full bg-yellowColor w-2 h-2"></View>
+                    <View className="absolute top-0 right-0.5  rounded-full bg-yellowColor w-2 h-2"></View>
                   )}
                 </View>
               </TouchableOpacity>
             </View>
           </View>
-          <View className="mt-32 bg-semi-transparent h-full  flex items-center justify-center  relative border border-t-borderColorSemiTransparent">
-            <View className="absolute bottom-[819]">
-              <View className="relative flex-1 justify-center items-center h-screen w-screen">
-                <View
-                  className="h-32 w-64 bg-primary border absolute border-b-borderColorSemiTransparent border-l-borderColorSemiTransparent  border-r-borderColorSemiTransparent  border-t-primaryBorder
-                              rounded-bl-full rounded-br-full  "
-                ></View>
-              </View>
-            </View>
+          <View className="mt-32 bg-semi-transparent h-full  flex items-center justify-center  relative border border-t-borderColorSemiTransparent ">
+            
             <View className="flex-1 top-28">
               <View>
                 <View className="right-24 mt-7">
                   <H3Text text={"Bezpłatne quizy"} />
                 </View>
                 {quizes.map((quize, index) => {
-                  return (
+                  return (  
+                  <TouchableOpacity 
+                    onPress={() => navigation.navigate("QuizeQuestion")}>
                     <View className="flex mt-7 mx-4 flex-row items-center justify-start">
-                      <QuizeBlock key={index} quize={quize} />
-                    </View>
+                        <QuizeBlock key={index} quize={quize}       
+                       />
+                    </View> 
+                    </TouchableOpacity>
                   );
                 })}
               </View>
@@ -144,6 +144,14 @@ const Home = () => {
            <Rings />
         </View> */}
         </View>
+        <View className="absolute bg-red-300 top-[331]">
+              <View className="relative justify-center items-center  w-screen">
+                <View
+                  className="h-32 w-64 bg-primary border absolute border-b-borderColorSemiTransparent border-l-borderColorSemiTransparent  border-r-borderColorSemiTransparent  border-t-primaryBorder
+                              rounded-bl-full rounded-br-full  "
+                ></View>
+              </View>
+            </View>
       </ScrollView>
       {/* <Tabbar/> */}
     </>

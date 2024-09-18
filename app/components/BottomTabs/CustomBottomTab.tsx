@@ -34,11 +34,14 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
     circleXCoordinate.value = getPathXCenter(currentPath);
   };
   const selectIcon = (routeName: string) => {
-    switch (routeName) {
-      case "Home":
-        return "home";
+    console.log(routeName);
+
+    switch (routeName) {  
       case "Account":
         return "user";
+      case "Home":
+        return "home";
+    
       default:
         return "home";
     }
@@ -124,7 +127,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
           const label = options.tabBarLabel ? options.tabBarLabel : route.name;
           return (
             <TabItem
-              key={index.toString()}
+              key={route.name}
               label={label as string}
               icon={selectIcon(route.name)}
               activeIndex={state.index + 1}

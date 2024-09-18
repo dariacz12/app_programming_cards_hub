@@ -18,6 +18,7 @@ module.exports = {
       backgroundColor: {
         primary: "#19173D",
         block: "#444065",
+        secondaryBg: "#B6B4CA",
         yellowColor: "#FEAD1D",
         "semi-transparent": "#262450",
         "light-semi-transparent": "#403a98",

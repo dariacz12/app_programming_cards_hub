@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Animated, {
   useAnimatedProps,
   useAnimatedStyle,
@@ -45,40 +45,55 @@ const TabItem: FC<TabProps> = ({
       // position: "absolute",
       width: ICON_SIZE,
       height: ICON_SIZE,
-      zIndex: 4,
+      zIndex: 45,
       transform: [
         { translateY: withTiming(translateY) },
         { translateX: iconPositionX - ICON_SIZE / 2 },
       ],
     };
   });
-  const labelContainerStyle = useAnimatedStyle(() => {
-    const translateY = animatedActiveIndex.value - 1 === index ? 36 : 100;
-    return {
-      transform: [
-        { translateY: withTiming(translateY) },
-        { translateX: labelPosition - LABEL_WIDTH / 2 },
-      ],
-    };
-  });
-  const iconColor = useSharedValue(
-    activeIndex === index + 1
-      ? "rgba(0, 215, 255, 1)"
-      : "rgba(128,128,128,0.8)",
+  // const labelContainerStyle = useAnimatedStyle(() => {
+  //   const translateY = animatedActiveIndex.value - 1 === index ? 36 : 100;
+  //   return {
+  //     transform: [
+  //       { translateY: withTiming(translateY) },
+  //       { translateX: labelPosition - LABEL_WIDTH / 2 },
+  //     ],
+  //   };
+  // });
+  // const iconColor = useSharedValue(
+  //   activeIndex === index + 1
+  //     ? "rgba(0, 215, 255, 1)"
+  //     : "rgba(128,128,128,0.8)",
+  // );
+  
+
+  // // Adjust Icon color for this first render
+  // useEffect(() => {
+  //   animatedActiveIndex.value = activeIndex;
+
+  //   console.log(333, activeIndex, index)
+  //   if (activeIndex === index + 1) {
+  //     iconColor.value = withTiming("rgba(0, 215, 255, 1)");
+  //   } else {
+  //     iconColor.value = withTiming("rgba(128,128,128,0.8)");
+  //   }
+  // }, [activeIndex]);
+  const   
+ [iconColor, setIconColor] = useState(
+    activeIndex === index + 1 ? 'white' : 'rgba(128,128,128,0.8)',
   );
 
-  //Adjust Icon color for this first render
   useEffect(() => {
-    animatedActiveIndex.value = activeIndex;
-    if (activeIndex === index + 1) {
-      iconColor.value = withTiming("rgba(0, 215, 255, 1)");
-    } else {
-      iconColor.value = withTiming("rgba(128,128,128,0.8)");
-    }
+    setIconColor(activeIndex === index + 1 ? 'white' : 'rgba(128,128,128,0.8)');
   }, [activeIndex]);
 
+
+  // const animatedIconProps = useAnimatedProps(() => ({
+  //   color: iconColor.value,
+  // }));
   const animatedIconProps = useAnimatedProps(() => ({
-    color: iconColor.value,
+    color: iconColor,
   }));
   return (
     <>

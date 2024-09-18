@@ -21,7 +21,6 @@ import InfoCard from "../components/InfoCard";
 import { Entypo, Feather, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
-import H2Text from "../components/H2Text";
 import Line from "../components/Line";
 import SecondaryButton from "../components/SecondaryButton";
 import Avatar from "../components/Avatar";

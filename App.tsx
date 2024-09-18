@@ -25,6 +25,7 @@ import SuccessfullPasswordRegistration from "./app/screens/SuccessfullPasswordRe
 import SuccessfullPasswordReset from "./app/screens/SuccessfullPasswordReset";
 import Account from "./app/screens/Account";
 import Tabbar from "./app/components/Tabbar";
+import QuizeQuestion from "./app/screens/QuizeQuestion";
 
 AppRegistry.registerComponent("main", () => App);
 if (Platform.OS === "web") {
@@ -48,26 +49,28 @@ export const Layout = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {authState?.authenticated ? (
+        {!authState?.authenticated ? (
           <React.Fragment>
-            <Stack.Screen
+             {/* <Stack.Screen
               name="Home"
               component={Home}
               options={{ headerShown: false }}
-            ></Stack.Screen>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
+            ></Stack.Screen>  */}
             <Stack.Screen
               name="Tabbar"
               component={Tabbar}
               options={{ headerShown: false }}
             ></Stack.Screen>
-            <Stack.Screen
-              name="Account"
-              component={Account}
+             <Stack.Screen
+              name="QuizeQuestion"
+              component={QuizeQuestion}
               options={{ headerShown: false }}
-            ></Stack.Screen>
+            ></Stack.Screen> 
+          
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            
             <Stack.Screen
               name="WelcomeScreen"
               component={WelcomeScreen}
