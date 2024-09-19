@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import H4Text from '../components/H4Text'
 import { useNavigation } from '@react-navigation/native';
@@ -9,30 +9,45 @@ import QuizeAnswerElement from '../components/QuizeAnswerElement';
 import QuizeQuestionElement from '../components/QuizeQuestionElement';
 import QuizeExplanationElement from '../components/QuizeExplanationElement';
 import { text } from 'd3';
+import ProgressBar from '../components/ProgressBar';
 
 
 const QuizeQuestion = () => {
     const navigation = useNavigation<any>();
     const [currentQuestion, changeCurrentQuestion] = useState<any>(0)
-  
-    const questionsListReact=[
+    const [chosenAnswer, setChosenAnswer] = useState<any>(null)
+    const [showExplanation, setShowExplanation] = useState<boolean>(false)
+
+    const handleAnswerSelection = (answer: any) => {
+        setChosenAnswer(answer.id)
+      };
+      
+      useEffect(() => {
+        if (chosenAnswer) { 
+            const isShowExplanation = questionsList[currentQuestion].answers.find(
+              (answer) => answer.id === chosenAnswer
+            );
+            setShowExplanation(isShowExplanation?.status ? false: true);
+          }
+      }, [chosenAnswer]);
+    const questionsList=[
         {
-            question:"W jaki sposób przekazuje się dane do komponentu? (pyt1)",
+            question:"W jaki sposób przekazuje się dane do komponentu?",
             answers:[
                 {id: "a",
-                 text:"Za pomocą kontekstu 1",
+                 text:"Za pomocą kontekstu",
                  status:false,
                 },
                 {id: "b",
-                 text:"Za pomocą propsów 1",
+                 text:"Za pomocą propsów",
                  status:true,
                 },
                 {id: "c",
-                 text:"Za pomocą state 1",
+                 text:"Za pomocą state",
                  status:false,
                 },
                 {id: "d",
-                 text:"Za pomocą routingu 1",
+                 text:"Za pomocą routingu",
                  status:false,
                 },
             ],
@@ -88,8 +103,8 @@ const QuizeQuestion = () => {
   return (
     <>
       <ScrollView className="bg-semi-transparent">
-        <View className='bg-semi-transparent flex-1'>
-        <View className=" mt-20 mb-8 mx-10">
+        <View className='flex-1'>
+        <View className=" flex-1 mt-20 mb-8 mx-10">
               <View className="flex-1 items-center flex-row ">
                 <TouchableOpacity
                   className=""
@@ -102,20 +117,22 @@ const QuizeQuestion = () => {
             </View>     
             </View>
             </View>
-            <View className=''>
-               <QuizeQuestionElement question={questionsListReact[currentQuestion].question}/>
+            <ProgressBar completedQuestions={currentQuestion+1} allQuestions={questionsList.length}/>
+            <View className='flex-1'>
+               <QuizeQuestionElement question={questionsList[currentQuestion].question}/>
             </View>
-            <View  className=''>
-                {questionsListReact[currentQuestion].answers.map((answer, index) => {
-                         console.log(`Element o indeksie ${index}: ${answer.text}`);
-                return <QuizeAnswerElement key={index} answer={answer} />;
-               
+            <View>
+                {questionsList[currentQuestion].answers.map((answer, index) => {
+                return <TouchableOpacity onPress={() => handleAnswerSelection(answer)}>
+                         <QuizeAnswerElement key={index} answer={answer} chosenAnswer={chosenAnswer} />
+                       </TouchableOpacity>
                 })}
-            
             </View>
-            <View className=''>
-                <QuizeExplanationElement explanation={questionsListReact[currentQuestion].explanation}/>
-            </View>
+      
+            {showExplanation &&
+             <View>
+                <QuizeExplanationElement explanation={questionsList[currentQuestion].explanation}/>
+            </View>}     
          </View>
         </ScrollView>
      </>
