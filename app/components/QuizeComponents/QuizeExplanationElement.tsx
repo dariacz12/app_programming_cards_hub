@@ -1,13 +1,13 @@
 import React from 'react'
 import { Text, View } from 'react-native'
-import H3Text from './H3Text'
-import H2Text from './H2Text'
+import H3Text from '../H3Text'
+import H2Text from '../H2Text'
 
 const QuizeExplanationElement = ({explanation}:{explanation: string}) => {
   
   return (
     <>
-    <View className='my-5 py-5'>
+    <View className='mt-5 mb-24 py-5'>
       <View className='mx-4 my-2 bg-block h-1 rounded-lg '/>
     <View className='p-4 ml-5'>
       <H2Text textCenter={false} text={"Wyjaśnienie:"}/>

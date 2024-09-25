@@ -24,6 +24,7 @@ module.exports = {
         "light-semi-transparent": "#403a98",
         active: "#0DA6C2",
         lightGray: "#D9D9D9",
+        darkBlue: "#163368",
       },
     },
   },

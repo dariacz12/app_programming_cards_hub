@@ -4,21 +4,19 @@ import { Text, TouchableOpacity } from "react-native";
 
 type Props = {};
 
-const SecondaryButton = ({
-  text,
+const QuizeSecondaryButton = ({
   onPress,
 }: {
-  text: String;
   onPress: () => unknown;
 }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="items-center  w-40 p-3 rounded-2xl border bg-semi-transparent border-borderColorSemiTransparent"
+      className="items-center w-36 h-11 rounded-2xl justify-center border bg-semi-transparent border-borderColorSemiTransparent"
     >
-      <Text className="text-base  text-primary">{text}</Text>
+      <Text className="text-base  text-primary">Cofnij</Text>
     </TouchableOpacity>
   );
 };
 
-export default SecondaryButton;
+export default QuizeSecondaryButton;
