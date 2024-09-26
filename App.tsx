@@ -26,6 +26,8 @@ import SuccessfullPasswordReset from "./app/screens/SuccessfullPasswordReset";
 import Account from "./app/screens/Account";
 import Tabbar from "./app/components/Tabbar";
 import QuizeQuestion from "./app/screens/QuizeQuestion";
+import QuizeStartPage from "./app/screens/QuizeStartPage";
+import QuizeResultPage from "./app/screens/QuizeResultPage";
 
 AppRegistry.registerComponent("main", () => App);
 if (Platform.OS === "web") {
@@ -62,11 +64,20 @@ export const Layout = () => {
               options={{ headerShown: false }}
             ></Stack.Screen>
              <Stack.Screen
+              name="QuizeStartPage"
+              component={QuizeStartPage}
+              options={{ headerShown: false }}
+            ></Stack.Screen> 
+             <Stack.Screen
               name="QuizeQuestion"
               component={QuizeQuestion}
               options={{ headerShown: false }}
             ></Stack.Screen> 
-          
+           <Stack.Screen
+              name="QuizeResultPage"
+              component={QuizeResultPage}
+              options={{ headerShown: false }}
+            ></Stack.Screen> 
           </React.Fragment>
         ) : (
           <React.Fragment>

@@ -49,14 +49,14 @@ const QuizeQuestion = () => {
          currentQuestion>0 && changeCurrentQuestion(currentQuestion-1)
              setTimeout(()=> {
             //  setChosenAnswer(chosenAnswersArray[currentQuestion - 1]); 
-             setIsButtonDisabled(true)
+            //  setIsButtonDisabled(true)
           });   
          
     };
     const nextQuestion= (chosenAnswer: string)=>{
-     (chosenAnswer || chosenAnswersArray[currentQuestion]) ? (currentQuestion<questionsList.length-1 ? changeCurrentQuestion(currentQuestion+1): navigation.navigate("Home")): null;
+     (chosenAnswer || chosenAnswersArray[currentQuestion]) ? (currentQuestion<questionsList.length-1 ? changeCurrentQuestion(currentQuestion+1): navigation.navigate("QuizeResultPage")): null;
      chosenAnswer && setChosenAnswerArray([...chosenAnswersArray, chosenAnswer]);
-     setIsButtonDisabled(true); 
+    //  setIsButtonDisabled(true); 
      setChosenAnswer(null);
 
     };
@@ -138,8 +138,7 @@ const QuizeQuestion = () => {
         <View className=" flex-1 mt-20 mb-8 mx-10">
               <View className="flex-1 items-center flex-row ">
                 <TouchableOpacity
-                  className=""
-                  onPress={() => navigation.navigate("Home")}
+                  onPress={() => navigation.navigate("QuizeStartPage")}
                 >
                   <AntDesign name="left" size={24}  color="ghostwhite" />
                 </TouchableOpacity>

@@ -15,9 +15,9 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Rings } from "../components/SkiaProgressComponents/Rings";
 import H3Text from "../components/H3Text";
-import QuizeBlock from "../components/QuizeBlock";
 import CardBlock from "../components/CardBlock";
 import Tabbar from "../components/Tabbar";
+import QuizeBlock from "../components/QuizeBlock";
 
 const quizes = [
   {
@@ -76,7 +76,7 @@ const Home = () => {
     <>
       <ScrollView className="bg-primary">
         <View className=" py-[60] mb-14 bg-primary">
-          <View className="flex-row mb-5 mx-10">
+          <View className="flex-row justify-between mb-5 mx-10">
             <View style={{flexDirection: "row", height: 60, width:156}}>
               <View className="flex-1 ">
                 <TouchableOpacity
@@ -88,7 +88,7 @@ const Home = () => {
                   <Avatar homeScreen={true} />
                 </TouchableOpacity>
               </View>
-              <View className="justify-center ml-3 bg-red-300">
+              <View className="justify-center ml-3">
                 <H4Text text={"Dzień dobry!"} />
                 <Text className="text-sm  text-secondary">Ruby</Text>
               </View>
@@ -103,7 +103,7 @@ const Home = () => {
                     size={24}
                     color="ghostwhite"
                   />
-                  {notifications && (
+                  {!notifications && (
                     <View className="absolute top-0 right-0.5  rounded-full bg-yellowColor w-2 h-2"></View>
                   )}
                 </View>
@@ -120,7 +120,7 @@ const Home = () => {
                 {quizes.map((quize, index) => {
                   return (  
                   <TouchableOpacity 
-                    onPress={() => navigation.navigate("QuizeQuestion")}>
+                    onPress={() => navigation.navigate("QuizeStartPage")}>
                     <View className="flex mt-7 mx-4 flex-row items-center justify-start">
                         <QuizeBlock key={index} quize={quize}       
                        />
@@ -132,7 +132,7 @@ const Home = () => {
               <View className="right-[104] mt-7">
                 <H3Text text={"Karty fizyczne"} />
               </View>
-              <View className="flex-wrap flex-row flex w-full m-4">
+              <View className="flex-wrap flex-row flex w-full m-4 mb-32">
                 {blockes.map((block, index) => {
                   return <CardBlock key={index} block={block} />;
                 })}

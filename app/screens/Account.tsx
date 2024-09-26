@@ -83,7 +83,7 @@ const Account = () => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         {/* <SafeAreaView className="flex-1 items-center bg-primary"> */}
         <ScrollView>
-          <View className="flex-1 flex items-center justify-start pt-12 pb-32 ">
+          <View className="flex-1 flex items-center justify-start pt-12 pb-36 ">
             <Image source={logo} className="w-64 h-12" />
             <View className="mt-6 relative">
               <Avatar homeScreen={false} />
