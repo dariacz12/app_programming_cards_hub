@@ -120,7 +120,7 @@ const Home = () => {
                 {quizes.map((quize, index) => {
                   return (  
                   <TouchableOpacity 
-                    onPress={() => navigation.navigate("QuizeStartPage")}>
+                    onPress={() => navigation.navigate("QuizeStartPage", {id:1})}>
                     <View className="flex mt-7 mx-4 flex-row items-center justify-start">
                         <QuizeBlock key={index} quize={quize}       
                        />

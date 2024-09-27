@@ -34,7 +34,6 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
     circleXCoordinate.value = getPathXCenter(currentPath);
   };
   const selectIcon = (routeName: string) => {
-    console.log(routeName);
 
     switch (routeName) {  
       case "Account":

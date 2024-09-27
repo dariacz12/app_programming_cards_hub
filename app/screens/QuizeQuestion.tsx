@@ -12,7 +12,6 @@ import QuizeActiveButton from '../components/QuizeComponents/QuizeActiveButton';
 
 
 const QuizeQuestion = () => {
-  console.log("pusta",[])
     const [chosenAnswersArray,setChosenAnswerArray] = useState<any>([]);
     const scrollView = useRef<ScrollView>(null);
     const navigation = useNavigation<any>();
@@ -23,13 +22,11 @@ const QuizeQuestion = () => {
    useEffect(() => {
            setChosenAnswer(null)
            chosenAnswersArray[currentQuestion]?setIsButtonDisabled(true):setIsButtonDisabled(false); 
-          console.log("chosenAnswerArray", chosenAnswersArray)
       }, [currentQuestion]);
     const handleAnswerSelection = (answer: any) => {
         setChosenAnswer(answer.id)
         setIsButtonDisabled(true);
         if (!answer.status) {
-            console.log("kot")
             setTimeout(()=>scrollView.current?.scrollToEnd({animated: true})); 
         }
     }
@@ -130,7 +127,6 @@ const QuizeQuestion = () => {
    
 
     ]
-    console.log("length",questionsList.length-1);
   return (
     <>
       <ScrollView ref={scrollView} className="bg-semi-transparent">
@@ -138,7 +134,7 @@ const QuizeQuestion = () => {
         <View className=" flex-1 mt-20 mb-8 mx-10">
               <View className="flex-1 items-center flex-row ">
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("QuizeStartPage")}
+                  onPress={() => navigation.navigate("QuizeStartPage", {id:1})}
                 >
                   <AntDesign name="left" size={24}  color="ghostwhite" />
                 </TouchableOpacity>
@@ -168,10 +164,12 @@ const QuizeQuestion = () => {
         </ScrollView>
         <View className='h-24 w-full bg-primary border  border-borderColorSemiTransparent bottom-0 absolute z-2 flex-1 flex-row justify-center items-center'>
     <QuizeSecondaryButton
-              onPress={() => {currentQuestion!==0 && goCurrentQuesttion()}}/>
+              onPress={() => {currentQuestion!==0 && goCurrentQuesttion()}}>
+                {"Cofnij"}
+              </QuizeSecondaryButton>
     <View className='w-4'></View>
     <QuizeActiveButton
-              onPress={() => nextQuestion(chosenAnswer)}/>
+              onPress={() => nextQuestion(chosenAnswer)}>{"Dalej"}</QuizeActiveButton>
    </View>
      </>
   )

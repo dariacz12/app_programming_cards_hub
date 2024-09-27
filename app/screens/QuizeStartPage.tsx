@@ -10,7 +10,8 @@ import Slider from '../components/Slider';
 import { AntDesign } from '@expo/vector-icons';
 import Tabbar from '../components/Tabbar';
 
-const QuizeStartPage = () => {
+const QuizeStartPage = ({route}:{route:any}) => {
+  const { id } = route?.params;
     const quizePhotos = [
         {id: '1',
          src: require('../../assets/react1.png')
@@ -61,8 +62,7 @@ const QuizeStartPage = () => {
             </View>
             <InfoCard welcomeScreen={false}>
                 <Text className="leading-5 text-base text-secondary px-4">
-                Pytania obejmują podstawowe pojęcia Reacta, takie jak propsy i cykl życia komponentu, jak równiez bardziej zaawansowane: routing, zarządzanie stanem itd.
-                {"\n"}
+                Ten quiz sprawdzi Twoją wiedzę na temat Reacta. Pytania obejmują podstawowe pojęcia Reacta, takie jak propsy i cykl życia komponentu. Quiz sprawdzi również Twoją znajomość bardziej zaawansowanych tematów: routing, zarządzanie stanem itd.
                 Quiz jest przeznaczony dla osób, które:
                 {"\n"}
                 • znają podstawy JavaScript,
@@ -72,7 +72,7 @@ const QuizeStartPage = () => {
                 • chcą sprawdzić swoją wiedzę z Reacta.
                 </Text>
             </InfoCard>
-            <View className='flex-1 justify-center items-center w-full'>
+            <View className='flex-1 pt-1 justify-center items-center w-full'>
                   <ActiveButton onPress={() =>
                          navigation.navigate("QuizeQuestion")
                         }

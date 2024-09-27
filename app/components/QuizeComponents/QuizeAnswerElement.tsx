@@ -15,8 +15,6 @@ interface AnswerProps {
  currentQuestion:number;
 }
 const QuizeAnswerElement = ({ answer: { text,  status, id }, chosenAnswer, chosenAnswersArray, currentQuestion }: AnswerProps) => {
- console.log("chosenAnswer", chosenAnswer);
- console.log("chosenAnswersArray", chosenAnswersArray);
   return (
     <View className={`flex-row  mx-8 my-3 p-8 rounded-2xl ${ chosenAnswer===null ? (chosenAnswersArray[currentQuestion]!==id ? "bg-primary":  status ? "bg-block border border-greanColor" :"bg-block border border-redError") :chosenAnswer!==id ? "bg-primary":  status ? "bg-block border border-greanColor" :"bg-block border border-redError"}`}   >
      

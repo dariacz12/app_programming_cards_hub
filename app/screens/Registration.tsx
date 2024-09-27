@@ -91,7 +91,6 @@ const Registration = () => {
     };
   };
 
-  console.log("errors", errors);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
