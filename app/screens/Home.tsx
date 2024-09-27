@@ -94,9 +94,7 @@ const Home = () => {
               </View>
             </View>
             <View className="justify-center">
-              <TouchableOpacity  onPress={() => navigation.navigate("Tabbar", {
-                    screen: "Account"
-                  })}>
+              <TouchableOpacity  onPress={() => navigation.navigate("Notifications")}>
                 <View className="relative">
                   <MaterialIcons
                     name="notifications"

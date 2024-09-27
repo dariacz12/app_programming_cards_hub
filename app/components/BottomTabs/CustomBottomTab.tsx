@@ -73,7 +73,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const blurredStyle = useAnimatedStyle(() => ({
     opacity: opacity.value, // Adjust opacity for desired blur level
   }));
-
+console.log("al",state.routes);
   return (
     <View style={styles.tabBarContainer}>
       <Image
@@ -121,7 +121,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
           },
         ]}
       >
-        {state.routes.map((route, index) => {
+        {state.routes.filter((route)=>{return route.name==="Home" || route.name==="Account"}).map((route, index) => {
           const { options } = descriptors[route.key];
           const label = options.tabBarLabel ? options.tabBarLabel : route.name;
           return (

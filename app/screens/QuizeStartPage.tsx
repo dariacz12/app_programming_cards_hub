@@ -32,8 +32,10 @@ const QuizeStartPage = ({route}:{route:any}) => {
     <ScrollView ref={scrollView} className="bg-primary">
     <View className=" pb-[60] mb-14">
         <View className='flex relative'>
-                <TouchableOpacity className="absolute z-10  left-10 top-20"
-                  onPress={() => navigation.goBack()}
+                <TouchableOpacity className="absolute z-10 p-2 left-10 top-16"
+                   onPress={() => navigation.navigate("Tabbar", {
+                    screen: "Home"
+                  })}
                 >
                   <AntDesign name="left" size={24}  color="ghostwhite" />
                 </TouchableOpacity>    
@@ -48,7 +50,7 @@ const QuizeStartPage = ({route}:{route:any}) => {
                 <TouchableOpacity
                   className=""
                   onPress={() => navigation.navigate("Tabbar", {
-                    screen: "Account"
+                    screen: "Home"
                   })}
                 >
                   <Avatar homeScreen={true} />
@@ -81,7 +83,7 @@ const QuizeStartPage = ({route}:{route:any}) => {
           
             </View>
     </ScrollView>
-    <Tabbar/>
+
     </>
   )
 }

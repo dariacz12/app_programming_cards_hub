@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { ReactNode } from "react";
 import { Text, TouchableOpacity } from "react-native";
 
 type Props = {};
@@ -10,7 +10,7 @@ const QuizeSecondaryButton = ({
   isResultPage=false,
 }: {
   onPress: () => unknown;
-  children: string;
+  children: ReactNode;
   isResultPage?: boolean;
 }) => {
   return (

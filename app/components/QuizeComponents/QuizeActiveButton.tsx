@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -9,7 +9,7 @@ const QuizeActiveButton = ({
   isResultPage=false,
 }: {
   onPress: () => unknown;
-  children:string;
+  children: ReactNode;
   isResultPage?: boolean;
 }) => {
   const navigation = useNavigation();

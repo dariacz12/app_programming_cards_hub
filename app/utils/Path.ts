@@ -7,7 +7,10 @@ export const getPathXCenter = (currentPath: string) => {
   return centerX;
 };
 export const getPathXCenterByIndex = (tabPaths: any[], index: number) => {
-  const curves = tabPaths[index].curves;
+  let curves = tabPaths[index]?.curves;
+  if (!curves){
+    curves=tabPaths[0]?.curves
+  }
   const startPoint = curves[0].to;
   const endPoint = curves[curves.length - 1].to;
   const centerX = (startPoint.x + endPoint.x) / 2;
