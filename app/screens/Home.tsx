@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import React, { useState } from "react";
@@ -12,12 +13,14 @@ import H1Text from "../components/H1Text";
 import H4Text from "../components/H4Text";
 import Avatar from "../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Rings } from "../components/SkiaProgressComponents/Rings";
 import H3Text from "../components/H3Text";
 import CardBlock from "../components/CardBlock";
 import Tabbar from "../components/Tabbar";
 import QuizeBlock from "../components/QuizeBlock";
+import ModalPopup from "../components/ModalPopup";
+import { LinearGradient } from "expo-linear-gradient";
 
 const quizes = [
   {
@@ -71,7 +74,7 @@ const blockes = [
 const Home = () => {
   const navigation = useNavigation<any>();
   const [notifications, setNotifications] = useState<boolean>(false);
-
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <>
       <ScrollView className="bg-primary">
@@ -118,7 +121,7 @@ const Home = () => {
                 {quizes.map((quize, index) => {
                   return (  
                   <TouchableOpacity 
-                    onPress={() => navigation.navigate("QuizeStartPage", {id:1})}>
+                    onPress={() => navigation.navigate("Tabbar", {screen:"QuizeStartPage", params:{id:1}})}>
                     <View className="flex mt-7 mx-4 flex-row items-center justify-start">
                         <QuizeBlock key={index} quize={quize}       
                        />
@@ -127,13 +130,42 @@ const Home = () => {
                   );
                 })}
               </View>
-              <View className="right-[104] mt-7">
-                <H3Text text={"Karty fizyczne"} />
+              <ModalPopup
+              modalVisible={modalVisible}
+              setModalVisible={setModalVisible}
+              hideModal={() => setModalVisible(false)}
+            >
+              <View style={styles.centeredView}>
+                <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
+                  <LinearGradient
+                    style={styles.modalView}
+                    className="border border-lightborderColor"
+                    colors={["rgba(82,78,155,255)", "rgba(54,52,133,255)"]}
+                  >
+                    <Text style={styles.modalText} className="text-whiteColor">
+                    Talia kart w eleganskim pudełku + jej digital wersja w aplikacji + przykłady w edytorze kodu
+                    </Text>
+                  </LinearGradient>
+                </TouchableWithoutFeedback>
               </View>
+            </ModalPopup>
+            <View className="flex-row ju ml-10 mt-7">
+                <H3Text text={"Karty fizyczne"} />
+              <TouchableOpacity className='px-2 justify-center items-center flex'
+                        onPress={() => setModalVisible(!modalVisible)}>
+                           <MaterialCommunityIcons name="open-in-new" size={18} color="#B6B4CA" />
+                  </TouchableOpacity>
+            </View>
+             
               <View className="flex-wrap flex-row flex w-full m-4 mb-32">
-                {blockes.map((block, index) => {
-                  return <CardBlock key={index} block={block} />;
-                })}
+                {/* {blockes.map((block, index) => {
+                   return (  
+                    <TouchableOpacity 
+                       onPress={() => navigation.navigate("Tabbar", {screen: "CardsStartPage",params: {id:1}})}>
+                       <CardBlock key={index} block={block} />
+                      </TouchableOpacity>
+                    )
+                })} */}
               </View>
             </View>
           </View>
@@ -158,4 +190,24 @@ const Home = () => {
 
 export default Home;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    borderRadius: 30,
+    paddingVertical: 35,
+    paddingHorizontal: 20,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    letterSpacing: 0.4,
+    
+  },
+});

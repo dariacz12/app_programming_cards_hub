@@ -11,7 +11,6 @@ import {
 import { AuthProvider, useAuth } from "./app/context/AuthContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./app/screens/Login";
-import Home from "./app/screens/Home";
 import WelcomeScreen from "./app/screens/WelcomeScreen";
 import PrivacyPolicy from "./app/screens/PrivacyPolicy";
 import Registration from "./app/screens/Registration";
@@ -29,6 +28,7 @@ import QuizeQuestion from "./app/screens/QuizeQuestion";
 import QuizeStartPage from "./app/screens/QuizeStartPage";
 import QuizeResultPage from "./app/screens/QuizeResultPage";
 import Notifications from "./app/screens/Notifications";
+import CardsStartPage from "./app/screens/CardsStartPage";
 
 AppRegistry.registerComponent("main", () => App);
 if (Platform.OS === "web") {
@@ -54,16 +54,17 @@ export const Layout = () => {
       <Stack.Navigator>
         {!authState?.authenticated ? (
           <React.Fragment>
-             {/* <Stack.Screen
-              name="Home"
-              component={Home}
-              options={{ headerShown: false }}
-            ></Stack.Screen>  */}
             <Stack.Screen
               name="Tabbar"
               component={Tabbar}
               options={{ headerShown: false }}
             ></Stack.Screen>
+            <Stack.Screen
+              name="CardsStartPage"
+              component={CardsStartPage}
+              options={{ headerShown: false }}
+            ></Stack.Screen> 
+            
              <Stack.Screen
               name="QuizeQuestion"
               component={QuizeQuestion}

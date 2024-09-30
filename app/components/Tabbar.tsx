@@ -8,6 +8,7 @@ import QuizeStartPage from "../screens/QuizeStartPage";
 import QuizeQuestion from "../screens/QuizeQuestion";
 import QuizeResultPage from "../screens/QuizeResultPage";
 import Notifications from "../screens/Notifications";
+import CardsStartPage from "../screens/CardsStartPage";
 
 const Tab = createBottomTabNavigator();
 
@@ -31,12 +32,16 @@ export default function Tabbar() {
               component={QuizeStartPage}
               options={{ headerShown: false }}
             ></Tab.Screen> 
-           
               <Tab.Screen
               name="Notifications"
               component={Notifications}
               options={{ headerShown: false }}
             ></Tab.Screen> 
+            {/* <Tab.Screen
+              name="CardsStartPage"
+              component={CardsStartPage}
+              options={{ headerShown: false }}
+            ></Tab.Screen>  */}
 {/*        
         <Tab.Screen
           options={{ tabBarLabel: "Login" }}
