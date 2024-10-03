@@ -18,7 +18,7 @@ const Slider = ({ quizePhotos }: QuizePhotosProps)=> {
     <FlatList data={quizePhotos} horizontal pagingEnabled snapToAlignment='center'
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => item.id} renderItem={({item})=> 
-        <View style={[styles.container, { height: height / 3.5 }]}>
+        <View style={[styles.container, { height: height / 3 }]}>
       <Image source={item.src} className='w-full h-full'/>
     </View>}>
 

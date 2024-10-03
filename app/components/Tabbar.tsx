@@ -9,6 +9,9 @@ import QuizeQuestion from "../screens/QuizeQuestion";
 import QuizeResultPage from "../screens/QuizeResultPage";
 import Notifications from "../screens/Notifications";
 import CardsStartPage from "../screens/CardsStartPage";
+import UnlockedCardsPage from "../screens/UnlockedCardsPage";
+import CardsResultPage from "../screens/CardsResultPage";
+import CardsStudyPage from "../screens/CardsStudyPage";
 
 const Tab = createBottomTabNavigator();
 
@@ -41,7 +44,22 @@ export default function Tabbar() {
               name="CardsStartPage"
               component={CardsStartPage}
               options={{ headerShown: false }}
-            ></Tab.Screen>  */}
+            ></Tab.Screen> 
+            <Tab.Screen
+              name="UnlockedCardsPage"
+              component={UnlockedCardsPage}
+              options={{ headerShown: false }}
+            ></Tab.Screen> 
+            <Tab.Screen
+              name="CardsResultPage"
+              component={CardsResultPage}
+              options={{ headerShown: false }}
+            ></Tab.Screen> 
+            <Tab.Screen
+              name="CardsStudyPage"
+              component={CardsStudyPage}
+              options={{ headerShown: false }}
+            ></Tab.Screen> */}
 {/*        
         <Tab.Screen
           options={{ tabBarLabel: "Login" }}

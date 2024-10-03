@@ -29,6 +29,10 @@ import QuizeStartPage from "./app/screens/QuizeStartPage";
 import QuizeResultPage from "./app/screens/QuizeResultPage";
 import Notifications from "./app/screens/Notifications";
 import CardsStartPage from "./app/screens/CardsStartPage";
+import AccessUnlocked from "./app/screens/AccessUnlocked";
+import UnlockedCardsPage from "./app/screens/UnlockedCardsPage";
+import CardsResultPage from "./app/screens/CardsResultPage";
+import CardsStudyPage from "./app/screens/CardsStudyPage";
 
 AppRegistry.registerComponent("main", () => App);
 if (Platform.OS === "web") {
@@ -54,17 +58,31 @@ export const Layout = () => {
       <Stack.Navigator>
         {!authState?.authenticated ? (
           <React.Fragment>
-            <Stack.Screen
+            {/* <Stack.Screen
               name="Tabbar"
               component={Tabbar}
               options={{ headerShown: false }}
-            ></Stack.Screen>
+            ></Stack.Screen> */}
+              <Stack.Screen
+              name="CardsStudyPage"
+              component={CardsStudyPage}
+              options={{ headerShown: false }}
+            ></Stack.Screen> 
+             <Stack.Screen
+              name="CardsResultPage"
+              component={CardsResultPage}
+              options={{ headerShown: false }}
+            ></Stack.Screen> 
             <Stack.Screen
               name="CardsStartPage"
               component={CardsStartPage}
               options={{ headerShown: false }}
             ></Stack.Screen> 
-            
+             <Stack.Screen
+              name="UnlockedCardsPage"
+              component={UnlockedCardsPage}
+              options={{ headerShown: false }}
+            ></Stack.Screen>
              <Stack.Screen
               name="QuizeQuestion"
               component={QuizeQuestion}
@@ -75,6 +93,12 @@ export const Layout = () => {
               component={QuizeResultPage}
               options={{ headerShown: false }}
             ></Stack.Screen> 
+             <Stack.Screen
+              name="AccessUnlocked"
+              component={AccessUnlocked}
+              options={{ headerShown: false }}
+            ></Stack.Screen> 
+            
              
           </React.Fragment>
         ) : (

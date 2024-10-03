@@ -10,13 +10,13 @@ import Animation from '../components/Animation';
 import H3Text from '../components/H3Text';
 import InfoCard from '../components/InfoCard';
 
-function QuizeResultPage() {
+function AccessUnlocked() {
     const animationSource = require("../../assets/congratulations.json");
     const scrollView = useRef<ScrollView>(null);
     const navigation = useNavigation<any>();
   return (
     <>
-        <SafeAreaView className="flex-1  bg-primary ">
+        <SafeAreaView className="flex-1 justi bg-primary ">
             <View className="flex mt-6  mx-10 flex-row ">
                 <TouchableOpacity
                   onPress={() => navigation.navigate("QuizeStartPage",{id:1})}
@@ -36,16 +36,16 @@ function QuizeResultPage() {
       <View className="mt-44 bg-semi-transparent h-full  flex items-center justify-center  border border-t-borderColorSemiTransparent ">
         <View className='flex-1 flex-col top-44'>
             <View className=''>
-            <H3Text color={"green"} text={"Świetnie Ci idzie!"}></H3Text>
+            <H3Text color={"green"} text={"Uzyskałeś pełny dostęp!"}></H3Text>
         </View>
         <View className=''>
              <InfoCard  isFlex1={false} welcomeScreen={false} isQuize={true}>
          <Text className="leading-5 text-base text-secondary px-4">
             <Text className="font-bold text-primary">
-              Mistrzu kodu, quiz zaliczony!
+               Gratulacje!
             </Text>{" "}
-            {"\n"} {"\n"}
-            Brawo! Ukończyłeś quiz i udowodniłeś, że kodowanie nie ma przed Tobą tajemnic!
+          
+            Teraz możesz sprawdzić swoją wiedzę i umiejętności bez żadnych ograniczeń.
                 </Text>
             </InfoCard>
         </View>
@@ -60,18 +60,12 @@ function QuizeResultPage() {
               </View>
             </View>
      <View className='h-28 w-full bg-primary border  border-borderColorSemiTransparent bottom-0 absolute z-2 flex-1 flex-row justify-center items-center'>
-            <QuizeSecondaryButton
-                    isResultPage={true}
-                    onPress={() =>navigation.navigate("Tabbar", {
-                        screen: "Home"
-                      })}>
-                        {"Wybierz quize"}
-                    </QuizeSecondaryButton>
+            
             <View className='w-4'></View>
             <QuizeActiveButton
               isResultPage={true}
-                    onPress={() => {navigation.navigate("QuizeStartPage", {id:1})}}>
-                        {"Powtórz quize"}
+                    onPress={() => {navigation.navigate("UnlockedCardsPage")}}>
+                        {"Rozpocznij"}
                     </QuizeActiveButton>
    </View>
    </SafeAreaView>
@@ -79,4 +73,4 @@ function QuizeResultPage() {
   )
 }
 
-export default QuizeResultPage
+export default AccessUnlocked

@@ -10,13 +10,16 @@ import Animation from '../components/Animation';
 import H3Text from '../components/H3Text';
 import InfoCard from '../components/InfoCard';
 
-function QuizeResultPage() {
+function CardsResultPage() {
     const animationSource = require("../../assets/congratulations.json");
     const scrollView = useRef<ScrollView>(null);
     const navigation = useNavigation<any>();
+    const numberDone = 4;
+    const numberInProgress = 21;
+    const numberToDo = 15;
   return (
     <>
-        <SafeAreaView className="flex-1  bg-primary ">
+        <SafeAreaView className="flex-1 justi bg-primary ">
             <View className="flex mt-6  mx-10 flex-row ">
                 <TouchableOpacity
                   onPress={() => navigation.navigate("QuizeStartPage",{id:1})}
@@ -34,32 +37,31 @@ function QuizeResultPage() {
             </View>
                
       <View className="mt-44 bg-semi-transparent h-full  flex items-center justify-center  border border-t-borderColorSemiTransparent ">
-        <View className='flex-1 flex-col top-44'>
+        <View className='flex-1 flex-col top-36'>
             <View className=''>
-            <H3Text color={"green"} text={"Świetnie Ci idzie!"}></H3Text>
+            <H3Text color={"blue"} text={"Świetnie Ci idzie!"}></H3Text>
         </View>
         <View className=''>
              <InfoCard  isFlex1={false} welcomeScreen={false} isQuize={true}>
-         <Text className="leading-5 text-base text-secondary px-4">
-            <Text className="font-bold text-primary">
-              Mistrzu kodu, quiz zaliczony!
-            </Text>{" "}
-            {"\n"} {"\n"}
-            Brawo! Ukończyłeś quiz i udowodniłeś, że kodowanie nie ma przed Tobą tajemnic!
-                </Text>
+         <View className="px-6">
+            <View className='flex flex-row justify-between items-center'>
+                <Text className="font-bold text-greanColor">Umiem</Text>
+                <View className='mr-2 w-9 h-8 border-2 border-greanColor rounded-full flex items-center justify-center'><Text  className='font-bold text-white'>{numberDone}</Text></View>
+            </View>
+            <View className='h-2'></View>
+            <View className='flex flex-row justify-between items-center'>
+                <Text className="font-bold text-redError">Wciąż ucze się</Text>
+                <View className='mr-2 w-9 h-8 border-2 border-redError rounded-full flex items-center justify-center'><Text  className='font-bold text-white'>{numberInProgress}</Text></View>
+            </View>
+          <View className='h-2'></View>
+          <View className='flex flex-row justify-between items-center'>
+                <Text className="font-bold text-grey">Liczba pozostałych pojęć</Text>
+                <View className='mr-2 w-9 h-8 border-2 border-grey rounded-full flex items-center justify-center'><Text  className='font-bold text-white'>{numberToDo}</Text></View>
+            </View>
+        </View>
             </InfoCard>
         </View>
-        </View>
-      </View>
-        <View className="absolute top-[351]">
-              <View className="relative justify-center items-center  w-screen">
-                <View
-                  className="h-32 w-64 bg-primary border absolute border-b-borderColorSemiTransparent border-l-borderColorSemiTransparent  border-r-borderColorSemiTransparent  border-t-primaryBorder
-                              rounded-bl-full rounded-br-full  "
-                ></View>
-              </View>
-            </View>
-     <View className='h-28 w-full bg-primary border  border-borderColorSemiTransparent bottom-0 absolute z-2 flex-1 flex-row justify-center items-center'>
+        <View className='flex flex-row justify-center mt-2 items-center'>
             <QuizeSecondaryButton
                     isResultPage={true}
                     onPress={() =>navigation.navigate("Tabbar", {
@@ -74,9 +76,23 @@ function QuizeResultPage() {
                         {"Powtórz quize"}
                     </QuizeActiveButton>
    </View>
+        </View>
+      </View>
+        <View className="absolute top-[351]">
+              <View className="relative justify-center items-center  w-screen">
+                <View
+                  className="h-32 w-64 bg-primary border absolute border-b-borderColorSemiTransparent border-l-borderColorSemiTransparent  border-r-borderColorSemiTransparent  border-t-primaryBorder
+                              rounded-bl-full rounded-br-full  "
+                ></View>
+              </View>
+            </View>
+            <View>
+                
+            </View>
+     
    </SafeAreaView>
     </>
   )
 }
 
-export default QuizeResultPage
+export default CardsResultPage
