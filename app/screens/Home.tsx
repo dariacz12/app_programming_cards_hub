@@ -13,7 +13,7 @@ import H1Text from "../components/H1Text";
 import H4Text from "../components/H4Text";
 import Avatar from "../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Rings } from "../components/SkiaProgressComponents/Rings";
 import H3Text from "../components/H3Text";
 import CardBlock from "../components/CardBlock";
@@ -21,32 +21,45 @@ import Tabbar from "../components/Tabbar";
 import QuizeBlock from "../components/QuizeBlock";
 import ModalPopup from "../components/ModalPopup";
 import { LinearGradient } from "expo-linear-gradient";
+import ProgressCircular from "../components/ProgressCircular";
+import ArrowBack from "../components/ArrowBack";
 
 const quizes = [
   {
     logo: require("../../assets/react.png"),
     level: [1, 2, 3],
     name: "React",
+    percentage:70,
+    color:"#9E4784"
   },
   {
     logo: require("../../assets/css.png"),
     level: [1],
     name: "CSS",
+    percentage:35,
+     color:"#66347F"
   },
   {
     logo: require("../../assets/php.png"),
     level: [1, 2, 3],
     name: "PHP",
+    percentage:90,
+    color:"#37306B"
   },
   {
     logo: require("../../assets/html.png"),
     level: [1],
     name: "HTML",
+    percentage:0,
+     color:"#9E4784",
+
   },
   {
     logo: require("../../assets/java.png"),
     level: [1, 2],
     name: "Java",
+    percentage:80,
+     color:"#66347F"
   },
 ];
 const blockes = [
@@ -71,15 +84,17 @@ const blockes = [
     name: "Java",
   },
 ];
+
 const Home = () => {
   const navigation = useNavigation<any>();
+  const [ curentQuizeCircle, setCurentQuizeCircle] = useState<number>(0);
   const [notifications, setNotifications] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <>
       <ScrollView className="bg-primary">
         <View className=" py-[60] mb-14 bg-primary">
-          <View className="flex-row justify-between mb-5 mx-10">
+          <View className="flex-row justify-between  mx-10">
             <View style={{flexDirection: "row", height: 60, width:156}}>
               <View className="flex-1 ">
                 <TouchableOpacity
@@ -111,9 +126,27 @@ const Home = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <View className="mt-32 bg-semi-transparent h-full  flex items-center justify-center  relative border border-t-borderColorSemiTransparent ">
-            
-            <View className="flex-1 top-28">
+          <View className="relative flex z-30">
+            <View className="absolute flex-row flex-1 w-full justify-between items-center px-10 top-24">
+              <TouchableOpacity  onPress={() =>setCurentQuizeCircle( curentQuizeCircle===0?quizes.length-1:curentQuizeCircle-1)}>
+                 <MaterialIcons name="arrow-back-ios" size={24} color="white"/>
+              </TouchableOpacity >
+              <TouchableOpacity  onPress={() => setCurentQuizeCircle(curentQuizeCircle===quizes.length-1?0:curentQuizeCircle+1)}>
+                 <AntDesign name="right" size={24} color="white" />
+              </TouchableOpacity >
+            </View>
+              <View className="  h-10 top-28 ">
+              <ProgressCircular name={quizes[curentQuizeCircle].name} percentage = {quizes[curentQuizeCircle].percentage} radius = {40} strokeWidth = {14} duration = {500} color ={quizes[curentQuizeCircle].color}
+                                delay ={0} max = {100}/>
+          </View>
+          </View>
+        
+          <View className="mt-[107] bg-semi-transparent h-full  flex items-center justify-center  relative border border-t-borderColorSemiTransparent ">
+
+            <View className="flex-1 top-28 relative">
+          
+          
+              
               <View>
                 <View className="right-24 mt-7">
                   <H3Text text={"Bezpłatne quizy"} />
@@ -158,23 +191,22 @@ const Home = () => {
             </View>
              
               <View className="flex-wrap flex-row flex w-full m-4 mb-32">
-                {/* {blockes.map((block, index) => {
+                {blockes.map((block, index) => {
                    return (  
                     <TouchableOpacity 
-                       onPress={() => navigation.navigate("Tabbar", {screen: "CardsStartPage",params: {id:1}})}>
+                       onPress={() => navigation.navigate("Tabbar", {
+                        screen: "CardsStartPage",
+                        // params: {id:1}
+                      })}>
                        <CardBlock key={index} block={block} />
                       </TouchableOpacity>
                     )
-                })} */}
+                })}
               </View>
             </View>
           </View>
 
-          {/* <View className="flex-1">
-           <Rings />
-        </View> */}
-        </View>
-        <View className="absolute bg-red-300 top-[331]">
+      <View className="absolute bg-red-300 top-[331] z-1">
               <View className="relative justify-center items-center  w-screen">
                 <View
                   className="h-32 w-64 bg-primary border absolute border-b-borderColorSemiTransparent border-l-borderColorSemiTransparent  border-r-borderColorSemiTransparent  border-t-primaryBorder
@@ -182,8 +214,10 @@ const Home = () => {
                 ></View>
               </View>
             </View>
+        </View>
+        
       </ScrollView>
-      {/* <Tabbar/> */}
+    
     </>
   );
 };
@@ -210,4 +244,5 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
     
   },
+
 });

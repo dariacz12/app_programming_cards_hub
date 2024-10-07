@@ -3,10 +3,10 @@ import React, { useState } from 'react'
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import H2Text from '../components/H2Text'
 import ProgressBar from '../components/ProgressBar'
-import QuizeQuestionElement from '../components/QuizeComponents/QuizeQuestionElement'
 import { useNavigation } from '@react-navigation/native'
-import { useSharedValue } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import FlipCard from '../components/FlipCard'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 
 const CardsStudyPage = () => {
   const navigation = useNavigation<any>();
@@ -33,6 +33,43 @@ const isFlipped = useSharedValue(false);
 const handlePress = () => {
   isFlipped.value = !isFlipped.value;
 };
+
+
+const isPressed = useSharedValue(false);
+const offset = useSharedValue({ x: 0, y: 0 });
+
+const animatedStyles = useAnimatedStyle(() => {
+  return {
+    transform: [
+      { translateX: offset.value.x },
+      { translateY: offset.value.y },
+      { scale: withSpring(isPressed.value ? 1.2 : 1) },
+    ],
+    backgroundColor: isPressed.value ? 'yellow' : 'blue',
+    borderRadius:"23px",
+  };
+});
+const start = useSharedValue({ x: 0, y: 0 });
+
+  const gesture = Gesture.Pan()
+    .onBegin(() => {
+      isPressed.value = true;
+    })
+    .onUpdate((e) => {
+      offset.value = {
+        x: e.translationX + start.value.x,
+        y: e.translationY + start.value.y,
+      };
+    })
+    .onEnd(() => {
+      start.value = {
+        x: offset.value.x,
+        y: offset.value.y,
+      };
+    })
+    .onFinalize(() => {
+      isPressed.value = false;
+    });
   return (
     <>
     <SafeAreaView className="flex-1  bg-primary ">
@@ -54,14 +91,20 @@ const handlePress = () => {
              </View>
              <View className='flex justify-center items-center'>  
               <Pressable  onPress={handlePress}>
-                
-               <FlipCard
+              <GestureDetector gesture={gesture}>
+                    <Animated.View style={animatedStyles} >
+                      <FlipCard
                 isFlipped={isFlipped}
                 cardStyle={styles.flipCard}
                 currentCard={cardsList[currentQuestion]}
               /> 
+                  </Animated.View>
+                
+              </GestureDetector>
+              
+              
               </Pressable>
-            </View>
+            </View> 
       </View>
            
     </SafeAreaView>

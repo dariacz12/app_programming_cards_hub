@@ -40,7 +40,7 @@ export default function Tabbar() {
               component={Notifications}
               options={{ headerShown: false }}
             ></Tab.Screen> 
-            {/* <Tab.Screen
+            <Tab.Screen
               name="CardsStartPage"
               component={CardsStartPage}
               options={{ headerShown: false }}
@@ -59,7 +59,7 @@ export default function Tabbar() {
               name="CardsStudyPage"
               component={CardsStudyPage}
               options={{ headerShown: false }}
-            ></Tab.Screen> */}
+            ></Tab.Screen>
 {/*        
         <Tab.Screen
           options={{ tabBarLabel: "Login" }}

@@ -10,7 +10,7 @@ const center = vec(width / 2, height / 2);
 
 export const { PI } = Math;
 export const TAU = 2 * PI;
-export const SIZE = width;
+export const SIZE = width ;
 export const strokeWidth = 40;
 
 const backgroundColor = "#000001";
@@ -70,7 +70,7 @@ export const Rings = () => {
   console.log(rings);
   return (
     <Canvas style={{ flex: 1 }}>
-      <Fill color="black" />
+      <Fill color="transparent" />
       {rings.map((ring, index) => {
         return (
           <Ring

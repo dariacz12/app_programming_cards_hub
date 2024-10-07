@@ -85,7 +85,7 @@ const CardsStartPage = () => {
   return (
     <>
     <ScrollView ref={scrollView} className="bg-primary">
-    <View className=" pb-[60] mb-14">
+    <View className=" pb-[60] mb-6">
         <View className='flex relative'>
                 <TouchableOpacity className="absolute z-10 p-2 left-10 top-16"
                    onPress={() => navigation.navigate("Tabbar", {

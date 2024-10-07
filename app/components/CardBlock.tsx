@@ -16,7 +16,7 @@ interface BlockProps {
 const CardBlock = ({ block: { logo, access, name } }: BlockProps) => {
   const navigation = useNavigation<any>();
   return (
-    <TouchableOpacity onPress={() => navigation.navigate("")}>
+    // <TouchableOpacity onPress={() => navigation.navigate("")}>
       <View
         className={`flex-col m-4 w-40 h-38  px-5 py-7 ${access ? "bg-primary" : "bg-block border border-borderColorSemiTransparent"}  rounded-2xl`}
       >
@@ -30,7 +30,7 @@ const CardBlock = ({ block: { logo, access, name } }: BlockProps) => {
           )}
         </View>
       </View>
-    </TouchableOpacity>
+    // </TouchableOpacity>
   );
 };
 

@@ -85,7 +85,7 @@ const UnlockedCardsPage = () => {
   return (
     <>
     <ScrollView ref={scrollView} className="bg-primary ">
-    <View className=" pb-[60] mb-14 ">
+    <View className=" pb-[60] mb-4 ">
       
              <View className='flex relative'>
                 <TouchableOpacity className="absolute z-10 p-2 left-10 top-16"
@@ -123,7 +123,7 @@ const UnlockedCardsPage = () => {
             </View>
              <View>
         <View className="items-start ml-6 mb-3 mt-7 ">
-                <H3Text text={"Mixuj pytamia z rónych kategorii"} />
+                <H3Text text={"Mixuj pytania z rónych kategorii"} />
         </View>
         
             <View className='flex-1 py-5 justify-center items-center w-full'>
@@ -132,10 +132,10 @@ const UnlockedCardsPage = () => {
                         }
                         text={"Ucz się"}/>
             </View>
-            <View className='mx-8 mb-2 mt-4  bg-block h-1 rounded-lg '/>
+            <View className='mx-8  mt-2  bg-block h-1 rounded-lg '/>
     </View>
             <View className="items-start ml-6 my-8">
-                <H3Text text={"Kategorie kart"} />
+                <H3Text text={"Wybierz kategorie kart"} />
               </View>
               <View className='flex w-full justify-center mb-4 flex-wrap flex-row'>
                 {categoriesPhotos.map(({src, text})=>{

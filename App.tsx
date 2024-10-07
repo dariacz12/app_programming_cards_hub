@@ -33,6 +33,9 @@ import AccessUnlocked from "./app/screens/AccessUnlocked";
 import UnlockedCardsPage from "./app/screens/UnlockedCardsPage";
 import CardsResultPage from "./app/screens/CardsResultPage";
 import CardsStudyPage from "./app/screens/CardsStudyPage";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Rings } from "./app/components/SkiaProgressComponents/Rings";
+import ProgressCircular from "./app/components/ProgressCircular";
 
 AppRegistry.registerComponent("main", () => App);
 if (Platform.OS === "web") {
@@ -54,16 +57,22 @@ export default function App() {
 export const Layout = () => {
   const { authState, onLogout } = useAuth();
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <NavigationContainer>
       <Stack.Navigator>
         {!authState?.authenticated ? (
           <React.Fragment>
             {/* <Stack.Screen
+              name="ProgressCircular"
+              component={ProgressCircular}
+              options={{ headerShown: false }}
+            ></Stack.Screen>  */}
+            <Stack.Screen
               name="Tabbar"
               component={Tabbar}
               options={{ headerShown: false }}
-            ></Stack.Screen> */}
-              <Stack.Screen
+            ></Stack.Screen>
+              {/* <Stack.Screen
               name="CardsStudyPage"
               component={CardsStudyPage}
               options={{ headerShown: false }}
@@ -82,7 +91,7 @@ export const Layout = () => {
               name="UnlockedCardsPage"
               component={UnlockedCardsPage}
               options={{ headerShown: false }}
-            ></Stack.Screen>
+            ></Stack.Screen> */}
              <Stack.Screen
               name="QuizeQuestion"
               component={QuizeQuestion}
@@ -153,5 +162,6 @@ export const Layout = () => {
         )}
       </Stack.Navigator>
     </NavigationContainer>
+    </GestureHandlerRootView>
   );
 };

@@ -10,10 +10,12 @@ import H1Text from './H1Text';
 
 
 interface FlipCardsProps {
-    isFlipped: boolean;
+    isFlipped: {
+        value: boolean
+    };
     cardStyle: { width: number; height: number };
-    direction: string;
-    duration: number;
+    direction?: string;
+    duration?: number;
     currentCard:{question: string, answer: string}
   }
 
