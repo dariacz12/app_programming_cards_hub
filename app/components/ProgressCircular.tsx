@@ -8,11 +8,13 @@ import {
   StyleSheet,
 } from 'react-native';
 import Svg, { G, Circle, Rect } from 'react-native-svg';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 export default function ProgressCircular({
+  isHome,
   percentage,
   radius,
   strokeWidth,
@@ -21,7 +23,8 @@ export default function ProgressCircular({
   delay,
   max,
   name
-}:{percentage: number
+}:{ isHome?: boolean,
+    percentage: number
     radius: number
     strokeWidth: number
     duration: number
@@ -83,6 +86,7 @@ export default function ProgressCircular({
         <G
           rotation="-90"
           origin={`${halfCircle}, ${halfCircle}`}>
+      
           <Circle
             ref={circleRef}
             cx="50%"
@@ -94,7 +98,9 @@ export default function ProgressCircular({
             strokeLinecap="round"
             strokeDashoffset={circumference}
             strokeDasharray={circumference}
+        
           />
+
           <Circle
             cx="50%"
             cy="50%"
@@ -104,6 +110,7 @@ export default function ProgressCircular({
             strokeWidth={strokeWidth}
             strokeLinejoin="round"
             strokeOpacity=".1"
+      
           />
         </G>
       </Svg>
@@ -113,13 +120,17 @@ export default function ProgressCircular({
         underlineColorAndroid="transparent"
         editable={false}
         defaultValue="0"
-        style={[
+        style={isHome?[
           StyleSheet.absoluteFillObject,
           { fontSize: radius / 2, color: '#FFFFFF'},
           styles.text,
-        ]}
+        ]:[
+            StyleSheet.absoluteFillObject,
+            { fontSize: radius , color: '#FFFFFF'},
+            styles.percentageOnly,
+          ] }
       />
-       <Text
+      {isHome && <Text
           style={{
             position: 'absolute', 
             top:25,
@@ -130,11 +141,12 @@ export default function ProgressCircular({
           }}
         >
          {name}
-        </Text>
+        </Text>}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   text: { fontWeight: '900', textAlign: 'center',bottom:20 },
+  percentageOnly:{ fontWeight:"500", textAlign: 'center', justifyContent:"center"},
 });

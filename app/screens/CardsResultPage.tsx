@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Animation from '../components/Animation';
 import H3Text from '../components/H3Text';
 import InfoCard from '../components/InfoCard';
+import ProgressCircular from '../components/ProgressCircular';
 
 function CardsResultPage() {
     const animationSource = require("../../assets/congratulations.json");
@@ -17,6 +18,9 @@ function CardsResultPage() {
     const numberDone = 4;
     const numberInProgress = 21;
     const numberToDo = 15;
+    const all = 40;
+    const name = "React";
+    const percentage = numberDone*100/all;
   return (
     <>
         <SafeAreaView className="flex-1 justi bg-primary ">
@@ -27,12 +31,16 @@ function CardsResultPage() {
                   <AntDesign name="left" size={24}  color="ghostwhite" />
                 </TouchableOpacity>
               <View className=" flex-1 items-center pr-4">
-                <H2Text textCenter={true}  text={"React"} />
+                <H2Text textCenter={true}  text={name} />
               </View>     
             </View>
-            <View className='flex-1 w-full relative '>
+            <View className='flex-1 w-full relative z-30'>
                  <View className="flex-1 absolute w-full justify-center items-center">
                  <Animation source={animationSource} />
+                </View>
+                <View className='mt-44 '>
+                    <ProgressCircular  name={name} percentage = {percentage} radius = {35} strokeWidth = {14} duration = {500} color ={"#9E4784"}
+                                delay ={0} max = {100}/>
                 </View>
             </View>
                

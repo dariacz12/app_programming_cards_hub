@@ -9,11 +9,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Animation from '../components/Animation';
 import H3Text from '../components/H3Text';
 import InfoCard from '../components/InfoCard';
+import ProgressCircular from '../components/ProgressCircular';
 
 function QuizeResultPage() {
     const animationSource = require("../../assets/congratulations.json");
     const scrollView = useRef<ScrollView>(null);
     const navigation = useNavigation<any>();
+    const name = "React";
+    const percentage = 50;
   return (
     <>
         <SafeAreaView className="flex-1  bg-primary ">
@@ -24,13 +27,18 @@ function QuizeResultPage() {
                   <AntDesign name="left" size={24}  color="ghostwhite" />
                 </TouchableOpacity>
               <View className=" flex-1 items-center pr-4">
-                <H2Text textCenter={true}  text={"React"} />
+                <H2Text textCenter={true}  text={name} />
               </View>     
             </View>
-            <View className='flex-1 w-full relative '>
+            <View className='flex-1 w-full relative z-30'>
                  <View className="flex-1 absolute w-full justify-center items-center">
                  <Animation source={animationSource} />
                 </View>
+                <View className='mt-44'>
+                    <ProgressCircular  name={name} percentage = {percentage} radius = {35} strokeWidth = {14} duration = {500} color ={"#9E4784"}
+                                delay ={0} max = {100}/>
+                </View>
+              
             </View>
                
       <View className="mt-44 bg-semi-transparent h-full  flex items-center justify-center  border border-t-borderColorSemiTransparent ">

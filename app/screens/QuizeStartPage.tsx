@@ -9,9 +9,10 @@ import ActiveButton from '../components/ActiveButton';
 import Slider from '../components/Slider';
 import { AntDesign } from '@expo/vector-icons';
 import Tabbar from '../components/Tabbar';
+import ProgressCircular from '../components/ProgressCircular';
 
 const QuizeStartPage = ({route}:{route:any}) => {
-  const { id } = route?.params;
+  const { id,  name, percentage, color } = route?.params;
     const quizePhotos = [
         {id: '1',
          src: require('../../assets/react1.png')
@@ -30,7 +31,7 @@ const QuizeStartPage = ({route}:{route:any}) => {
   return (
     <>
     <ScrollView ref={scrollView} className="bg-primary">
-    <View className=" pb-[60] mb-14">
+    <View className=" pb-[60] mb-20">
         <View className='flex relative'>
                 <TouchableOpacity className="absolute z-10 p-2 left-10 top-16"
                    onPress={() => navigation.navigate("Tabbar", {
@@ -53,11 +54,12 @@ const QuizeStartPage = ({route}:{route:any}) => {
                     screen: "Home"
                   })}
                 >
-                  <Avatar homeScreen={true} />
+                  <ProgressCircular name={name} percentage = {percentage} radius = {11} strokeWidth = {5} duration = {500} color ={color}
+                                delay ={0} max = {100}/>
                 </TouchableOpacity>
               </View>
               <View className="justify-center items-start ">
-                <H1Text text={"React"} />
+                <H1Text text={name} />
                 <Text className="text-sm  text-secondary">rozwiązano 65 z 100 pytań</Text>
               </View>
             </View>
@@ -72,6 +74,7 @@ const QuizeStartPage = ({route}:{route:any}) => {
                 • mają pewne doświadczenie z Reactem,
                 {"\n"}
                 • chcą sprawdzić swoją wiedzę z Reacta.
+                
                 </Text>
             </InfoCard>
             <View className='flex-1 pt-1 justify-center items-center w-full'>

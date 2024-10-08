@@ -63,25 +63,33 @@ const quizes = [
   },
 ];
 const blockes = [
-  {
+  { id: 1,
     logo: require("../../assets/javascript.png"),
     access: true,
     name: "JavaScript",
+     percentage:80,
+     color:"#66347F"
   },
-  {
+  { id: 2,
     logo: require("../../assets/css.png"),
     access: false,
     name: "CSS",
+    percentage:0,
+    color:"#9E4784",
   },
-  {
+  { id: 3,
     logo: require("../../assets/react.png"),
     access: false,
     name: "React",
+      percentage:35,
+     color:"#66347F"
   },
-  {
+  { id: 4,
     logo: require("../../assets/java.png"),
     access: false,
     name: "Java",
+      percentage:35,
+     color:"#66347F"
   },
 ];
 
@@ -127,16 +135,20 @@ const Home = () => {
             </View>
           </View>
           <View className="relative flex z-30">
-            <View className="absolute flex-row flex-1 w-full justify-between items-center px-10 top-24">
-              <TouchableOpacity  onPress={() =>setCurentQuizeCircle( curentQuizeCircle===0?quizes.length-1:curentQuizeCircle-1)}>
-                 <MaterialIcons name="arrow-back-ios" size={24} color="white"/>
+            <View className="absolute flex-row flex-1 w-full justify-between items-center px-4 top-24">
+              <TouchableOpacity  onPress={() =>setCurentQuizeCircle( curentQuizeCircle===0?quizes.length-1:curentQuizeCircle-1)}> 
+                 <View className="w-16 h-10  items-center justify-center">
+                    <MaterialIcons name="arrow-back-ios" size={24} color="white"/>
+                  </View>
               </TouchableOpacity >
               <TouchableOpacity  onPress={() => setCurentQuizeCircle(curentQuizeCircle===quizes.length-1?0:curentQuizeCircle+1)}>
-                 <AntDesign name="right" size={24} color="white" />
+              <View className="w-16 h-10 items-center justify-center">
+                <AntDesign name="right" size={24} color="white" />
+              </View>
               </TouchableOpacity >
             </View>
               <View className="  h-10 top-28 ">
-              <ProgressCircular name={quizes[curentQuizeCircle].name} percentage = {quizes[curentQuizeCircle].percentage} radius = {40} strokeWidth = {14} duration = {500} color ={quizes[curentQuizeCircle].color}
+              <ProgressCircular isHome={true} name={quizes[curentQuizeCircle].name} percentage = {quizes[curentQuizeCircle].percentage} radius = {40} strokeWidth = {14} duration = {500} color ={quizes[curentQuizeCircle].color}
                                 delay ={0} max = {100}/>
           </View>
           </View>
@@ -154,7 +166,7 @@ const Home = () => {
                 {quizes.map((quize, index) => {
                   return (  
                   <TouchableOpacity 
-                    onPress={() => navigation.navigate("Tabbar", {screen:"QuizeStartPage", params:{id:1}})}>
+                    onPress={() => navigation.navigate("Tabbar", {screen:"QuizeStartPage", params:{id:1, name:quize.name, percentage:quize.percentage, color:quize.color }})}>
                     <View className="flex mt-7 mx-4 flex-row items-center justify-start">
                         <QuizeBlock key={index} quize={quize}       
                        />
@@ -196,8 +208,7 @@ const Home = () => {
                     <TouchableOpacity 
                        onPress={() => navigation.navigate("Tabbar", {
                         screen: "CardsStartPage",
-                        // params: {id:1}
-                      })}>
+                        params:{id:block.id, name:block.name, percentage:block.percentage, color:block.color, logo:block.logo }})}>
                        <CardBlock key={index} block={block} />
                       </TouchableOpacity>
                     )

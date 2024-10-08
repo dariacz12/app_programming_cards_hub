@@ -14,11 +14,13 @@ import { Controller, useForm } from 'react-hook-form';
 import ModalPopup from '../components/ModalPopup';
 import { LinearGradient } from 'expo-linear-gradient';
 import CategoryElement from '../components/CategoryElement';
+import ProgressCircular from '../components/ProgressCircular';
 type FormData = {
  kod: string;
 };
 
-const UnlockedCardsPage = () => {
+const UnlockedCardsPage = ({route}:{route:any}) => {
+  const { id,  name, percentage, color, logo } = route?.params;
 
   // const { id } = route?.params;
   const cardsPhotos = [
@@ -112,11 +114,12 @@ const UnlockedCardsPage = () => {
                     screen: "Home"
                   })}
                 >
-                  <Avatar homeScreen={true} />
+                   <ProgressCircular name={name} percentage = {percentage} radius = {11} strokeWidth = {5} duration = {500} color ={color}
+                                delay ={0} max = {100}/>
                 </TouchableOpacity>
               </View>
               <View className="justify-center items-start ">
-                <H1Text text={"React"} />
+                <H1Text text={name} />
                 <Text className="text-sm  text-secondary">rozwiązano 65 z 100 pytań</Text>
               </View>
             </View>
@@ -128,7 +131,7 @@ const UnlockedCardsPage = () => {
         
             <View className='flex-1 py-5 justify-center items-center w-full'>
                   <ActiveButton onPress={() =>
-                         navigation.navigate("")
+                         navigation.navigate("CardsResultPage")
                         }
                         text={"Ucz się"}/>
             </View>
