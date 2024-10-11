@@ -17,19 +17,19 @@ const CardBlock = ({ block: { logo, access, name } }: BlockProps) => {
   const navigation = useNavigation<any>();
   return (
     // <TouchableOpacity onPress={() => navigation.navigate("")}>
-      <View
-        className={`flex-col m-4 w-40 h-38  px-5 py-7 ${access ? "bg-primary" : "bg-block border border-borderColorSemiTransparent"}  rounded-2xl`}
-      >
-        <View className="flex justify-center items-center">
-          <LanguageLogo isQuize={false} logo={logo} />
-          <H3Text text={`${name}`} />
-          {access ? (
-            <Text className="text-white text-sm">pełny dostęp</Text>
-          ) : (
-            <Text className="text-sm  text-secondary">odblokuj dostęp</Text>
-          )}
-        </View>
+    <View
+      className={`flex-col m-4 w-40 h-38  px-5 py-7 ${access ? "bg-primary" : "bg-block border border-borderColorSemiTransparent"}  rounded-2xl`}
+    >
+      <View className="flex justify-center items-center">
+        <LanguageLogo isQuize={false} logo={logo} />
+        <H3Text text={`${name}`} />
+        {access ? (
+          <Text className="text-white text-sm">pełny dostęp</Text>
+        ) : (
+          <Text className="text-sm  text-secondary">odblokuj dostęp</Text>
+        )}
       </View>
+    </View>
     // </TouchableOpacity>
   );
 };

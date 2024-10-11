@@ -66,7 +66,6 @@ const TabItem: FC<TabProps> = ({
   //     ? "rgba(0, 215, 255, 1)"
   //     : "rgba(128,128,128,0.8)",
   // );
-  
 
   // // Adjust Icon color for this first render
   // useEffect(() => {
@@ -79,15 +78,13 @@ const TabItem: FC<TabProps> = ({
   //     iconColor.value = withTiming("rgba(128,128,128,0.8)");
   //   }
   // }, [activeIndex]);
-  const   
- [iconColor, setIconColor] = useState(
-    activeIndex === index + 1 ? 'white' : 'rgba(128,128,128,0.8)',
+  const [iconColor, setIconColor] = useState(
+    activeIndex === index + 1 ? "white" : "rgba(128,128,128,0.8)",
   );
 
   useEffect(() => {
-    setIconColor(activeIndex === index + 1 ? 'white' : 'rgba(128,128,128,0.8)');
+    setIconColor(activeIndex === index + 1 ? "white" : "rgba(128,128,128,0.8)");
   }, [activeIndex]);
-
 
   // const animatedIconProps = useAnimatedProps(() => ({
   //   color: iconColor.value,

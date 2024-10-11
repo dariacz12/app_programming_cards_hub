@@ -101,7 +101,7 @@ const NewPassword = () => {
           <View
             className={`mx-4  items-center ${hasKeyboard ? "pt-4" : errors.password || errors.password_repeat ? "pt-4" : "pt-9 pb-2"}`}
           >
-            <H2Text textCenter={true}  text={"Ustaw nowe hasło"} />
+            <H2Text textCenter={true} text={"Ustaw nowe hasło"} />
           </View>
           <View className={`flex-row justify-center`}>
             <InfoCard welcomeScreen={false}>

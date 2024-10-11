@@ -1,6 +1,6 @@
-import { faCloudShowersWater } from '@fortawesome/free-solid-svg-icons';
-import React from 'react'
-import { Text, View } from 'react-native'
+import { faCloudShowersWater } from "@fortawesome/free-solid-svg-icons";
+import React from "react";
+import { Text, View } from "react-native";
 
 interface Answer {
   text: string;
@@ -9,19 +9,25 @@ interface Answer {
 }
 
 interface AnswerProps {
- answer: Answer;
- chosenAnswer: string;
- chosenAnswersArray: [string];
- currentQuestion:number;
+  answer: Answer;
+  chosenAnswer: string;
+  chosenAnswersArray: [string];
+  currentQuestion: number;
 }
-const QuizeAnswerElement = ({ answer: { text,  status, id }, chosenAnswer, chosenAnswersArray, currentQuestion }: AnswerProps) => {
+const QuizeAnswerElement = ({
+  answer: { text, status, id },
+  chosenAnswer,
+  chosenAnswersArray,
+  currentQuestion,
+}: AnswerProps) => {
   return (
-    <View className={`flex-row  mx-8 my-3 p-8 rounded-2xl ${ chosenAnswer===null ? (chosenAnswersArray[currentQuestion]!==id ? "bg-primary":  status ? "bg-block border border-greanColor" :"bg-block border border-redError") :chosenAnswer!==id ? "bg-primary":  status ? "bg-block border border-greanColor" :"bg-block border border-redError"}`}   >
-     
-        <Text className="text-base text-secondary pr-4">{id}.</Text>
-        <Text className="text-base text-primary">{text}</Text>
+    <View
+      className={`flex-row  mx-8 my-3 p-8 rounded-2xl ${chosenAnswer === null ? (chosenAnswersArray[currentQuestion] !== id ? "bg-primary" : status ? "bg-block border border-greanColor" : "bg-block border border-redError") : chosenAnswer !== id ? "bg-primary" : status ? "bg-block border border-greanColor" : "bg-block border border-redError"}`}
+    >
+      <Text className="text-base text-secondary pr-4">{id}.</Text>
+      <Text className="text-base text-primary">{text}</Text>
     </View>
-  )
-}
+  );
+};
 
-export default QuizeAnswerElement
+export default QuizeAnswerElement;

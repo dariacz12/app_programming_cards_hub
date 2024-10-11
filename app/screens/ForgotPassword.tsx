@@ -103,7 +103,7 @@ const ForgotPassword = () => {
           <View
             className={`mx-4 mt-5 items-center ${hasKeyboard ? "py-0" : errors.password || errors.email ? "py-0" : "py-3"}`}
           >
-            <H2Text textCenter={true}  text={"Zresetuj hasło"} />
+            <H2Text textCenter={true} text={"Zresetuj hasło"} />
             <Text className="leading-5 px-4 mt-1 text-base text-secondary text-center">
               Wpisz adres e-mail, którego użyłeś do rejestracji w aplikacji,
               wyślemy tam wiadomość z linkiem do resetowania hasła{" "}

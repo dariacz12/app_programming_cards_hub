@@ -14,9 +14,9 @@ module.exports = {
         greanColor: "#62DE71",
         whiteColor: "#FFFFFF",
         activeColor: "#0DA6C2",
-        lightBlue:"#15DCE7",
-        grey:"#898A8D",
-        textBlue:"#141338",
+        lightBlue: "#15DCE7",
+        grey: "#898A8D",
+        textBlue: "#141338",
       },
       backgroundColor: {
         primary: "#19173D",

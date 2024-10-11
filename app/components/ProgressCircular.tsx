@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Easing,
   TextInput,
@@ -6,9 +6,9 @@ import {
   Text,
   View,
   StyleSheet,
-} from 'react-native';
-import Svg, { G, Circle, Rect } from 'react-native-svg';
-import { LinearGradient } from 'expo-linear-gradient';
+} from "react-native";
+import Svg, { G, Circle, Rect } from "react-native-svg";
+import { LinearGradient } from "expo-linear-gradient";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
@@ -22,18 +22,18 @@ export default function ProgressCircular({
   color,
   delay,
   max,
-  name
-}:{ isHome?: boolean,
-    percentage: number
-    radius: number
-    strokeWidth: number
-    duration: number
-    color: string
-    delay: number
-    max: number
-    name: string}) {
-
-  
+  name,
+}: {
+  isHome?: boolean;
+  percentage: number;
+  radius: number;
+  strokeWidth: number;
+  duration: number;
+  color: string;
+  delay: number;
+  max: number;
+  name: string;
+}) {
   const animated = React.useRef(new Animated.Value(0)).current;
   const circleRef = React.useRef();
   const inputRef = React.useRef();
@@ -52,20 +52,24 @@ export default function ProgressCircular({
 
   React.useEffect(() => {
     animation(percentage);
-    animated.addListener((v) => {
-      const maxPerc = 100 * v.value / max;
-      const strokeDashoffset = circumference - (circumference * maxPerc) / 100;
-      if (inputRef?.current) {
-        inputRef.current.setNativeProps({
-          text: `${Math.round(v.value)}%`,
-        });
-      }
-      if (circleRef?.current) {
-        circleRef.current.setNativeProps({
-          strokeDashoffset,
-        });
-      }
-    }, [max, percentage,name]);
+    animated.addListener(
+      (v) => {
+        const maxPerc = (100 * v.value) / max;
+        const strokeDashoffset =
+          circumference - (circumference * maxPerc) / 100;
+        if (inputRef?.current) {
+          inputRef.current.setNativeProps({
+            text: `${Math.round(v.value)}%`,
+          });
+        }
+        if (circleRef?.current) {
+          circleRef.current.setNativeProps({
+            strokeDashoffset,
+          });
+        }
+      },
+      [max, percentage, name],
+    );
 
     return () => {
       animated.removeAllListeners();
@@ -73,20 +77,19 @@ export default function ProgressCircular({
   });
 
   return (
-    <View style={{
+    <View
+      style={{
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <Svg
         height={radius * 6}
         width={radius * 6}
         viewBox={`0 0 ${halfCircle * 2} ${halfCircle * 2}`}
-        >
-        <G
-          rotation="-90"
-          origin={`${halfCircle}, ${halfCircle}`}>
-      
+      >
+        <G rotation="-90" origin={`${halfCircle}, ${halfCircle}`}>
           <Circle
             ref={circleRef}
             cx="50%"
@@ -98,7 +101,6 @@ export default function ProgressCircular({
             strokeLinecap="round"
             strokeDashoffset={circumference}
             strokeDasharray={circumference}
-        
           />
 
           <Circle
@@ -110,7 +112,6 @@ export default function ProgressCircular({
             strokeWidth={strokeWidth}
             strokeLinejoin="round"
             strokeOpacity=".1"
-      
           />
         </G>
       </Svg>
@@ -120,33 +121,43 @@ export default function ProgressCircular({
         underlineColorAndroid="transparent"
         editable={false}
         defaultValue="0"
-        style={isHome?[
-          StyleSheet.absoluteFillObject,
-          { fontSize: radius / 2, color: '#FFFFFF'},
-          styles.text,
-        ]:[
-            StyleSheet.absoluteFillObject,
-            { fontSize: radius , color: '#FFFFFF'},
-            styles.percentageOnly,
-          ] }
+        style={
+          isHome
+            ? [
+                StyleSheet.absoluteFillObject,
+                { fontSize: radius / 2, color: "#FFFFFF" },
+                styles.text,
+              ]
+            : [
+                StyleSheet.absoluteFillObject,
+                { fontSize: radius, color: "#FFFFFF" },
+                styles.percentageOnly,
+              ]
+        }
       />
-      {isHome && <Text
+      {isHome && (
+        <Text
           style={{
-            position: 'absolute', 
-            top:25,
-            textAlign: 'center',
-            justifyContent:'center',
-            color: '#FFFFFF',
+            position: "absolute",
+            top: 25,
+            textAlign: "center",
+            justifyContent: "center",
+            color: "#FFFFFF",
             fontSize: 18,
           }}
         >
-         {name}
-        </Text>}
+          {name}
+        </Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  text: { fontWeight: '900', textAlign: 'center',bottom:20 },
-  percentageOnly:{ fontWeight:"500", textAlign: 'center', justifyContent:"center"},
+  text: { fontWeight: "900", textAlign: "center", bottom: 20 },
+  percentageOnly: {
+    fontWeight: "500",
+    textAlign: "center",
+    justifyContent: "center",
+  },
 });

@@ -34,13 +34,12 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
     circleXCoordinate.value = getPathXCenter(currentPath);
   };
   const selectIcon = (routeName: string) => {
-
-    switch (routeName) {  
+    switch (routeName) {
       case "Account":
         return "user";
       case "Home":
         return "home";
-    
+
       default:
         return "home";
     }
@@ -73,7 +72,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const blurredStyle = useAnimatedStyle(() => ({
     opacity: opacity.value, // Adjust opacity for desired blur level
   }));
-console.log("al",state.routes);
+  console.log("al", state.routes);
   return (
     <View style={styles.tabBarContainer}>
       <Image
@@ -121,20 +120,26 @@ console.log("al",state.routes);
           },
         ]}
       >
-        {state.routes.filter((route)=>{return route.name==="Home" || route.name==="Account"}).map((route, index) => {
-          const { options } = descriptors[route.key];
-          const label = options.tabBarLabel ? options.tabBarLabel : route.name;
-          return (
-            <TabItem
-              key={route.name}
-              label={label as string}
-              icon={selectIcon(route.name)}
-              activeIndex={state.index + 1}
-              index={index}
-              onTabPress={() => handleTabPress(index + 1, route.name)}
-            />
-          );
-        })}
+        {state.routes
+          .filter((route) => {
+            return route.name === "Home" || route.name === "Account";
+          })
+          .map((route, index) => {
+            const { options } = descriptors[route.key];
+            const label = options.tabBarLabel
+              ? options.tabBarLabel
+              : route.name;
+            return (
+              <TabItem
+                key={route.name}
+                label={label as string}
+                icon={selectIcon(route.name)}
+                activeIndex={state.index + 1}
+                index={index}
+                onTabPress={() => handleTabPress(index + 1, route.name)}
+              />
+            );
+          })}
       </View>
       {/*  </BlurView>  */}
     </View>

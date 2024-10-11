@@ -58,20 +58,20 @@ export const Layout = () => {
   const { authState, onLogout } = useAuth();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-    <NavigationContainer>
-      <Stack.Navigator>
-        {!authState?.authenticated ? (
-          <React.Fragment>
-            {/* <Stack.Screen
+      <NavigationContainer>
+        <Stack.Navigator>
+          {!authState?.authenticated ? (
+            <React.Fragment>
+              {/* <Stack.Screen
               name="ProgressCircular"
               component={ProgressCircular}
               options={{ headerShown: false }}
             ></Stack.Screen>  */}
-            <Stack.Screen
-              name="Tabbar"
-              component={Tabbar}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
+              <Stack.Screen
+                name="Tabbar"
+                component={Tabbar}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
               {/* <Stack.Screen
               name="CardsStudyPage"
               component={CardsStudyPage}
@@ -92,76 +92,73 @@ export const Layout = () => {
               component={UnlockedCardsPage}
               options={{ headerShown: false }}
             ></Stack.Screen> */}
-             <Stack.Screen
-              name="QuizeQuestion"
-              component={QuizeQuestion}
-              options={{ headerShown: false }}
-            ></Stack.Screen> 
-           <Stack.Screen
-              name="QuizeResultPage"
-              component={QuizeResultPage}
-              options={{ headerShown: false }}
-            ></Stack.Screen> 
-             <Stack.Screen
-              name="AccessUnlocked"
-              component={AccessUnlocked}
-              options={{ headerShown: false }}
-            ></Stack.Screen> 
-            
-             
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            
-            <Stack.Screen
-              name="WelcomeScreen"
-              component={WelcomeScreen}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-            <Stack.Screen
-              name="PrivacyPolicy"
-              component={PrivacyPolicy}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-            <Stack.Screen
-              name="Statute"
-              component={Statute}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-            <Stack.Screen
-              name="Registration"
-              component={Registration}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-            <Stack.Screen
-              name="Login"
-              component={Login}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-            <Stack.Screen
-              name="ForgotPassword"
-              component={ForgotPassword}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-            <Stack.Screen
-              name="NewPassword"
-              component={NewPassword}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-            <Stack.Screen
-              name="SuccessfullPasswordReset"
-              component={SuccessfullPasswordReset}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-            <Stack.Screen
-              name="SuccesfullLoginRegistration"
-              component={SuccessfulLoginRegistration}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-          </React.Fragment>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+              <Stack.Screen
+                name="QuizeQuestion"
+                component={QuizeQuestion}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+              <Stack.Screen
+                name="QuizeResultPage"
+                component={QuizeResultPage}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+              <Stack.Screen
+                name="AccessUnlocked"
+                component={AccessUnlocked}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <Stack.Screen
+                name="WelcomeScreen"
+                component={WelcomeScreen}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+              <Stack.Screen
+                name="PrivacyPolicy"
+                component={PrivacyPolicy}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+              <Stack.Screen
+                name="Statute"
+                component={Statute}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+              <Stack.Screen
+                name="Registration"
+                component={Registration}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+              <Stack.Screen
+                name="ForgotPassword"
+                component={ForgotPassword}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+              <Stack.Screen
+                name="NewPassword"
+                component={NewPassword}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+              <Stack.Screen
+                name="SuccessfullPasswordReset"
+                component={SuccessfullPasswordReset}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+              <Stack.Screen
+                name="SuccesfullLoginRegistration"
+                component={SuccessfulLoginRegistration}
+                options={{ headerShown: false }}
+              ></Stack.Screen>
+            </React.Fragment>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
     </GestureHandlerRootView>
   );
 };

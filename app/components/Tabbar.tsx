@@ -19,48 +19,47 @@ export default function Tabbar() {
   return (
     <Tab.Navigator tabBar={(props) => <CustomBottomTab {...props} />}>
       <Tab.Group screenOptions={{ headerShown: false }}>
-       
-         <Tab.Screen
+        <Tab.Screen
           options={{ tabBarLabel: "Home" }}
           name="Home"
           component={Home}
         />
-         <Tab.Screen
+        <Tab.Screen
           options={{ tabBarLabel: "Account" }}
           name="Account"
           component={Account}
         />
-         <Tab.Screen
-              name="QuizeStartPage"
-              component={QuizeStartPage}
-              options={{ headerShown: false }}
-            ></Tab.Screen> 
-              <Tab.Screen
-              name="Notifications"
-              component={Notifications}
-              options={{ headerShown: false }}
-            ></Tab.Screen> 
-            <Tab.Screen
-              name="CardsStartPage"
-              component={CardsStartPage}
-              options={{ headerShown: false }}
-            ></Tab.Screen> 
-            <Tab.Screen
-              name="UnlockedCardsPage"
-              component={UnlockedCardsPage}
-              options={{ headerShown: false }}
-            ></Tab.Screen> 
-            <Tab.Screen
-              name="CardsResultPage"
-              component={CardsResultPage}
-              options={{ headerShown: false }}
-            ></Tab.Screen> 
-            <Tab.Screen
-              name="CardsStudyPage"
-              component={CardsStudyPage}
-              options={{ headerShown: false }}
-            ></Tab.Screen>
-{/*        
+        <Tab.Screen
+          name="QuizeStartPage"
+          component={QuizeStartPage}
+          options={{ headerShown: false }}
+        ></Tab.Screen>
+        <Tab.Screen
+          name="Notifications"
+          component={Notifications}
+          options={{ headerShown: false }}
+        ></Tab.Screen>
+        <Tab.Screen
+          name="CardsStartPage"
+          component={CardsStartPage}
+          options={{ headerShown: false }}
+        ></Tab.Screen>
+        <Tab.Screen
+          name="UnlockedCardsPage"
+          component={UnlockedCardsPage}
+          options={{ headerShown: false }}
+        ></Tab.Screen>
+        <Tab.Screen
+          name="CardsResultPage"
+          component={CardsResultPage}
+          options={{ headerShown: false }}
+        ></Tab.Screen>
+        <Tab.Screen
+          name="CardsStudyPage"
+          component={CardsStudyPage}
+          options={{ headerShown: false }}
+        ></Tab.Screen>
+        {/*        
         <Tab.Screen
           options={{ tabBarLabel: "Login" }}
           name="Login"

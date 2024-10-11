@@ -1,56 +1,94 @@
-import React from 'react';
-import { Pressable, SafeAreaView, View, StyleSheet, Text, Image } from 'react-native';
+import React from "react";
+import {
+  Pressable,
+  SafeAreaView,
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  useWindowDimensions,
+} from "react-native";
 import Animated, {
   interpolate,
+  runOnJS,
+  SharedValue,
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
   withTiming,
-} from 'react-native-reanimated';
-import H1Text from './H1Text';
-
+} from "react-native-reanimated";
+import H1Text from "./H1Text";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 interface FlipCardsProps {
-    isFlipped: {
-        value: boolean
-    };
-    cardStyle: { width: number; height: number };
-    direction?: string;
-    duration?: number;
-    currentCard:{question: string, answer: string}
-  }
+  // isFlipped: {
+  //   value: boolean;
+  // };
+  maxVisibleItem: number;
+  cardStyle: { width: number; height: number };
+  direction?: string;
+  duration?: number;
+  currentCard: { question: string; answer: string };
+  index: number;
+  dataLength: number;
+  currentIndex: number;
+  animatedValue: SharedValue<number>;
+  setNewData: React.Dispatch<
+    React.SetStateAction<
+      {
+        question: string;
+        answer: any;
+      }[]
+    >
+  >;
+  setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
+}
 
-  const flippedContentStyles = StyleSheet.create({
-    card: {
-      flex: 1,
-      borderRadius: 16,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    image: {
-        flex: 1,
-        height: "100%",
-        width:"100%",
-        borderRadius: 16,
-    },
-  });
-  
-  const regularContentStyles = StyleSheet.create({
+const flippedContentStyles = StyleSheet.create({
   card: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  });
- const FlipCard = ({
-  isFlipped,
+  image: {
+    flex: 1,
+    height: "100%",
+    width: "100%",
+    borderRadius: 16,
+  },
+});
+
+const regularContentStyles = StyleSheet.create({
+  card: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+const FlipCard = ({
+  index,
   cardStyle,
-  direction = 'y',
+  direction = "y",
   duration = 500,
   currentCard,
+  dataLength,
+  maxVisibleItem,
+  currentIndex,
+  animatedValue,
+  setCurrentQuestionIndex,
+  setNewData,
 }: FlipCardsProps) => {
-  const isDirectionX = direction === 'x';
+  const isDirectionX = direction === "x";
+  const isFlipped = useSharedValue(false);
+
+  const handlePress = () => {
+    if (currentIndex === index) {
+      isFlipped.value = !isFlipped.value;
+    }
+  };
 
   const regularCardAnimatedStyle = useAnimatedStyle(() => {
     const spinValue = interpolate(Number(isFlipped.value), [0, 1], [0, 180]);
@@ -74,39 +112,163 @@ interface FlipCardsProps {
     };
   });
 
+  const isPressed = useSharedValue(false);
+  const offset = useSharedValue({ x: 0, y: 0 });
+  const { width } = useWindowDimensions();
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: offset.value.x },
+        { translateY: offset.value.y },
+        { scale: withSpring(isPressed.value ? 1.2 : 1) },
+      ],
+      // opacity: index < maxVisibleItem?1:0,
+      backgroundColor: isPressed.value ? "yellow" : "transparent",
+      borderRadius: "23px",
+    };
+  });
+  const start = useSharedValue({ x: 0, y: 0 });
+  const translateX = useSharedValue(0);
+  const directionX = useSharedValue(0);
+  const pan = Gesture.Pan()
+    .onUpdate((e) => {
+      console.log(e.translationX);
+      const isSwipeRight = e.translationX > 0;
+      directionX.value = isSwipeRight ? 1 : -1;
+      if (currentIndex === index) {
+        translateX.value = e.translationX;
+        animatedValue.value = interpolate(
+          Math.abs(e.translationX),
+          [0, width],
+          [index, index + 1],
+        );
+        console.log(animatedValue.value);
+      }
+    })
+    .onEnd((e) => {
+      if (currentIndex === index) {
+        if (Math.abs(e.translationX) > 150 || Math.abs(e.velocityX) > 1000) {
+          translateX.value = withTiming(
+            1.5 * width * directionX.value,
+            {},
+            () => {
+              runOnJS(setCurrentQuestionIndex)(currentIndex + 1);
+            },
+          );
+          animatedValue.value = withTiming(currentIndex + 1);
+        } else {
+          translateX.value = withTiming(0, { duration: 500 });
+          animatedValue.value = withTiming(currentIndex);
+        }
+      }
+    });
+
+  const animatedSwipeStyles = useAnimatedStyle(() => {
+    const currentItem = index === currentIndex;
+    const rotateZ = interpolate(
+      Math.abs(translateX.value),
+      [0, width],
+      [0, 20],
+    );
+    const translateY = interpolate(
+      animatedValue.value,
+      [index - 1, index],
+      [-10, 0],
+    );
+    const scale = interpolate(
+      animatedValue.value,
+      [index - 1, index],
+      [0.9, 1],
+    );
+    const opacity = interpolate(
+      animatedValue.value + maxVisibleItem,
+      [index, index + 1],
+      [0, 1],
+    );
+    return {
+      transform: [
+        { translateX: translateX.value },
+        {
+          scale: currentItem ? 1 : scale,
+        },
+        {
+          translateY: currentItem ? 0 : translateY,
+        },
+        {
+          rotateZ: currentItem ? `${directionX.value * rotateZ}deg` : "0deg",
+        },
+      ],
+      opacity: index < maxVisibleItem + currentIndex ? 1 : opacity,
+      // transform: [
+      //   { translateX: translateX.value },
+      //   {
+      //     scale: currentItem ? 1 - index * 0.1 : 1,
+      //   },
+      //   {
+      //     translateY: currentItem ? index * -10 : 0,
+      //   },
+      //   {
+      //     rotateZ: currentItem ? `${directionX.value * rotateZ}deg` : '0deg',
+      //   },
+      // ],
+      // opacity: interpolate(
+      //   Math.abs(translateX.value),
+      //   [0, width/2], // Adjust the threshold for opacity change
+      //   [1, 0.5]
+      // ),
+    };
+  });
   return (
-    <View>
-      <Animated.View
-        style={[
-          flipCardStyles.regularCard,
-          cardStyle,
-          regularCardAnimatedStyle,
-        ]}>
-    <View style={regularContentStyles.card}>
-    <Text className="text-textBlue font-bold text-xl text-center mx-6">{currentCard.question}</Text>
-    </View>
-      </Animated.View>
-      <Animated.View
-        style={[
-          flipCardStyles.flippedCard,
-          cardStyle,
-          flippedCardAnimatedStyle,
-        ]}>
-        <View style={flippedContentStyles.card}>
-        <Image source={currentCard.answer}  style={flippedContentStyles.image}/>
-      </View>
-      </Animated.View>
-    </View>
+    <GestureDetector gesture={pan}>
+      <Pressable onPress={handlePress}>
+        <Animated.View style={animatedStyles}>
+          <Animated.View style={[animatedSwipeStyles]}>
+            <Animated.View
+              style={[
+                flipCardStyles.regularCard,
+                cardStyle,
+                {
+                  borderWidth: 0.5,
+                  borderColor: "black",
+                  borderRadius: 16,
+                },
+                regularCardAnimatedStyle,
+              ]}
+            >
+              <View style={regularContentStyles.card}>
+                <Text className="text-textBlue font-bold text-xl text-center mx-6">
+                  {currentCard.question}
+                </Text>
+              </View>
+            </Animated.View>
+            <Animated.View
+              style={[
+                flipCardStyles.flippedCard,
+                cardStyle,
+                flippedCardAnimatedStyle,
+              ]}
+            >
+              <View style={flippedContentStyles.card}>
+                <Image
+                  source={currentCard.answer}
+                  style={flippedContentStyles.image}
+                />
+              </View>
+            </Animated.View>
+          </Animated.View>
+        </Animated.View>
+      </Pressable>
+    </GestureDetector>
   );
 };
 
 const flipCardStyles = StyleSheet.create({
   regularCard: {
-    position: 'absolute',
+    position: "absolute",
     zIndex: 1,
   },
   flippedCard: {
-    backfaceVisibility: 'hidden',
+    backfaceVisibility: "hidden",
     zIndex: 2,
   },
 });

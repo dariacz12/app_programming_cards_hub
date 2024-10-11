@@ -22,29 +22,29 @@ const QuizeBlock = ({ quize: { logo, level, name } }: QuizeProps) => {
       {/* <TouchableOpacity
         className="flex-row"
       > */}
-        <View className="flex-row flex-1">
-          <View>
-            <LanguageLogo isQuize={true} logo={logo} />
-          </View>
-          <View className="justify-center items-start ml-3">
-            <H3Text text={`${name}`} />
-            <Text className="text-sm  text-secondary">poziom trudności:</Text>
-          </View>
+      <View className="flex-row flex-1">
+        <View>
+          <LanguageLogo isQuize={true} logo={logo} />
         </View>
-        <View className="justify-center ">
-          <View className="relative flex-row">
-            {level.map((index) => {
-              return (
-                <FontAwesome
-                  key={index}
-                  name="star"
-                  size={20}
-                  style={{ color: "rgba(254, 173, 29, 100)", paddingRight: 4 }}
-                />
-              );
-            })}
-          </View>
+        <View className="justify-center items-start ml-3">
+          <H3Text text={`${name}`} />
+          <Text className="text-sm  text-secondary">poziom trudności:</Text>
         </View>
+      </View>
+      <View className="justify-center ">
+        <View className="relative flex-row">
+          {level.map((index) => {
+            return (
+              <FontAwesome
+                key={index}
+                name="star"
+                size={20}
+                style={{ color: "rgba(254, 173, 29, 100)", paddingRight: 4 }}
+              />
+            );
+          })}
+        </View>
+      </View>
       {/* </TouchableOpacity> */}
     </View>
   );
