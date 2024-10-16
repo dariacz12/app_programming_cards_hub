@@ -151,7 +151,7 @@ const UnlockedCardsPage = ({ route }: { route: any }) => {
 
               <View className="flex-1 py-5 justify-center items-center w-full">
                 <ActiveButton
-                  onPress={() => navigation.navigate("CardsResultPage")}
+                  onPress={() => navigation.navigate("CardsStudyPage")}
                   text={"Ucz się"}
                 />
               </View>

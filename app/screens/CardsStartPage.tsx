@@ -1,6 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useRef, useState } from "react";
 import {
+  Alert,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -88,6 +90,15 @@ const CardsStartPage = ({ route }: { route: any }) => {
     },
   });
   const [modalVisible, setModalVisible] = useState(false);
+  const openExternalLink = async () => {
+    const url = "https://fiszki-z-programowania.pl/";
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      Linking.openURL(url);
+    } else {
+      Alert.alert(`Can't open this URL: ${url}`);
+    }
+  };
   return (
     <>
       <ScrollView ref={scrollView} className="bg-primary">
@@ -174,10 +185,7 @@ const CardsStartPage = ({ route }: { route: any }) => {
                 onPress={() => navigation.navigate("")}
                 text={"Przetestuj"}
               />
-              <ActiveButton
-                onPress={() => navigation.navigate("")}
-                text={"Kup"}
-              />
+              <ActiveButton onPress={openExternalLink} text={"Kup"} />
             </View>
             <View className="mx-8 my-11  bg-block h-1 rounded-lg " />
             <View className="items-start ml-6 mb-3 ">

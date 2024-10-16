@@ -29,6 +29,8 @@ const CardsStudyPage = () => {
   const numberWrong = 4;
   const numberRight = 15;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<any>(0);
+  const [negativeCount, setNegativeCount] = useState<number>(0);
+  const [positiveCount, setPositiveCount] = useState<number>(0);
 
   const animatedValue = useSharedValue(0);
   const cardsList = [
@@ -58,47 +60,6 @@ const CardsStudyPage = () => {
     },
   ];
   const [newData, setNewData] = useState(cardsList);
-  // const isFlipped = useSharedValue(false);
-
-  // const handlePress = () => {
-  //   isFlipped.value = !isFlipped.value;
-  // };
-
-  // const isPressed = useSharedValue(false);
-  // const offset = useSharedValue({ x: 0, y: 0 });
-
-  // const animatedStyles = useAnimatedStyle(() => {
-  //   return {
-  //     transform: [
-  //       { translateX: offset.value.x },
-  //       { translateY: offset.value.y },
-  //       { scale: withSpring(isPressed.value ? 1.2 : 1) },
-  //     ],
-  //     backgroundColor: isPressed.value ? "yellow" : "transparent",
-  //     borderRadius: "23px",
-  //   };
-  // });
-  // const start = useSharedValue({ x: 0, y: 0 });
-
-  // const gesture = Gesture.Pan()
-  //   .onBegin(() => {
-  //     isPressed.value = true;
-  //   })
-  //   .onUpdate((e) => {
-  //     offset.value = {
-  //       x: e.translationX + start.value.x,
-  //       y: e.translationY + start.value.y,
-  //     };
-  //   })
-  //   .onEnd(() => {
-  //     start.value = {
-  //       x: offset.value.x,
-  //       y: offset.value.y,
-  //     };
-  //   })
-  //   .onFinalize(() => {
-  //     isPressed.value = false;
-  //   });
   const MAX = 3;
   return (
     <>
@@ -120,15 +81,13 @@ const CardsStudyPage = () => {
           />
           <View className="flex mt-1 mb-16 flex-row justify-between relative">
             <View className="absolute right-[325] mr-2 w-20 h-12 border-2 border-redError rounded-full flex items-end pr-5 justify-center">
-              <Text className="font-bold text-white">{numberWrong}</Text>
+              <Text className="font-bold text-white">{negativeCount}</Text>
             </View>
             <View className="absolute left-[335] mr-2 w-20 h-12 border-2 border-greanColor rounded-full flex items-start pl-5 justify-center">
-              <Text className="font-bold text-white">{numberRight}</Text>
+              <Text className="font-bold text-white">{positiveCount}</Text>
             </View>
           </View>
           <View className="flex justify-center items-center">
-            {/* <Pressable onPress={handlePress}> */}
-            {/* <GestureDetector gesture={gesture}> */}
             <GestureHandlerRootView>
               <SafeAreaView>
                 <View style={styles.cardContainer}>
@@ -140,13 +99,11 @@ const CardsStudyPage = () => {
                       return null;
                     }
                     return (
-                      // <Animated.View style={animatedStyles}>
                       <View
                         key={index}
                         style={{ zIndex: cardsList.length - index }}
                       >
                         <FlipCard
-                          // isFlipped={isFlipped}
                           cardStyle={styles.flipCard}
                           currentCard={item}
                           index={index}
@@ -157,16 +114,17 @@ const CardsStudyPage = () => {
                           animatedValue={animatedValue}
                           setCurrentQuestionIndex={setCurrentQuestionIndex}
                           setNewData={setNewData}
+                          setNegativeCount={setNegativeCount}
+                          setPositiveCount={setPositiveCount}
+                          negativeCount={negativeCount}
+                          positiveCount={positiveCount}
                         />
                       </View>
-                      //  </Animated.View>
                     );
                   })}
                 </View>
               </SafeAreaView>
             </GestureHandlerRootView>
-            {/* </GestureDetector> */}
-            {/* </Pressable> */}
           </View>
         </View>
       </SafeAreaView>

@@ -11,14 +11,19 @@ import H3Text from "../components/H3Text";
 import InfoCard from "../components/InfoCard";
 import ProgressCircular from "../components/ProgressCircular";
 
-function CardsResultPage() {
+function CardsResultPage({ route }: any) {
+  const negativeArray = route.params?.negativeArray;
+  const positiveArray = route.params?.positiveArray;
+  console.log("route.params", route.params);
+  console.log("negativeArray", negativeArray);
   const animationSource = require("../../assets/congratulations.json");
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
-  const numberDone = 4;
-  const numberInProgress = 21;
-  const numberToDo = 15;
-  const all = 40;
+  const all = 18; //pobrać z serwera
+  const numberDone = positiveArray?.length ? positiveArray.length : 0;
+  const numberInProgress = negativeArray?.length ? negativeArray.length : 0;
+  const numberToDo = all - numberDone - numberInProgress;
+
   const name = "React";
   const percentage = (numberDone * 100) / all;
   return (

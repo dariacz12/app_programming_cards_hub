@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Pressable,
   SafeAreaView,
@@ -18,12 +18,18 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import H1Text from "./H1Text";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+  Gesture,
+  GestureDetector,
+  GestureStateChangeEvent,
+  PanGestureHandlerEventPayload,
+} from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
+
+var negativeArray: number[] = [];
+var positiveArray: number[] = [];
 
 interface FlipCardsProps {
-  // isFlipped: {
-  //   value: boolean;
-  // };
   maxVisibleItem: number;
   cardStyle: { width: number; height: number };
   direction?: string;
@@ -41,7 +47,11 @@ interface FlipCardsProps {
       }[]
     >
   >;
+  setPositiveCount: React.Dispatch<React.SetStateAction<number>>;
+  setNegativeCount: React.Dispatch<React.SetStateAction<number>>;
   setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
+  positiveCount: number;
+  negativeCount: number;
 }
 
 const flippedContentStyles = StyleSheet.create({
@@ -68,6 +78,7 @@ const regularContentStyles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
 const FlipCard = ({
   index,
   cardStyle,
@@ -80,9 +91,25 @@ const FlipCard = ({
   animatedValue,
   setCurrentQuestionIndex,
   setNewData,
+  setPositiveCount,
+  setNegativeCount,
+  positiveCount,
+  negativeCount,
 }: FlipCardsProps) => {
   const isDirectionX = direction === "x";
   const isFlipped = useSharedValue(false);
+
+  // useEffect(()=>{
+  // console.log('negative:', negativeArray.length);
+  //  setNegativeCount(negativeArray.length)
+  //  console.log('count changed negative:', negativeArray.length);
+  // },[negativeArray.length])
+
+  // useEffect(()=>{
+  //   console.log('positive:', positiveArray.length);
+  //   setPositiveCount(positiveArray.length)
+  //   console.log('count change positive:', positiveArray.length);
+  //  },[positiveArray.length])
 
   const handlePress = () => {
     if (currentIndex === index) {
@@ -112,9 +139,65 @@ const FlipCard = ({
     };
   });
 
+  // console.log("swipedNegativeIndexArray1", swipedNegativeIndexArray);
+
+  const navigation = useNavigation<any>();
   const isPressed = useSharedValue(false);
   const offset = useSharedValue({ x: 0, y: 0 });
   const { width } = useWindowDimensions();
+
+  // useEffect(() => {
+  //   console.log("swipedNegativeIndexArray updated:", swipedNegativeIndexArray);
+  // }, [swipedNegativeIndexArray]);
+
+  // const zrobWszystko = (currentIndex: number, e: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => {
+  //   setCurrentQuestionIndex(currentIndex + 1);
+  //   console.log("zrobWszystko called with currentIndex:", currentIndex, "e:", e);
+  //   if (e.translationX < 0) {
+  //     console.log("Swiped left:", currentIndex);
+  //     setSwipedNegativeIndexArray(prev => {
+  //       const newArray = [...prev, currentIndex];
+  //       console.log("Updated swipedNegativeIndexArray (inside):", newArray);
+  //       return newArray;
+  //     });
+  //   } else if (e.translationX > 0) {
+  //     console.log("Swiped right:", currentIndex);
+  //     setSwipedPositiveIndexArray(prev => [...prev, currentIndex]);
+  //   }
+  // };
+  // const zrobWszystko = (currentIndex: number, translationX: number) => {
+  //   setCurrentQuestionIndex(currentIndex + 1);
+
+  //   console.log("Swiping. Current Index:", currentIndex, "TranslationX:", translationX);
+
+  //   if (translationX < 0) {
+  //     setSwipedNegativeIndexArray(prev => {
+  //       const newArray = [...prev, currentIndex];
+  //       console.log("Updated swipedNegativeIndexArray:", newArray);
+  //       return newArray;
+  //     });
+  //   } else if (translationX > 0) {
+  //     setSwipedPositiveIndexArray(prev => {
+  //       const newArray = [...prev, currentIndex];
+  //       console.log("Updated swipedPositiveIndexArray:", newArray);
+  //       return newArray;
+  //     });
+  //   }
+  // }
+  const swipeLogic = (currentIndex: number, translationX: number) => {
+    setCurrentQuestionIndex(currentIndex + 1);
+
+    if (translationX < 0) {
+      negativeArray.push(currentIndex);
+      setNegativeCount(negativeArray.length);
+    } else if (translationX > 0) {
+      positiveArray.push(currentIndex);
+      setPositiveCount(positiveArray.length);
+    }
+    if (currentIndex === dataLength - 1) {
+      navigation.navigate("CardsResultPage", { negativeArray, positiveArray });
+    }
+  };
   const animatedStyles = useAnimatedStyle(() => {
     return {
       transform: [
@@ -122,7 +205,6 @@ const FlipCard = ({
         { translateY: offset.value.y },
         { scale: withSpring(isPressed.value ? 1.2 : 1) },
       ],
-      // opacity: index < maxVisibleItem?1:0,
       backgroundColor: isPressed.value ? "yellow" : "transparent",
       borderRadius: "23px",
     };
@@ -132,7 +214,7 @@ const FlipCard = ({
   const directionX = useSharedValue(0);
   const pan = Gesture.Pan()
     .onUpdate((e) => {
-      console.log(e.translationX);
+      // console.log(e.translationX);
       const isSwipeRight = e.translationX > 0;
       directionX.value = isSwipeRight ? 1 : -1;
       if (currentIndex === index) {
@@ -142,7 +224,7 @@ const FlipCard = ({
           [0, width],
           [index, index + 1],
         );
-        console.log(animatedValue.value);
+        // console.log(animatedValue.value);
       }
     })
     .onEnd((e) => {
@@ -152,7 +234,31 @@ const FlipCard = ({
             1.5 * width * directionX.value,
             {},
             () => {
-              runOnJS(setCurrentQuestionIndex)(currentIndex + 1);
+              runOnJS(swipeLogic)(currentIndex, e.translationX);
+              // runOnJS(zrobWszystko)(currentIndex, e.translationX);
+              // runOnJS(zrobWszystko)(currentIndex, e)
+              // runOnJS((swipedNegativeIndexArray: number[], swipedPositiveIndexArray: number[]) => {
+
+              //   // runOnJS(setSwipedNegativeIndexArray)([currentIndex]);
+
+              // })(swipedNegativeIndexArray, swipedPositiveIndexArray)
+              // runOnJS(setCurrentQuestionIndex)(currentIndex + 1);
+              //   if(e.translationX<0){
+              //     console.log("zopka 1")
+              //     runOnJS(setSwipedNegativeIndexArray)([currentIndex]);
+
+              //   // runOnJS(() => {
+
+              //   //   setSwipedNegativeIndexArray([...swipedNegativeIndexArray,currentIndex])
+              //   // }
+              //   // )
+              // }
+              //     if(e.translationX>0){
+              //     runOnJS(() => {
+
+              //     setSwipedPositiveIndexArray([...swipedPositiveIndexArray,currentIndex])
+
+              // }) }
             },
           );
           animatedValue.value = withTiming(currentIndex + 1);
@@ -199,23 +305,6 @@ const FlipCard = ({
         },
       ],
       opacity: index < maxVisibleItem + currentIndex ? 1 : opacity,
-      // transform: [
-      //   { translateX: translateX.value },
-      //   {
-      //     scale: currentItem ? 1 - index * 0.1 : 1,
-      //   },
-      //   {
-      //     translateY: currentItem ? index * -10 : 0,
-      //   },
-      //   {
-      //     rotateZ: currentItem ? `${directionX.value * rotateZ}deg` : '0deg',
-      //   },
-      // ],
-      // opacity: interpolate(
-      //   Math.abs(translateX.value),
-      //   [0, width/2], // Adjust the threshold for opacity change
-      //   [1, 0.5]
-      // ),
     };
   });
   return (
