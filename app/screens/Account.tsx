@@ -1,4 +1,5 @@
 import {
+  Button,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -27,6 +28,9 @@ import Avatar from "../components/Avatar";
 import EditPen from "../components/EditPen";
 import ModalPopup from "../components/ModalPopup";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Notifications from "expo-notifications";
+import { format } from "date-fns";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 type FormData = {
   name: string;
@@ -37,6 +41,30 @@ type FormData = {
 const minLength = 8;
 
 const Account = () => {
+  const [chosenTime, setChosenTime] = useState<Date | null>(null);
+  const [chosenTimes, setChosenTimes] = useState<Array<Date>>([]);
+  const [show, setShow] = useState(false);
+
+  const scheduleNotification = async (time: Date) => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Reminder!",
+        body: `This is your notification for ${format(time, "hh:mm a")}`,
+        sound: true,
+      },
+      trigger: {
+        hour: time.getHours(),
+        minute: time.getMinutes(),
+        repeats: true,
+      },
+    });
+  };
+
+  const handleTimeChange = (event: any, selectedDate: Date | undefined) => {
+    const currentTime = selectedDate || chosenTime;
+    setChosenTime(currentTime);
+  };
+
   const navigation = useNavigation<any>();
 
   const [showPasword, setShowPassword] = useState<boolean>(true);
@@ -141,7 +169,68 @@ const Account = () => {
                 </TouchableWithoutFeedback>
               </View>
             </ModalPopup>
-            <Text className="text-white font-bold text-lg mr-48 mt-7">
+            <Text className="text-white font-bold text-lg mr-28 ml-6 mt-7">
+              Twoje przypomnienia o nauce
+            </Text>
+
+            <View className="flex-1 flex-row flex-wrap items-start justify-around mb-2 mx-8 mt-5 w-hull ">
+              {chosenTimes &&
+                chosenTimes.map((chosenTime) => (
+                  <View
+                    className={
+                      "bg-block flex h-16 w-16 m-2 items-center justify-center   border border-borderColorSemiTransparent rounded-3xl"
+                    }
+                  >
+                    <Text className="text-secondary text-sm space-y-2">
+                      {format(chosenTime, "HH:mm")}
+                    </Text>
+                  </View>
+                ))}
+            </View>
+
+            {!show && (
+              <View className="flex-1 flex items-center justify-center w-full mt-1">
+                <SecondaryButton
+                  onPress={() => setShow(!show)}
+                  text={"Ustaw godzinę"}
+                />
+              </View>
+            )}
+
+            {show && (
+              <>
+                <View className="my-2">
+                  <DateTimePicker
+                    value={chosenTime || new Date()}
+                    mode="time"
+                    textColor="white"
+                    display="spinner"
+                    onChange={handleTimeChange}
+                  />
+                </View>
+
+                <View className="flex justify-center items-center">
+                  <SecondaryButton
+                    onPress={() => {
+                      if (chosenTime) {
+                        scheduleNotification(chosenTime);
+                        setChosenTimes([...chosenTimes, chosenTime]);
+                        alert(
+                          "Notification scheduled at " +
+                            format(chosenTime, "hh:mm a"),
+                        );
+                        setShow(false);
+                      } else {
+                        alert("Please choose a time first.");
+                      }
+                    }}
+                    text={"Dodaj"}
+                  />
+                </View>
+              </>
+            )}
+
+            <Text className="text-white font-bold text-lg mr-48 mt-6">
               Dane personalne
             </Text>
             <View className={`flex-row justify-center mb-2`}>

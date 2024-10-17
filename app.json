@@ -34,7 +34,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/welcomeAnimation.json"
@@ -48,6 +49,12 @@
         }
       ],
       ["expo-font"]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c02dcc04-4437-463f-8394-84736e976fd4"
+      }
+    },
+    "owner": "daria_czupreta"
   }
 }

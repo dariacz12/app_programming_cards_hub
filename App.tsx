@@ -36,6 +36,7 @@ import CardsStudyPage from "./app/screens/CardsStudyPage";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Rings } from "./app/components/SkiaProgressComponents/Rings";
 import ProgressCircular from "./app/components/ProgressCircular";
+import { usePushNotifications } from "./app/hooks/usePushNotifications";
 
 AppRegistry.registerComponent("main", () => App);
 if (Platform.OS === "web") {
@@ -47,6 +48,10 @@ if (Platform.OS === "web") {
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const { expoPushToken, notification } = usePushNotifications();
+  const data = JSON.stringify(notification, undefined, 2);
+  console.log("expoPushToken", expoPushToken?.data ?? "");
+  console.log("data", data);
   return (
     <AuthProvider>
       <Layout></Layout>
