@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Image,
   Keyboard,
@@ -19,7 +20,7 @@ import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import ActiveButton from "../components/ActiveButton";
 import InfoCard from "../components/InfoCard";
-import { Entypo, Feather, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, Entypo, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import Line from "../components/Line";
@@ -39,17 +40,48 @@ type FormData = {
 };
 
 const minLength = 8;
-
+const notificationsList = [
+  "Czas na codzienną dawkę nauki programowania!",
+  "Pamiętaj, aby dzisiaj poćwiczyć programowanie!",
+  "Nie zapomnij o nauce – każdy dzień to krok do przodu!",
+  "Zrób kolejny krok w kierunku mistrzostwa w programowaniu!",
+  "Twój cel jest blisko, poświęć chwilę na naukę kodowania!",
+  "Wpadnij na krótką sesję programowania, sukces jest w zasięgu ręki!",
+  "Regularna praktyka to klucz – zaplanuj czas na programowanie!",
+  "Rozwój umiejętności nie czeka – czas na naukę programowania!",
+];
 const Account = () => {
-  const [chosenTime, setChosenTime] = useState<Date | null>(null);
-  const [chosenTimes, setChosenTimes] = useState<Array<Date>>([]);
+  const [chosenTime, setChosenTime] = useState<Date>();
   const [show, setShow] = useState(false);
+  const [scheduledNotifications, setScheduledNotifications] = useState<
+    Array<Notifications.NotificationRequest>
+  >([]);
+  console.log("11111", scheduledNotifications[0]);
+  const fetchScheduledNotifications = async () => {
+    try {
+      const notifications =
+        await Notifications.getAllScheduledNotificationsAsync();
+      setScheduledNotifications(notifications);
+      console.log("Scheduled Notifications:", notifications);
+    } catch (error) {
+      console.error("Error fetching scheduled notifications:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchScheduledNotifications();
+  }, []);
+
+  function getRandomElement(arr: any) {
+    const randomIndex = Math.floor(Math.random() * arr.length);
+    return arr[randomIndex];
+  }
 
   const scheduleNotification = async (time: Date) => {
-    await Notifications.scheduleNotificationAsync({
+    const id = await Notifications.scheduleNotificationAsync({
       content: {
-        title: "Reminder!",
-        body: `This is your notification for ${format(time, "hh:mm a")}`,
+        title: "Programming Cards' Hub",
+        body: `${getRandomElement(notificationsList)}`,
         sound: true,
       },
       trigger: {
@@ -58,8 +90,17 @@ const Account = () => {
         repeats: true,
       },
     });
+    fetchScheduledNotifications();
   };
-
+  const cancelNotification = async (cancelId: any) => {
+    if (cancelId) {
+      await Notifications.cancelScheduledNotificationAsync(cancelId);
+      console.log("Notification canceled:", cancelId);
+      fetchScheduledNotifications();
+    } else {
+      console.log("No notification to cancel.");
+    }
+  };
   const handleTimeChange = (event: any, selectedDate: Date | undefined) => {
     const currentTime = selectedDate || chosenTime;
     setChosenTime(currentTime);
@@ -103,13 +144,9 @@ const Account = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      // behavior="padding"
-      // keyboardVerticalOffset={Platform.OS === 'ios' ? 200 : 0}
-
       className="flex-1 flex items-center bg-primary py-10"
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        {/* <SafeAreaView className="flex-1 items-center bg-primary"> */}
         <ScrollView>
           <View className="flex-1 flex items-center justify-start pt-12 pb-36 ">
             <Image source={logo} className="w-64 h-12" />
@@ -173,23 +210,41 @@ const Account = () => {
               Twoje przypomnienia o nauce
             </Text>
 
-            <View className="flex-1 flex-row flex-wrap items-start justify-around mb-2 mx-8 mt-5 w-hull ">
-              {chosenTimes &&
-                chosenTimes.map((chosenTime) => (
-                  <View
-                    className={
-                      "bg-block flex h-16 w-16 m-2 items-center justify-center   border border-borderColorSemiTransparent rounded-3xl"
-                    }
-                  >
-                    <Text className="text-secondary text-sm space-y-2">
-                      {format(chosenTime, "HH:mm")}
-                    </Text>
-                  </View>
-                ))}
+            <View className="flex-1 flex-row flex-wrap items-start justify-around mb-4 mx-8 mt-2 w-hull ">
+              {scheduledNotifications &&
+                scheduledNotifications.map(
+                  ({
+                    trigger,
+                    identifier,
+                  }: {
+                    trigger: any;
+                    identifier: string;
+                  }) => (
+                    <View key={identifier} className="flex relative">
+                      <View
+                        className={
+                          "bg-block flex h-16 w-16 m-2 items-center justify-center   border border-borderColorSemiTransparent rounded-3xl"
+                        }
+                      >
+                        <Text className="text-whiteColor text-sm space-y-2">
+                          {`${trigger.dateComponents.hour}:${String(trigger.dateComponents.minute).padStart(2, "0")}`}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        onPress={() => cancelNotification(identifier)}
+                        className="absolute right-2 top-0.5 "
+                      >
+                        <View className=" bg-semi-transparent flex p-1 items-center justify-center   border border-borderColorSemiTransparent rounded-3xl">
+                          <AntDesign name="close" size={12} color={"white"} />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  ),
+                )}
             </View>
 
             {!show && (
-              <View className="flex-1 flex items-center justify-center w-full mt-1">
+              <View className="flex-1 flex items-center  justify-center w-full ">
                 <SecondaryButton
                   onPress={() => setShow(!show)}
                   text={"Ustaw godzinę"}
@@ -199,7 +254,7 @@ const Account = () => {
 
             {show && (
               <>
-                <View className="my-2">
+                <View className="mb-2">
                   <DateTimePicker
                     value={chosenTime || new Date()}
                     mode="time"
@@ -209,19 +264,22 @@ const Account = () => {
                   />
                 </View>
 
-                <View className="flex justify-center items-center">
+                <View className="flex justify-center mb-2 items-center">
                   <SecondaryButton
                     onPress={() => {
                       if (chosenTime) {
                         scheduleNotification(chosenTime);
-                        setChosenTimes([...chosenTimes, chosenTime]);
-                        alert(
-                          "Notification scheduled at " +
-                            format(chosenTime, "hh:mm a"),
+
+                        Alert.alert(
+                          "",
+                          `Codziennie o godzinie ${format(chosenTime, "HH:mm")} będziesz otrzymywać przypomnienie o nauce.`,
+                          [{ text: "OK" }],
                         );
                         setShow(false);
                       } else {
-                        alert("Please choose a time first.");
+                        alert(
+                          "Wybierz godzinę o której chcesz otrzymać przypomnienie.",
+                        );
                       }
                     }}
                     text={"Dodaj"}
@@ -349,7 +407,6 @@ const Account = () => {
               </InfoCard>
             </View>
             <View>
-              {/* <ActiveButton text="Załóż konto"  onPress={() => navigation.navigate("SuccesfullLoginRegistration")} /> */}
               <ActiveButton
                 text="Zapisz zmiany"
                 onPress={handleSubmit(login)}
@@ -402,7 +459,6 @@ const Account = () => {
             </View>
           </View>
         </ScrollView>
-        {/* </SafeAreaView>  */}
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
@@ -443,5 +499,8 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
+  },
+  textSecondary: {
+    color: '"#B6B4CA"',
   },
 });
