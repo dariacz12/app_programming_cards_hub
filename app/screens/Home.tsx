@@ -27,6 +27,7 @@ import ModalPopup from "../components/ModalPopup";
 import { LinearGradient } from "expo-linear-gradient";
 import ProgressCircular from "../components/ProgressCircular";
 import ArrowBack from "../components/ArrowBack";
+import { eventEmitter } from "../components/BottomTabs/CustomBottomTab";
 
 const quizes = [
   {
@@ -114,11 +115,12 @@ const Home = () => {
               <View className="flex-1 ">
                 <TouchableOpacity
                   className=""
-                  onPress={() =>
+                  onPress={() => {
                     navigation.navigate("Tabbar", {
                       screen: "Account",
-                    })
-                  }
+                    });
+                    eventEmitter.emit("updateActiveTab", 2);
+                  }}
                 >
                   <Avatar homeScreen={true} />
                 </TouchableOpacity>

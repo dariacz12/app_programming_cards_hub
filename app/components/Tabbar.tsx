@@ -59,17 +59,6 @@ export default function Tabbar() {
           component={CardsStudyPage}
           options={{ headerShown: false }}
         ></Tab.Screen>
-        {/*        
-        <Tab.Screen
-          options={{ tabBarLabel: "Login" }}
-          name="Login"
-          component={Login}
-        />
-        <Tab.Screen
-          options={{ tabBarLabel: "Registration" }}
-          name="Registration"
-          component={Registration}
-        /> */}
       </Tab.Group>
     </Tab.Navigator>
   );

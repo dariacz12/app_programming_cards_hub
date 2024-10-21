@@ -16,6 +16,7 @@ export type TabProps = {
   icon: string;
   index: number;
   activeIndex: number;
+  activeTab: number;
   onTabPress: () => void;
 };
 const ICON_SIZE = 25;
@@ -26,6 +27,7 @@ const TabItem: FC<TabProps> = ({
   icon,
   index,
   activeIndex,
+  activeTab,
   onTabPress,
 }) => {
   const { curvedPaths } = usePath();

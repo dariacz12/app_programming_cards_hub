@@ -1,13 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
-import {
-  AppRegistry,
-  Button,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { AppRegistry, Platform } from "react-native";
 import { AuthProvider, useAuth } from "./app/context/AuthContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./app/screens/Login";
@@ -18,24 +10,13 @@ import Statute from "./app/screens/Statute";
 import SuccessfulLoginRegistration from "./app/screens/SuccessfulLoginRegistration";
 import React from "react";
 import ForgotPassword from "./app/screens/ForgotPassword";
-import ResetPassword from "./app/screens/NewPassword";
 import NewPassword from "./app/screens/NewPassword";
-import SuccessfullPasswordRegistration from "./app/screens/SuccessfullPasswordReset";
 import SuccessfullPasswordReset from "./app/screens/SuccessfullPasswordReset";
-import Account from "./app/screens/Account";
 import Tabbar from "./app/components/Tabbar";
 import QuizeQuestion from "./app/screens/QuizeQuestion";
-import QuizeStartPage from "./app/screens/QuizeStartPage";
 import QuizeResultPage from "./app/screens/QuizeResultPage";
-import Notifications from "./app/screens/Notifications";
-import CardsStartPage from "./app/screens/CardsStartPage";
 import AccessUnlocked from "./app/screens/AccessUnlocked";
-import UnlockedCardsPage from "./app/screens/UnlockedCardsPage";
-import CardsResultPage from "./app/screens/CardsResultPage";
-import CardsStudyPage from "./app/screens/CardsStudyPage";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Rings } from "./app/components/SkiaProgressComponents/Rings";
-import ProgressCircular from "./app/components/ProgressCircular";
 import { usePushNotifications } from "./app/hooks/usePushNotifications";
 
 AppRegistry.registerComponent("main", () => App);
@@ -67,36 +48,11 @@ export const Layout = () => {
         <Stack.Navigator>
           {!authState?.authenticated ? (
             <React.Fragment>
-              {/* <Stack.Screen
-              name="ProgressCircular"
-              component={ProgressCircular}
-              options={{ headerShown: false }}
-            ></Stack.Screen>  */}
               <Stack.Screen
                 name="Tabbar"
                 component={Tabbar}
                 options={{ headerShown: false }}
               ></Stack.Screen>
-              {/* <Stack.Screen
-              name="CardsStudyPage"
-              component={CardsStudyPage}
-              options={{ headerShown: false }}
-            ></Stack.Screen> 
-             <Stack.Screen
-              name="CardsResultPage"
-              component={CardsResultPage}
-              options={{ headerShown: false }}
-            ></Stack.Screen> 
-            <Stack.Screen
-              name="CardsStartPage"
-              component={CardsStartPage}
-              options={{ headerShown: false }}
-            ></Stack.Screen> 
-             <Stack.Screen
-              name="UnlockedCardsPage"
-              component={UnlockedCardsPage}
-              options={{ headerShown: false }}
-            ></Stack.Screen> */}
               <Stack.Screen
                 name="QuizeQuestion"
                 component={QuizeQuestion}

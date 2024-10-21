@@ -1,6 +1,6 @@
-import React, { FC, useMemo, useState } from "react";
-import { StyleSheet, View, Image, ImageBackground } from "react-native";
-import Svg, { Path, Mask } from "react-native-svg";
+import React, { FC, useEffect, useMemo, useState } from "react";
+import { StyleSheet, View, Image } from "react-native";
+import Svg, { Path } from "react-native-svg";
 import Animated, {
   interpolateColor,
   runOnJS,
@@ -12,16 +12,17 @@ import Animated, {
 import { interpolatePath } from "react-native-redash";
 
 import TabItem from "./TabItem";
-import AnimatedCircle from "./AnimatedCircle";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import usePath from "../../hooks/usePath";
 import { getPathXCenter } from "../../utils/Path";
 import { SCREEN_WIDTH } from "../../constants/Screen";
 
-import { BlurView } from "expo-blur";
-import { center } from "@shopify/react-native-skia";
+import { useNavigationState } from "@react-navigation/native";
+import EventEmitter from "react-native/Libraries/vendor/emitter/EventEmitter";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
+export const eventEmitter = new EventEmitter();
+
 export const CustomBottomTab: FC<BottomTabBarProps> = ({
   state,
   descriptors,
@@ -30,6 +31,22 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const { containerPath, curvedPaths, tHeight } = usePath();
   const circleXCoordinate = useSharedValue(0);
   const progress = useSharedValue(1);
+
+  const [activeTab, setActiveTab] = useState(0);
+
+  useEffect(() => {
+    const subscription = eventEmitter.addListener(
+      "updateActiveTab",
+      (index) => {
+        setActiveTab(index);
+      },
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   const handleMoveCircle = (currentPath: string) => {
     circleXCoordinate.value = getPathXCenter(currentPath);
   };
@@ -73,6 +90,11 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
     opacity: opacity.value, // Adjust opacity for desired blur level
   }));
   console.log("al", state.routes);
+
+  const isCurvedTabScreen =
+    state.routes[state.index].name === "Home" ||
+    state.routes[state.index].name === "Account";
+
   return (
     <View style={styles.tabBarContainer}>
       <Image
@@ -102,11 +124,21 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
         ]}
       >
         <Svg width={SCREEN_WIDTH} height={tHeight} style={[styles.shadowMd]}>
-          <AnimatedPath
+          {/* <AnimatedPath
             fill={"#262450"}
             animatedProps={animatedProps}
             // style={[ styles.box]}
-          />
+          /> */}
+          {isCurvedTabScreen ? (
+            // Curved Bottom Bar for "Home" and "Account"
+            <AnimatedPath fill={"#262450"} animatedProps={animatedProps} />
+          ) : (
+            // Non-curved Bottom Bar for other screens (flat bar)
+            <Path
+              fill={"#262450"}
+              d={`M0,0 L${SCREEN_WIDTH},0 L${SCREEN_WIDTH},${tHeight} L0,${tHeight} Z`}
+            />
+          )}
         </Svg>
       </Animated.View>
       {/* <AnimatedCircle circleX={circleXCoordinate} /> */}
@@ -136,6 +168,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
                 icon={selectIcon(route.name)}
                 activeIndex={state.index + 1}
                 index={index}
+                activeTab={activeTab}
                 onTabPress={() => handleTabPress(index + 1, route.name)}
               />
             );

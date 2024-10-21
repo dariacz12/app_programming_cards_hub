@@ -63,8 +63,8 @@ const Notifications = () => {
   ];
   return (
     <>
-      <ScrollView ref={scrollView} className="bg-semi-transparent flex-1 ">
-        <View className="flex-1">
+      <ScrollView ref={scrollView} className="bg-semi-transparent flex flex-1">
+        <View className="flex-1 ">
           <View className=" flex-1 mt-20 mb-8 mx-10">
             <View className="flex-1 items-center flex-row ">
               <TouchableOpacity
@@ -82,16 +82,23 @@ const Notifications = () => {
           </View>
           <View className="mx-8 mb-4  bg-block h-1 rounded-lg " />
         </View>
-        <View className="mb-32">
-          {notifications.map(({ id, title, text }) => {
-            return (
-              <NotifictionItem>
-                <Text className="leading-5 text-base text-secondary px-4">
-                  <Text className="font-bold text-primary">{title}</Text> {text}
-                </Text>
-              </NotifictionItem>
-            );
-          })}
+        <View className="mb-32 flex-1">
+          {notifications ? (
+            notifications.map(({ id, title, text }) => {
+              return (
+                <NotifictionItem>
+                  <Text className="leading-5 text-base text-secondary px-4">
+                    <Text className="font-bold text-primary">{title}</Text>{" "}
+                    {text}
+                  </Text>
+                </NotifictionItem>
+              );
+            })
+          ) : (
+            <View className="items-center justify-center h-[600] flex-1 ">
+              <Text className="text-secondary"> Brak powiadomień</Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </>
