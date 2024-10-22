@@ -119,7 +119,8 @@ const Home = () => {
                     navigation.navigate("Tabbar", {
                       screen: "Account",
                     });
-                    eventEmitter.emit("updateActiveTab", 2);
+                    eventEmitter.emit("updateActiveTab", 2)
+                    eventEmitter.emit("animateTab", 2)
                   }}
                 >
                   <Avatar homeScreen={true} />

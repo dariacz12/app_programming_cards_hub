@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image} from "react-native";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
   interpolateColor,
@@ -16,9 +16,9 @@ import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import usePath from "../../hooks/usePath";
 import { getPathXCenter } from "../../utils/Path";
 import { SCREEN_WIDTH } from "../../constants/Screen";
-
-import { useNavigationState } from "@react-navigation/native";
 import EventEmitter from "react-native/Libraries/vendor/emitter/EventEmitter";
+import { useNavigationState } from "@react-navigation/native";
+
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 export const eventEmitter = new EventEmitter();
@@ -32,20 +32,35 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const circleXCoordinate = useSharedValue(0);
   const progress = useSharedValue(1);
 
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(state.index);
 
+  console.log(777, activeTab)
+  const navigationState = useNavigationState((state) => state);
+  
   useEffect(() => {
-    const subscription = eventEmitter.addListener(
-      "updateActiveTab",
-      (index) => {
-        setActiveTab(index);
-      },
-    );
+    // Sync active tab based on navigation state changes
+    const currentTabIndex = navigationState.index;
+    setActiveTab(currentTabIndex);
 
+    const subscription = eventEmitter.addListener('updateActiveTab', (index) => {
+      console.log(6666, index)
+      // Update state to visually change active tab when EventEmitter is used
+      setActiveTab(index);
+      // Optionally, you could also navigate directly from here, but navigation
+      // should already be handled by the TouchableOpacity or Tabbar.
+    })
+    const animationSubscription = eventEmitter.addListener("animateTab", (index) => {
+      progress.value = withTiming(index);  // Animate the tab to the correct index
+    });
     return () => {
       subscription.remove();
+      animationSubscription.remove();
     };
-  }, []);
+  }, [navigationState.index]);
+
+
+
+
 
   const handleMoveCircle = (currentPath: string) => {
     circleXCoordinate.value = getPathXCenter(currentPath);
@@ -80,7 +95,9 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const handleTabPress = (index: number, tab: string) => {
     navigation.navigate(tab);
     progress.value = withTiming(index);
+   
   };
+  
   const opacity = useSharedValue(0.9);
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: 1,
@@ -92,8 +109,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   console.log("al", state.routes);
 
   const isCurvedTabScreen =
-    state.routes[state.index].name === "Home" ||
-    state.routes[state.index].name === "Account";
+    state.routes[state.index].name === "Home" || state.routes[state.index].name === "Account";
 
   return (
     <View style={styles.tabBarContainer}>
@@ -129,7 +145,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
             animatedProps={animatedProps}
             // style={[ styles.box]}
           /> */}
-          {isCurvedTabScreen ? (
+           {isCurvedTabScreen ? (
             // Curved Bottom Bar for "Home" and "Account"
             <AnimatedPath fill={"#262450"} animatedProps={animatedProps} />
           ) : (
@@ -166,6 +182,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
                 key={route.name}
                 label={label as string}
                 icon={selectIcon(route.name)}
+                // activeIndex={state.index + 1}
                 activeIndex={state.index + 1}
                 index={index}
                 activeTab={activeTab}
