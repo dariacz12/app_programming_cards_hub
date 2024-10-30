@@ -83,7 +83,7 @@ const Notifications = () => {
           <View className="mx-8 mb-4  bg-block h-1 rounded-lg " />
         </View>
         <View className="mb-32 flex-1">
-          {notifications ? (
+          {!notifications ? (
             notifications.map(({ id, title, text }) => {
               return (
                 <NotifictionItem>

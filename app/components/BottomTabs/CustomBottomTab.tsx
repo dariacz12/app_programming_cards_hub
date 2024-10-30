@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { StyleSheet, View, Image} from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
   interpolateColor,
@@ -19,7 +19,6 @@ import { SCREEN_WIDTH } from "../../constants/Screen";
 import EventEmitter from "react-native/Libraries/vendor/emitter/EventEmitter";
 import { useNavigationState } from "@react-navigation/native";
 
-
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 export const eventEmitter = new EventEmitter();
 
@@ -32,35 +31,24 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const circleXCoordinate = useSharedValue(0);
   const progress = useSharedValue(1);
 
-  const [activeTab, setActiveTab] = useState(state.index);
-
-  console.log(777, activeTab)
   const navigationState = useNavigationState((state) => state);
-  
-  useEffect(() => {
-    // Sync active tab based on navigation state changes
-    const currentTabIndex = navigationState.index;
-    setActiveTab(currentTabIndex);
 
-    const subscription = eventEmitter.addListener('updateActiveTab', (index) => {
-      console.log(6666, index)
-      // Update state to visually change active tab when EventEmitter is used
-      setActiveTab(index);
-      // Optionally, you could also navigate directly from here, but navigation
-      // should already be handled by the TouchableOpacity or Tabbar.
-    })
-    const animationSubscription = eventEmitter.addListener("animateTab", (index) => {
-      progress.value = withTiming(index);  // Animate the tab to the correct index
-    });
+  useEffect(() => {
+    const subscription = eventEmitter.addListener(
+      "updateActiveTab",
+      (index) => {},
+    );
+    const animationSubscription = eventEmitter.addListener(
+      "animateTab",
+      (index) => {
+        progress.value = withTiming(index);
+      },
+    );
     return () => {
       subscription.remove();
       animationSubscription.remove();
     };
   }, [navigationState.index]);
-
-
-
-
 
   const handleMoveCircle = (currentPath: string) => {
     circleXCoordinate.value = getPathXCenter(currentPath);
@@ -85,31 +73,48 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
     runOnJS(handleMoveCircle)(currentPath);
     return {
       d: `${containerPath} ${currentPath}`,
-      //  stroke: 'red', // Your desired border color
-      //  strokeWidth: 2, // Your desired border width
-      //  borderTopWidth: 22, // Use the shared value
-      //   borderTopColor: "#ff2200", // Set the border color
     };
   });
+  const [activeIndex, setActiveIndex] = useState("Home");
+  const [isNavigating, setIsNavigating] = useState(false); // New state to track navigation
 
   const handleTabPress = (index: number, tab: string) => {
+    setActiveIndex(tab); // Set the active index
+    setIsNavigating(true); // Trigger navigation state
     navigation.navigate(tab);
-    progress.value = withTiming(index);
-   
+    progress.value = withTiming(index + 1);
   };
-  
+
+  // Effect to perform actions after activeIndex changes
+  useEffect(() => {
+    if (isNavigating) {
+      // Perform any additional actions here after activeIndex has changed
+      console.log(`Active index set to: ${activeIndex}`);
+
+      // Reset isNavigating after actions are performed
+      setIsNavigating(false);
+    }
+  }, [activeIndex, isNavigating]);
+  // const handleTabPress = (index: number, tab: string) => {
+  //   setActiveIndex(tab);
+  //   navigation.navigate(tab);
+  //   progress.value = withTiming(index+1);
+
+  // };
+
   const opacity = useSharedValue(0.9);
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: 1,
   }));
 
   const blurredStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value, // Adjust opacity for desired blur level
+    opacity: opacity.value,
   }));
   console.log("al", state.routes);
 
   const isCurvedTabScreen =
-    state.routes[state.index].name === "Home" || state.routes[state.index].name === "Account";
+    state.routes[state.index].name === "Home" ||
+    state.routes[state.index].name === "Account";
 
   return (
     <View style={styles.tabBarContainer}>
@@ -124,10 +129,6 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
         source={require("../../../assets/bbblurry.png")}
         preserveAspectRatio="xMidYMid slice"
       />
-
-      {/* <Animated.View style={[blurredStyle, styles.blurredBackground]}>
-       
-      </Animated.View> */}
       <Animated.View
         style={[
           animatedStyle,
@@ -140,16 +141,9 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
         ]}
       >
         <Svg width={SCREEN_WIDTH} height={tHeight} style={[styles.shadowMd]}>
-          {/* <AnimatedPath
-            fill={"#262450"}
-            animatedProps={animatedProps}
-            // style={[ styles.box]}
-          /> */}
-           {isCurvedTabScreen ? (
-            // Curved Bottom Bar for "Home" and "Account"
+          {isCurvedTabScreen ? (
             <AnimatedPath fill={"#262450"} animatedProps={animatedProps} />
           ) : (
-            // Non-curved Bottom Bar for other screens (flat bar)
             <Path
               fill={"#262450"}
               d={`M0,0 L${SCREEN_WIDTH},0 L${SCREEN_WIDTH},${tHeight} L0,${tHeight} Z`}
@@ -157,8 +151,6 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
           )}
         </Svg>
       </Animated.View>
-      {/* <AnimatedCircle circleX={circleXCoordinate} /> */}
-      {/* <BlurView intensity={100}  tint="light" style={styles.blurContainer}> */}
       <View
         style={[
           styles.tabItemsContainer,
@@ -182,16 +174,14 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
                 key={route.name}
                 label={label as string}
                 icon={selectIcon(route.name)}
-                // activeIndex={state.index + 1}
-                activeIndex={state.index + 1}
+                activeIndex={index + 1}
+                activeRoute={activeIndex}
                 index={index}
-                activeTab={activeTab}
-                onTabPress={() => handleTabPress(index + 1, route.name)}
+                onTabPress={() => handleTabPress(index, route.name)}
               />
             );
           })}
       </View>
-      {/*  </BlurView>  */}
     </View>
   );
 };
@@ -226,6 +216,6 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0, // Ensure it covers the entire content area
+    bottom: 0,
   },
 });

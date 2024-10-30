@@ -16,8 +16,8 @@ export type TabProps = {
   icon: string;
   index: number;
   activeIndex: number;
-  activeTab: number;
   onTabPress: () => void;
+  activeRoute: string;
 };
 const ICON_SIZE = 25;
 const LABEL_WIDTH = SCREEN_WIDTH / 4;
@@ -27,7 +27,8 @@ const TabItem: FC<TabProps> = ({
   icon,
   index,
   activeIndex,
-  activeTab,
+  activeRoute,
+
   onTabPress,
 }) => {
   const { curvedPaths } = usePath();
@@ -39,12 +40,6 @@ const TabItem: FC<TabProps> = ({
     const translateY = animatedActiveIndex.value + 30;
     const iconPositionX = iconPosition - index * ICON_SIZE;
     return {
-      // borderBlockColor: "red",
-      // borderCurve: 22,
-      // borderColor: "red",
-      // tintColor: "red",
-      // zIndex:3,
-      // position: "absolute",
       width: ICON_SIZE,
       height: ICON_SIZE,
       zIndex: 45,
@@ -54,43 +49,15 @@ const TabItem: FC<TabProps> = ({
       ],
     };
   });
-  // const labelContainerStyle = useAnimatedStyle(() => {
-  //   const translateY = animatedActiveIndex.value - 1 === index ? 36 : 100;
-  //   return {
-  //     transform: [
-  //       { translateY: withTiming(translateY) },
-  //       { translateX: labelPosition - LABEL_WIDTH / 2 },
-  //     ],
-  //   };
-  // });
-  // const iconColor = useSharedValue(
-  //   activeIndex === index + 1
-  //     ? "rgba(0, 215, 255, 1)"
-  //     : "rgba(128,128,128,0.8)",
-  // );
 
-  // // Adjust Icon color for this first render
-  // useEffect(() => {
-  //   animatedActiveIndex.value = activeIndex;
-
-  //   console.log(333, activeIndex, index)
-  //   if (activeIndex === index + 1) {
-  //     iconColor.value = withTiming("rgba(0, 215, 255, 1)");
-  //   } else {
-  //     iconColor.value = withTiming("rgba(128,128,128,0.8)");
-  //   }
-  // }, [activeIndex]);
   const [iconColor, setIconColor] = useState(
-    activeIndex === index + 1 ? "white" : "rgba(128,128,128,0.8)",
+    activeRoute === label ? "white" : "rgba(128,128,128,0.8)",
   );
 
   useEffect(() => {
-    setIconColor(activeIndex === index + 1 ? "white" : "rgba(128,128,128,0.8)");
-  }, [activeIndex]);
+    setIconColor(activeRoute === label ? "white" : "rgba(128,128,128,0.8)");
+  }, [activeRoute]);
 
-  // const animatedIconProps = useAnimatedProps(() => ({
-  //   color: iconColor.value,
-  // }));
   const animatedIconProps = useAnimatedProps(() => ({
     color: iconColor,
   }));
@@ -110,9 +77,6 @@ const TabItem: FC<TabProps> = ({
           />
         </Pressable>
       </Animated.View>
-      {/* <Animated.View style={[labelContainerStyle, styles.labelContainer]}>
-        <Text style={styles.label}>{label}</Text>
-      </Animated.View> */}
     </>
   );
 };

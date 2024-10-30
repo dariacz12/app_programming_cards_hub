@@ -18,14 +18,12 @@ import ActiveButton from "../components/ActiveButton";
 import InfoCard from "../components/InfoCard";
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useAuth } from "../context/AuthContext";
+import { API_URL, useAuth } from "../context/AuthContext";
 import H2Text from "../components/H2Text";
 import axios from "axios";
 
-export const API_URL = "";
 type FormData = {
   email: string;
-  password: string;
 };
 
 const minLength = 8;
@@ -77,10 +75,11 @@ const ForgotPassword = () => {
   const [noEmail, setNoEmail] = useState<boolean>(false);
   const [email, setEmail] = useState("");
 
-  const resetPassword = async () => {
+  const resetPassword = async ({ email }: FormData) => {
     try {
-      const result = await axios.post(`${API_URL}/`, { email });
-      console.log(result);
+      const result = await axios.post(`${API_URL}/auth/forgot-password`, {
+        email,
+      });
       return result;
     } catch (e) {
       setNoEmail(true);
@@ -91,17 +90,13 @@ const ForgotPassword = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      // behavior="padding"
-      // keyboardVerticalOffset={Platform.OS === 'ios' ? 200 : 0}
-
       className="flex-1 flex items-center bg-primary py-10"
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        {/* <SafeAreaView className="flex-1 items-center bg-primary"> */}
         <View className="flex-1 flex justify-start items-center py-12 ">
           <Image source={logo} className="w-64 h-12" />
           <View
-            className={`mx-4 mt-5 items-center ${hasKeyboard ? "py-0" : errors.password || errors.email ? "py-0" : "py-3"}`}
+            className={`mx-4 mt-5 items-center ${hasKeyboard ? "py-0" : errors.email ? "py-0" : "py-3"}`}
           >
             <H2Text textCenter={true} text={"Zresetuj hasło"} />
             <Text className="leading-5 px-4 mt-1 text-base text-secondary text-center">
@@ -150,15 +145,12 @@ const ForgotPassword = () => {
             </InfoCard>
           </View>
           <View>
-            {/* <ActiveButton text="Załóż konto"  onPress={() => navigation.navigate("SuccesfullLoginRegistration")} /> */}
-            {/* <ActiveButton text="Resetuj hasło" onPress={handleSubmit(resetPassword)} /> */}
             <ActiveButton
               text="Resetuj hasło"
-              onPress={() => navigation.navigate("NewPassword")}
+              onPress={handleSubmit(resetPassword)}
             />
           </View>
         </View>
-        {/* </SafeAreaView>  */}
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );

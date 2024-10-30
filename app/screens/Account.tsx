@@ -32,13 +32,18 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Notifications from "expo-notifications";
 import { format } from "date-fns";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import axios from "axios";
+import { API_URL } from "../context/AuthContext";
 
-type FormData = {
+interface Form1Data {
   name: string;
-  email: string;
-  password: string;
-};
+}
 
+interface Form2Data {
+  currentPin: string;
+  newPassword: string;
+  repeatNewPassword: string;
+}
 const minLength = 8;
 const notificationsList = [
   "Czas na codzienną dawkę nauki programowania!",
@@ -56,13 +61,11 @@ const Account = () => {
   const [scheduledNotifications, setScheduledNotifications] = useState<
     Array<Notifications.NotificationRequest>
   >([]);
-  console.log("11111", scheduledNotifications[0]);
   const fetchScheduledNotifications = async () => {
     try {
       const notifications =
         await Notifications.getAllScheduledNotificationsAsync();
       setScheduledNotifications(notifications);
-      console.log("Scheduled Notifications:", notifications);
     } catch (error) {
       console.error("Error fetching scheduled notifications:", error);
     }
@@ -95,7 +98,6 @@ const Account = () => {
   const cancelNotification = async (cancelId: any) => {
     if (cancelId) {
       await Notifications.cancelScheduledNotificationAsync(cancelId);
-      console.log("Notification canceled:", cancelId);
       fetchScheduledNotifications();
     } else {
       console.log("No notification to cancel.");
@@ -106,39 +108,105 @@ const Account = () => {
     setChosenTime(currentTime);
   };
 
-  const navigation = useNavigation<any>();
-
-  const [showPasword, setShowPassword] = useState<boolean>(true);
-  const togglePassword = () => {
-    setShowPassword(!showPasword);
+  const [showCurrentPasword, setShowcurrentPin] = useState<boolean>(true);
+  const [showNewPasword, setShowNewPassword] = useState<boolean>(true);
+  const [showNewPaswordRepeat, setShowNewPasswordRepeat] =
+    useState<boolean>(true);
+  const togglecurrentPin = () => {
+    setShowcurrentPin(!showCurrentPasword);
+  };
+  const toggleNewPassword = () => {
+    setShowNewPassword(!showNewPasword);
+  };
+  const toggleNewPasswordRepeat = () => {
+    setShowNewPasswordRepeat(!showNewPaswordRepeat);
   };
 
   const logo = require("../../assets/logo.png");
   const {
-    register,
-    setValue,
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = useForm<FormData>({
+    register: registerForm1,
+    handleSubmit: handleSubmitForm1,
+    control: controlForm1,
+    formState: { errors: errorsForm1 },
+  } = useForm<Form1Data>({
     defaultValues: {
       name: "",
-      email: "",
-      password: "",
     },
   });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { onLogin } = useAuth();
+  const {
+    register: registerForm2,
+    handleSubmit: handleSubmitForm2,
+    control: controlForm2,
+    formState: { errors: errorsForm2 },
+    reset,
+  } = useForm<Form2Data>({
+    defaultValues: {
+      currentPin: "",
+      newPassword: "",
+      repeatNewPassword: "",
+    },
+  });
 
-  const login = async () => {
-    const result = await onLogin!(email, password);
+  const onSubmitForm1 = (data: Form1Data) => {
+    console.log("Form 1 Data:", data);
+  };
+
+  const onSubmitForm2 = async (data: Form2Data) => {
+    try {
+      const result = await axios.post(`${API_URL}/auth/change-password`, {
+        currentPassword: data.currentPin,
+        password: data.newPassword,
+        passwordConfirmation: data.repeatNewPassword,
+      });
+      if (result) {
+        Alert.alert("", "Hasło zostało pomyślnie zmienione.", [{ text: "OK" }]);
+        reset();
+      }
+      return result;
+    } catch (e) {
+      return {
+        error: true,
+        msg: (e as any).response?.error?.message || "An unknown error occurred",
+      };
+    }
+  };
+
+  const { onLogout } = useAuth();
+
+  const logoutUser = async () => {
+    const result = await onLogout!();
     if (result && result.error) {
       alert(result.msg);
     }
   };
+
+  const deleteUser = async (id: number) => {
+    try {
+      const result = await axios.delete(`${API_URL}/users/${id}`);
+      console.log("usunięto");
+      return result;
+    } catch (e) {
+      return {
+        error: true,
+        msg: (e as any).response?.error?.message || "An unknown error occurred",
+      };
+    }
+  };
+  const [userData, setUserData] = useState<any>();
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const user = await axios.get(`${API_URL}/users/me`);
+        setUserData(user.data);
+      } catch (e) {
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getUserData();
+  }, []);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [modalUploadPhotoVisible, setModalUploadPhotoVisible] = useState(false);
   return (
@@ -299,16 +367,18 @@ const Account = () => {
                   </Text>
                   <View className="items-center">
                     <Controller
-                      control={control}
+                      control={controlForm1}
                       render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
-                          className={`bg-primary rounded-2xl h-12 w-80 px-5 text-primary ${errors.email && "border border-redError"}`}
+                          placeholder={userData?.username}
+                          placeholderTextColor="#B6B4CA"
+                          className={`bg-primary rounded-2xl h-12 w-80 px-5 text-primary ${errorsForm1.name && "border border-redError"}`}
                           onBlur={onBlur}
                           onChangeText={(value) => onChange(value)}
                           value={value}
                         />
                       )}
-                      name="email"
+                      name="name"
                       rules={{
                         required: "Pole wymagane",
                         pattern: {
@@ -318,67 +388,57 @@ const Account = () => {
                       }}
                     />
                   </View>
-                  {errors.email && (
+                  {errorsForm1.name && (
                     <Text className="text-red-600 pt-2 pl-5">
-                      {errors.email.message}
+                      {errorsForm1.name.message}
                     </Text>
                   )}
                 </View>
               </InfoCard>
+            </View>
+            <View className="mb-6">
+              <ActiveButton
+                text="Zapisz zmiany"
+                onPress={handleSubmitForm1(onSubmitForm1)}
+              />
             </View>
             <Text className="text-white font-bold text-lg mr-48">
               Bezpieczeństwo
             </Text>
             <View className={`flex-row justify-center mb-3`}>
               <InfoCard welcomeScreen={false}>
-                <View className="mb-5">
+                <View className="mb-4">
                   <Text className="leading-5 px-5 text-sm text-secondary mb-2 ">
                     Email
                   </Text>
                   <View className="items-center">
-                    <Controller
-                      control={control}
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                          className={`bg-primary rounded-2xl h-12 w-80 px-5 text-primary ${errors.email && "border border-redError"}`}
-                          onBlur={onBlur}
-                          onChangeText={(value) => onChange(value)}
-                          value={value}
-                        />
-                      )}
-                      name="email"
-                      rules={{
-                        required: "Pole wymagane",
-                        pattern: {
-                          value: /^\S+@\S+$/i,
-                          message: "Podaj poprawny format email",
-                        },
-                      }}
+                    <TextInput
+                      placeholder={userData?.email}
+                      placeholderTextColor="#B6B4CA"
+                      className={`bg-primary rounded-2xl h-12 w-80 px-5 text-primary`}
+                      editable={false}
                     />
                   </View>
-                  {errors.email && (
-                    <Text className="text-red-600 pt-2 pl-5">
-                      {errors.email.message}
-                    </Text>
-                  )}
                 </View>
                 <View>
                   <Text className="leading-5 px-5 text-sm text-secondary mb-2">
-                    Hasło
+                    Obecne hasło
                   </Text>
                   <View className="items-center justify-center flex flex-row relative">
                     <Controller
-                      control={control}
+                      control={controlForm2}
                       render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
-                          className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errors.password && "border border-redError"} ${value.length >= minLength && "border border-greanColor"}`}
+                          className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errorsForm2.currentPin && "border border-redError"} ${value.length >= minLength && "border border-greanColor"}`}
                           onBlur={onBlur}
                           onChangeText={(value) => onChange(value)}
                           value={value}
-                          secureTextEntry={showPasword}
+                          secureTextEntry={showCurrentPasword}
+                          textContentType="username"
+                          autoComplete="off"
                         />
                       )}
-                      name="password"
+                      name="currentPin"
                       rules={{
                         required: "Pole wymagane",
                         minLength: {
@@ -388,19 +448,107 @@ const Account = () => {
                       }}
                     />
                     <TouchableOpacity
-                      onPress={togglePassword}
+                      onPress={togglecurrentPin}
                       className="absolute right-8"
                     >
-                      {showPasword ? (
+                      {showCurrentPasword ? (
                         <Entypo name="eye" size={22} color="white" />
                       ) : (
                         <Entypo name="eye-with-line" size={22} color="white" />
                       )}
                     </TouchableOpacity>
                   </View>
-                  {errors.password && (
+                  {errorsForm2.currentPin && (
                     <Text className="text-red-600 pt-2 pl-5">
-                      {errors.password.message}
+                      {errorsForm2.currentPin.message}
+                    </Text>
+                  )}
+                </View>
+                <View className="mt-4">
+                  <Text className="leading-5 px-5 text-sm text-secondary mb-2">
+                    Nowe hasło
+                  </Text>
+                  <View className="items-center justify-center flex flex-row relative">
+                    <Controller
+                      control={controlForm2}
+                      render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                          className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errorsForm2.newPassword && "border border-redError"} ${value.length >= minLength && "border border-greanColor"}`}
+                          onBlur={onBlur}
+                          onChangeText={(value) => onChange(value)}
+                          value={value}
+                          secureTextEntry={showNewPasword}
+                          textContentType="username"
+                          autoComplete="off"
+                        />
+                      )}
+                      name="newPassword"
+                      rules={{
+                        required: "Pole wymagane",
+                        minLength: {
+                          value: 8,
+                          message: "Min 8 znaków",
+                        },
+                      }}
+                    />
+                    <TouchableOpacity
+                      onPress={toggleNewPassword}
+                      className="absolute right-8"
+                    >
+                      {showNewPasword ? (
+                        <Entypo name="eye" size={22} color="white" />
+                      ) : (
+                        <Entypo name="eye-with-line" size={22} color="white" />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                  {errorsForm2.newPassword && (
+                    <Text className="text-red-600 pt-2 pl-5">
+                      {errorsForm2.newPassword.message}
+                    </Text>
+                  )}
+                </View>
+                <View className="mt-4">
+                  <Text className="leading-5 px-5 text-sm text-secondary mb-2">
+                    Powtórz nowe hasło
+                  </Text>
+                  <View className="items-center justify-center flex flex-row relative">
+                    <Controller
+                      control={controlForm2}
+                      render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                          className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errorsForm2.repeatNewPassword && "border border-redError"} ${value.length >= minLength && "border border-greanColor"}`}
+                          onBlur={onBlur}
+                          onChangeText={(value) => onChange(value)}
+                          value={value}
+                          secureTextEntry={showNewPaswordRepeat}
+                          textContentType="username"
+                          autoComplete="off"
+                        />
+                      )}
+                      name="repeatNewPassword"
+                      rules={{
+                        required: "Pole wymagane",
+                        minLength: {
+                          value: 8,
+                          message: "Min 8 znaków",
+                        },
+                      }}
+                    />
+                    <TouchableOpacity
+                      onPress={toggleNewPasswordRepeat}
+                      className="absolute right-8"
+                    >
+                      {showNewPaswordRepeat ? (
+                        <Entypo name="eye" size={22} color="white" />
+                      ) : (
+                        <Entypo name="eye-with-line" size={22} color="white" />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                  {errorsForm2.repeatNewPassword && (
+                    <Text className="text-red-600 pt-2 pl-5">
+                      {errorsForm2.repeatNewPassword.message}
                     </Text>
                   )}
                 </View>
@@ -409,7 +557,7 @@ const Account = () => {
             <View>
               <ActiveButton
                 text="Zapisz zmiany"
-                onPress={handleSubmit(login)}
+                onPress={handleSubmitForm2(onSubmitForm2)}
               />
             </View>
             <View className="w-96 items-center justify-center">
@@ -439,7 +587,7 @@ const Account = () => {
                       </TouchableOpacity>
                       <View className="w-2"></View>
                       <ActiveButton
-                        onPress={() => setModalVisible(!modalVisible)}
+                        onPress={() => deleteUser(userData.id)}
                         text={"Usuń"}
                       ></ActiveButton>
                     </View>
@@ -449,13 +597,10 @@ const Account = () => {
             </ModalPopup>
             <View className="flex-row flex-1 flex justify-between w-full px-6">
               <SecondaryButton
-                onPress={() => setModalVisible(true)}
+                onPress={() => setModalVisible(!modalVisible)}
                 text={"Usuń konto"}
               />
-              <SecondaryButton
-                onPress={() => navigation.navigate("PrivacyPolicy")}
-                text={"Wyloguj się"}
-              />
+              <SecondaryButton onPress={logoutUser} text={"Wyloguj się"} />
             </View>
           </View>
         </ScrollView>

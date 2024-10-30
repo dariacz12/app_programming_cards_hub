@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import H1Text from "../components/H1Text";
 import H4Text from "../components/H4Text";
@@ -28,6 +28,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import ProgressCircular from "../components/ProgressCircular";
 import ArrowBack from "../components/ArrowBack";
 import { eventEmitter } from "../components/BottomTabs/CustomBottomTab";
+import axios from "axios";
+import { API_URL } from "../context/AuthContext";
 
 const quizes = [
   {
@@ -106,6 +108,21 @@ const Home = () => {
   const [curentQuizeCircle, setCurentQuizeCircle] = useState<number>(0);
   const [notifications, setNotifications] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [userName, setUserName] = useState<string>();
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const user = await axios.get(`${API_URL}/users/me`);
+        console.log(user);
+
+        setUserName(user.data.username);
+      } catch (e) {
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getUserData();
+  }, []);
   return (
     <>
       <ScrollView className="bg-primary">
@@ -119,8 +136,8 @@ const Home = () => {
                     navigation.navigate("Tabbar", {
                       screen: "Account",
                     });
-                    eventEmitter.emit("updateActiveTab", 2)
-                    eventEmitter.emit("animateTab", 2)
+                    eventEmitter.emit("updateActiveTab", 2);
+                    eventEmitter.emit("animateTab", 2);
                   }}
                 >
                   <Avatar homeScreen={true} />
@@ -128,7 +145,7 @@ const Home = () => {
               </View>
               <View className="justify-center ml-3">
                 <H4Text text={"Dzień dobry!"} />
-                <Text className="text-sm  text-secondary">Ruby</Text>
+                <Text className="text-sm  text-secondary">{userName}</Text>
               </View>
             </View>
             <View className="justify-center">
@@ -141,7 +158,7 @@ const Home = () => {
                     size={24}
                     color="ghostwhite"
                   />
-                  {!notifications && (
+                  {notifications && (
                     <View className="absolute top-0 right-0.5  rounded-full bg-yellowColor w-2 h-2"></View>
                   )}
                 </View>

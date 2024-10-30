@@ -30,7 +30,7 @@ const minLength = 8;
 const Login = () => {
   const navigation = useNavigation<any>();
   const [hasKeyboard, setHasKeyboard] = useState(false);
-
+  const [noEmail, setNoEmail] = useState<boolean>(false);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -77,11 +77,18 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { onLogin } = useAuth();
 
-  const login = async () => {
-    const result = await onLogin!(email, password);
-    if (result && result.error) {
-      alert(result.msg);
+  const login = async ({ email, password }: FormData) => {
+    try {
+      const result = await onLogin!(email, password);
+      return result;
+    } catch (e) {
+      setNoEmail(true);
+      return { error: true, msg: (e as any).response.error.message };
     }
+    // if (result && result.error) {
+
+    //   // alert(result.error.message);
+    // }
   };
 
   return (
@@ -183,6 +190,11 @@ const Login = () => {
                   Zapomniałeś/aś hasło?
                 </Text>
               </TouchableOpacity>
+              {noEmail && (
+                <Text className="text-red-600 pt-2 pl-5">
+                  Podany e-mail i/lub hasło są błędne
+                </Text>
+              )}
             </InfoCard>
           </View>
           <View>

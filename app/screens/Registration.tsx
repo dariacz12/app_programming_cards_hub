@@ -21,6 +21,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 
 type FormData = {
+  name: string;
   email: string;
   password: string;
 };
@@ -67,14 +68,15 @@ const Registration = () => {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   });
   const { onRegister } = useAuth();
 
-  const registerUser = async ({ email, password }: FormData) => {
-    const result = await onRegister!(email, password);
+  const registerUser = async ({ name, email, password }: FormData) => {
+    const result = await onRegister!(name, email, password);
     if (result && result.error) {
       alert(result.msg);
     } else {
@@ -94,13 +96,9 @@ const Registration = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      // behavior="padding"
-      // keyboardVerticalOffset={Platform.OS === 'ios' ? 200 : 0}
-
       className="flex-1 flex items-center bg-primary py-10"
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        {/* <SafeAreaView className="flex-1 items-center bg-primary"> */}
         <View className="flex-1 flex justify-start items-center py-12 ">
           <Image source={logo} className="w-64 h-12" />
 
@@ -108,6 +106,37 @@ const Registration = () => {
             className={`flex-row justify-center ${!hasKeyboard ? "py-10" : errors.password || errors.email ? "py-0" : "py-3"}  `}
           >
             <InfoCard welcomeScreen={false}>
+              <View className="mb-5">
+                <Text className="leading-5 px-5 text-sm text-secondary mb-2 ">
+                  Imię
+                </Text>
+                <View className="items-center">
+                  <Controller
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInput
+                        className={`bg-primary rounded-2xl h-12 w-80 px-5 text-primary ${errors.name && "border border-redError"}`}
+                        onBlur={onBlur}
+                        onChangeText={(value) => onChange(value)}
+                        value={value}
+                      />
+                    )}
+                    name="name"
+                    rules={{
+                      required: "Pole wymagane",
+                      pattern: {
+                        value: /^[A-Za-z]+$/i,
+                        message: "Podaj poprawny format imenia",
+                      },
+                    }}
+                  />
+                </View>
+                {errors.name && (
+                  <Text className="text-red-600 pt-2 pl-5">
+                    {errors.name.message}
+                  </Text>
+                )}
+              </View>
               <View className="mb-5">
                 <Text className="leading-5 px-5 text-sm text-secondary mb-2 ">
                   Email
@@ -184,14 +213,12 @@ const Registration = () => {
             </InfoCard>
           </View>
           <View>
-            {/* <ActiveButton text="Załóż konto"  onPress={() => navigation.navigate("SuccesfullLoginRegistration")} /> */}
             <ActiveButton
               text="Załóż konto"
               onPress={handleSubmit(registerUser)}
             />
           </View>
         </View>
-        {/* </SafeAreaView>  */}
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );

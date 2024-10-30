@@ -31,8 +31,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   const { expoPushToken, notification } = usePushNotifications();
   const data = JSON.stringify(notification, undefined, 2);
-  console.log("expoPushToken", expoPushToken?.data ?? "");
-  console.log("data", data);
+
   return (
     <AuthProvider>
       <Layout></Layout>
@@ -46,7 +45,7 @@ export const Layout = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         <Stack.Navigator>
-          {!authState?.authenticated ? (
+          {authState?.authenticated ? (
             <React.Fragment>
               <Stack.Screen
                 name="Tabbar"

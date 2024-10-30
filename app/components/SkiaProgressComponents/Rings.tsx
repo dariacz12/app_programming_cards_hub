@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
 });
 
 export const Rings = () => {
-  console.log(rings);
   return (
     <Canvas style={{ flex: 1 }}>
       <Fill color="transparent" />
