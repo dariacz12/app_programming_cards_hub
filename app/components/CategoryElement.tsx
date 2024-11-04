@@ -4,10 +4,10 @@ import H4Text from "./H4Text";
 
 const CategoryElement = ({
   children,
-  text,
+  nameCategory,
 }: {
   children: ReactNode;
-  text: string;
+  nameCategory: string;
 }) => {
   return (
     <View className="flex justify-start items-center p-1.5 ">
@@ -17,7 +17,7 @@ const CategoryElement = ({
         <Image source={children} className={`rounded-ful w-14 h-14`} />
       </View>
       <View className="w-20 pt-3">
-        <H4Text text={text} />
+        <H4Text text={nameCategory} />
       </View>
     </View>
   );

@@ -6,34 +6,23 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import H3Text from "./H3Text";
 import LanguageLogo from "./LanguageLogo";
-interface Quize {
-  logo: string;
-  level: number[];
-  name: string;
-}
+import { Quiz } from "../screens/Home";
 
-interface QuizeProps {
-  quize: Quize;
-}
-const QuizeBlock = ({ quize: { logo, level, name } }: QuizeProps) => {
-  const navigation = useNavigation<any>();
+const QuizeBlock = (quiz: Quiz) => {
   return (
     <View className="flex-row  mx-4 p-3 px-6 bg-primary rounded-full">
-      {/* <TouchableOpacity
-        className="flex-row"
-      > */}
       <View className="flex-row flex-1">
         <View>
-          <LanguageLogo isQuize={true} logo={logo} />
+          <LanguageLogo isQuize={true} logo={quiz.logo} />
         </View>
         <View className="justify-center items-start ml-3">
-          <H3Text text={`${name}`} />
+          <H3Text text={`${quiz.name}`} />
           <Text className="text-sm  text-secondary">poziom trudności:</Text>
         </View>
       </View>
       <View className="justify-center ">
         <View className="relative flex-row">
-          {level.map((index) => {
+          {Array.from({ length: quiz.level }).map((_, index) => {
             return (
               <FontAwesome
                 key={index}
@@ -45,7 +34,6 @@ const QuizeBlock = ({ quize: { logo, level, name } }: QuizeProps) => {
           })}
         </View>
       </View>
-      {/* </TouchableOpacity> */}
     </View>
   );
 };

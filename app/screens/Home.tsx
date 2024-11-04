@@ -103,6 +103,21 @@ const blockes = [
   },
 ];
 
+export interface Quiz {
+  circleProgressColor: string;
+  logo: string;
+  description: string;
+  documentId: string;
+  level: number;
+  name: string;
+}
+export interface Card {
+  circleProgressColor: string;
+  logo: string;
+  description: string;
+  documentId: string;
+  name: string;
+}
 const Home = () => {
   const navigation = useNavigation<any>();
   const [curentQuizeCircle, setCurentQuizeCircle] = useState<number>(0);
@@ -122,6 +137,34 @@ const Home = () => {
       }
     };
     getUserData();
+  }, []);
+
+  const [quizesData, setQuizesData] = useState<Quiz[]>([]);
+
+  useEffect(() => {
+    const getQuizesData = async () => {
+      try {
+        const data = await axios.get(`${API_URL}/quizes?populate[logo]=*`);
+        setQuizesData(data.data.data);
+      } catch (e) {
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getQuizesData();
+  }, []);
+
+  const [cardsData, setCardsData] = useState<Quiz[]>([]);
+
+  useEffect(() => {
+    const getCardsData = async () => {
+      try {
+        const data = await axios.get(`${API_URL}/cards?populate[logo]=*`);
+        setCardsData(data.data.data);
+      } catch (e) {
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getCardsData();
   }, []);
   return (
     <>
@@ -219,23 +262,21 @@ const Home = () => {
                 <View className="right-24 mt-7">
                   <H3Text text={"Bezpłatne quizy"} />
                 </View>
-                {quizes.map((quize, index) => {
+                {quizesData?.map((quiz, index) => {
                   return (
                     <TouchableOpacity
+                      key={index}
                       onPress={() =>
                         navigation.navigate("Tabbar", {
                           screen: "QuizeStartPage",
                           params: {
-                            id: 1,
-                            name: quize.name,
-                            percentage: quize.percentage,
-                            color: quize.color,
+                            documentId: quiz.documentId,
                           },
                         })
                       }
                     >
                       <View className="flex mt-7 mx-4 flex-row items-center justify-start">
-                        <QuizeBlock key={index} quize={quize} />
+                        <QuizeBlock {...quiz} />
                       </View>
                     </TouchableOpacity>
                   );
@@ -281,37 +322,30 @@ const Home = () => {
               </View>
 
               <View className="flex-wrap flex-row flex w-full m-4 mb-32">
-                {blockes.map((block, index) => {
+                {cardsData.map((block, index) => {
                   return (
                     <TouchableOpacity
                       onPress={() =>
                         navigation.navigate(
                           "Tabbar",
-                          block.access
-                            ? {
-                                screen: "UnlockedCardsPage",
-                                params: {
-                                  id: block.id,
-                                  name: block.name,
-                                  percentage: block.percentage,
-                                  color: block.color,
-                                  logo: block.logo,
-                                },
-                              }
-                            : {
-                                screen: "CardsStartPage",
-                                params: {
-                                  id: block.id,
-                                  name: block.name,
-                                  percentage: block.percentage,
-                                  color: block.color,
-                                  logo: block.logo,
-                                },
-                              },
+                          // block.access
+                          //   ? {
+                          //       screen: "UnlockedCardsPage",
+                          //       params: {
+                          //        documentId: block.documentId
+                          //       },
+                          //     }
+                          //   :
+                          {
+                            screen: "CardsStartPage",
+                            params: {
+                              documentId: block.documentId,
+                            },
+                          },
                         )
                       }
                     >
-                      <CardBlock key={index} block={block} />
+                      <CardBlock {...block} />
                     </TouchableOpacity>
                   );
                 })}
