@@ -3,9 +3,9 @@ import React from "react";
 import { Text, View } from "react-native";
 
 interface Answer {
-  text: string;
-  status: boolean;
-  id: string;
+  answerName: string;
+  isCorrect: boolean;
+  answerLetter: string;
 }
 
 interface AnswerProps {
@@ -15,17 +15,17 @@ interface AnswerProps {
   currentQuestion: number;
 }
 const QuizeAnswerElement = ({
-  answer: { text, status, id },
+  answer: { answerName, isCorrect, answerLetter },
   chosenAnswer,
   chosenAnswersArray,
   currentQuestion,
 }: AnswerProps) => {
   return (
     <View
-      className={`flex-row  mx-8 my-3 p-8 rounded-2xl ${chosenAnswer === null ? (chosenAnswersArray[currentQuestion] !== id ? "bg-primary" : status ? "bg-block border border-greanColor" : "bg-block border border-redError") : chosenAnswer !== id ? "bg-primary" : status ? "bg-block border border-greanColor" : "bg-block border border-redError"}`}
+      className={`flex-row  mx-8 my-3 p-8 rounded-2xl ${chosenAnswer === null ? (chosenAnswersArray[currentQuestion] !== answerLetter ? "bg-primary" : isCorrect ? "bg-block border border-greanColor" : "bg-block border border-redError") : chosenAnswer !== answerLetter ? "bg-primary" : isCorrect ? "bg-block border border-greanColor" : "bg-block border border-redError"}`}
     >
-      <Text className="text-base text-secondary pr-4">{id}.</Text>
-      <Text className="text-base text-primary">{text}</Text>
+      <Text className="text-base text-secondary pr-4">{answerLetter}.</Text>
+      <Text className="text-base text-primary">{answerName}</Text>
     </View>
   );
 };

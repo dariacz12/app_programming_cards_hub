@@ -110,7 +110,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const blurredStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
-  console.log("al", state.routes);
+  // console.log("al", state.routes);
 
   const isCurvedTabScreen =
     state.routes[state.index].name === "Home" ||

@@ -94,7 +94,11 @@ const QuizeStartPage = ({ route }: { route: any }) => {
             </InfoCard>
             <View className="flex-1 pt-1 justify-center items-center w-full">
               <ActiveButton
-                onPress={() => navigation.navigate("QuizeQuestion")}
+                onPress={() =>
+                  navigation.navigate("QuizeQuestion", {
+                    documentId: documentId,
+                  })
+                }
                 text={"Rozpocznij"}
               />
             </View>

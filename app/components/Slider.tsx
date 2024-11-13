@@ -24,9 +24,6 @@ const Slider = ({ photos }: QuizPhotosProps) => {
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item, index) => item.documentId}
         renderItem={({ item }) => {
-          const fullUrl = `${API_URL}${item.url}`;
-          console.log("Image URL:", fullUrl);
-
           return (
             <View style={[styles.container, { height: height / 3 }]}>
               <Image

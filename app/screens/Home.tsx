@@ -332,7 +332,11 @@ const Home = () => {
                           //   ? {
                           //       screen: "UnlockedCardsPage",
                           //       params: {
-                          //        documentId: block.documentId
+                          //         id: block.id,
+                          //         name: block.name,
+                          //         percentage: block.percentage,
+                          //         color: block.color,
+                          //         logo: block.logo,
                           //       },
                           //     }
                           //   :

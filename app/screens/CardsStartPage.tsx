@@ -28,59 +28,18 @@ import { API_URL } from "../context/AuthContext";
 type FormData = {
   kod: string;
 };
-
+interface CardCategoryLogo {
+  documentId: string;
+  url: string;
+}
+type CardsCategoryProps = {
+  nameCategory: string;
+  iconCategory: CardCategoryLogo;
+};
 const CardsStartPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
+  console.log("documentId", documentId);
 
-  const cardsPhotos = [
-    { id: "1", src: require("../../assets/react1.png") },
-    // {id: '2',
-    //  src: require('../../assets/react2.png')
-    // },
-    { id: "3", src: require("../../assets/react3.png") },
-  ];
-  const cardsCategories = [
-    {
-      id: "1",
-      iconeCategory: require("../../assets/categorycard1.png"),
-      nameCategory: "Zmienne, Operatory",
-    },
-    {
-      id: "2",
-      iconeCategory: require("../../assets/categorycard2.png"),
-      nameCategory: "Tablice",
-    },
-    {
-      id: "3",
-      iconeCategory: require("../../assets/categorycard3.png"),
-      nameCategory: "Funkcje",
-    },
-    {
-      id: "4",
-      iconeCategory: require("../../assets/categorycard4.png"),
-      nameCategory: "Obiekty",
-    },
-    {
-      id: "5",
-      iconeCategory: require("../../assets/categorycard5.png"),
-      nameCategory: "Pojęcia",
-    },
-    {
-      id: "6",
-      iconeCategory: require("../../assets/categorycard6.png"),
-      nameCategory: "Silnik JavaScript",
-    },
-    {
-      id: "7",
-      iconeCategory: require("../../assets/categorycard7.png"),
-      nameCategory: "REST API/HTTP",
-    },
-    {
-      id: "8",
-      iconeCategory: require("../../assets/categorycard8.png"),
-      nameCategory: "Eventy",
-    },
-  ];
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
   const {
@@ -113,15 +72,18 @@ const CardsStartPage = ({ route }: { route: any }) => {
     const getCardData = async () => {
       try {
         const data = await axios.get(
-          `${API_URL}/cards/${documentId}?populate[sliderPhotos]=*`,
+          `${API_URL}/cards/${documentId}?populate[sliderPhotos]=*&populate[cards_categories][populate][iconCategory]=*`,
         );
+        console.log("data1", data);
         setCardData(data.data.data);
       } catch (e) {
+        console.log("e", e);
         return { error: true, msg: (e as any).response.data.msg };
       }
     };
     getCardData();
   }, [documentId]);
+
   return (
     <>
       {cardData && (
@@ -179,33 +141,20 @@ const CardsStartPage = ({ route }: { route: any }) => {
                 <H3Text text={"Kategorie kart"} />
               </View>
               <View className="flex w-full justify-center mb-4 flex-wrap flex-row">
-                {cardsCategories.map(({ iconeCategory, nameCategory }) => {
-                  return (
-                    <CategoryElement nameCategory={nameCategory}>
-                      {iconeCategory}
-                    </CategoryElement>
-                  );
-                })}
+                {cardData.cards_categories.map(
+                  (cardCategory: CardsCategoryProps) => {
+                    return (
+                      <CategoryElement
+                        nameCategory={cardCategory.nameCategory}
+                        url={cardCategory.iconCategory.url}
+                      ></CategoryElement>
+                    );
+                  },
+                )}
               </View>
               <InfoCard welcomeScreen={false}>
                 <Text className="leading-5 text-base text-secondary px-4">
-                  Programujesz w JavaScript? 👨‍💻 A może dopiero myślisz o pracy
-                  jako Front-end developer? 🚀 Według nas niezależnie od
-                  doświadczenia i stanowiska warto rozwijać swoją wiedzę, gdyż
-                  to ona jest w cenie! 📖
-                  {"\n"}Z naszymi kartami:
-                  {"\n"}🚀 Poznasz lepiej swoje narzędzie pracy. W przypadku
-                  programisty najcenniejsza jest wiedza!
-                  {"\n"}🚀 Zobaczysz, jak działa JavaScript! Pojęcia typu: Call
-                  Stack, Stack, Event Queue, IFEE, Closure, Event Capturing,
-                  dziedziczenie prototypowe czy też mutacja danych nie będą
-                  więcej Ci obce!
-                  {"\n"}🚀 Przygotujesz się do technicznej części rozmowy
-                  rekrutacyjnej.
-                  {"\n"}🚀 Poznasz zagadnienia często pomijane w kursach i
-                  tutorialach
-                  {"\n"}🚀 Przetestujesz przykłady bez przepisywania kodu!
-                  Wystarczy zeskanować kod QR z karty.
+                  {cardData.description}
                 </Text>
               </InfoCard>
               <View className="flex-row mt-5 px-2 mx-4 justify-around items-center">
@@ -295,11 +244,11 @@ const CardsStartPage = ({ route }: { route: any }) => {
                 <ActiveButton
                   onPress={() =>
                     navigation.navigate("AccessUnlocked", {
-                      id,
-                      logo,
-                      name,
-                      percentage,
-                      color,
+                      // id,
+                      // logo,
+                      // name,
+                      // percentage,
+                      // color,
                     })
                   }
                   text={"Odblokuj dostęp"}

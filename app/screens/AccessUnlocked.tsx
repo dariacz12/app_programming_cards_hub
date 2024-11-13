@@ -54,7 +54,7 @@ function AccessUnlocked({ route }: { route?: any }) {
             </View>
           </View>
         </View>
-        <View className="absolute top-[351]">
+        <View className="absolute top-[347]">
           <View className="relative justify-center items-center  w-screen">
             <View
               className="h-32 w-64 bg-primary border absolute border-b-borderColorSemiTransparent border-l-borderColorSemiTransparent  border-r-borderColorSemiTransparent  border-t-primaryBorder

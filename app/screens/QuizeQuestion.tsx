@@ -9,8 +9,11 @@ import ProgressBar from "../components/ProgressBar";
 import QuizeQuestionElement from "../components/QuizeComponents/QuizeQuestionElement";
 import QuizeSecondaryButton from "../components/QuizeComponents/QuizeSeccondaryButton";
 import QuizeActiveButton from "../components/QuizeComponents/QuizeActiveButton";
+import { API_URL } from "../context/AuthContext";
+import axios from "axios";
 
-const QuizeQuestion = () => {
+const QuizeQuestion = ({ route }: { route: any }) => {
+  const { documentId } = route?.params;
   const [chosenAnswersArray, setChosenAnswerArray] = useState<any>([]);
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
@@ -18,6 +21,25 @@ const QuizeQuestion = () => {
   const [chosenAnswer, setChosenAnswer] = useState<any>(null);
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  const [questionsList, setQuestionsList] = useState<any>();
+  console.log("quizeQuestionsData", questionsList?.[0]);
+
+  useEffect(() => {
+    const getQuizData = async () => {
+      try {
+        const data = await axios.get(
+          `${API_URL}/quizes/${documentId}?populate[quiz_questions_elements][populate][quiz_answer_options]=*`,
+        );
+        setQuestionsList(data.data.data.quiz_questions_elements);
+      } catch (e) {
+        console.log("e", e);
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getQuizData();
+  }, [documentId]);
+
   useEffect(() => {
     setChosenAnswer(null);
     chosenAnswersArray[currentQuestion]
@@ -25,7 +47,7 @@ const QuizeQuestion = () => {
       : setIsButtonDisabled(false);
   }, [currentQuestion]);
   const handleAnswerSelection = (answer: any) => {
-    setChosenAnswer(answer.id);
+    setChosenAnswer(answer.answerLetter);
     setIsButtonDisabled(true);
     if (!answer.status) {
       setTimeout(() => scrollView.current?.scrollToEnd({ animated: true }));
@@ -34,10 +56,12 @@ const QuizeQuestion = () => {
 
   useEffect(() => {
     if (chosenAnswer) {
-      const isShowExplanation = questionsList[currentQuestion].answers.find(
-        (answer) => answer.id === chosenAnswer,
+      const isShowExplanation = questionsList[
+        currentQuestion
+      ].quiz_answer_options.find(
+        (answer: any) => answer.answerLetter === chosenAnswer,
       );
-      setShowExplanation(isShowExplanation?.status ? false : true);
+      setShowExplanation(isShowExplanation?.isCorrect ? false : true);
     }
   }, [chosenAnswer]);
 
@@ -58,95 +82,67 @@ const QuizeQuestion = () => {
     //  setIsButtonDisabled(true);
     setChosenAnswer(null);
   };
-  const questionsList = [
-    {
-      question: "W jaki sposób przekazuje się dane do komponentu?",
-      answers: [
-        { id: "a", text: "Za pomocą kontekstu", status: false },
-        { id: "b", text: "Za pomocą propsów", status: true },
-        { id: "c", text: "Za pomocą state", status: false },
-        { id: "d", text: "Za pomocą routingu", status: false },
-      ],
-      explanation:
-        "b. Za pomocą propsów jest odpowiedzią prawidłową, poniewa propsy są standardowym sposobem przekazywania danych do komponentów w Reacie.",
-    },
-    {
-      question: "W jaki sposób przekazuje się dane do komponentu? (pyt2)",
-      answers: [
-        { id: "a", text: "Za pomocą kontekstu 2", status: true },
-        { id: "b", text: "Za pomocą propsów 2", status: false },
-        { id: "c", text: "Za pomocą state 2", status: false },
-        { id: "d", text: "Za pomocą routingu 2", status: false },
-      ],
-      explanation:
-        "b. Za pomocą propsów jest odpowiedzią prawidłową, poniewa propsy są standardowym sposobem przekazywania danych do komponentów w Reacie.",
-    },
-    {
-      question: "W jaki sposób przekazuje się dane do komponentu? (pyt3)",
-      answers: [
-        { id: "a", text: "Za pomocą kontekstu 3", status: false },
-        { id: "b", text: "Za pomocą propsów 3", status: false },
-        { id: "c", text: "Za pomocą state 3", status: false },
-        { id: "d", text: "Za pomocą routingu 3", status: true },
-      ],
-      explanation:
-        "b. Za pomocą propsów jest odpowiedzią prawidłową, poniewa propsy są standardowym sposobem przekazywania danych do komponentów w Reacie.",
-    },
-  ];
+
   return (
     <>
-      <ScrollView ref={scrollView} className="bg-semi-transparent">
-        <View className="flex-1">
-          <View className=" flex-1 mt-20 mb-8 mx-10">
-            <View className="flex-1 items-center flex-row ">
-              <TouchableOpacity
-                onPress={() => navigation.navigate("QuizeStartPage", { id: 1 })}
-              >
-                <AntDesign name="left" size={24} color="ghostwhite" />
-              </TouchableOpacity>
-              <View className="justify-center flex-1 items-center pr-4">
-                <H2Text textCenter={true} text={"React"} />
+      {questionsList && (
+        <ScrollView ref={scrollView} className="bg-semi-transparent">
+          <View className="flex-1">
+            <View className=" flex-1 mt-20 mb-8 mx-10">
+              <View className="flex-1 items-center flex-row ">
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("QuizeStartPage", { id: 1 })
+                  }
+                >
+                  <AntDesign name="left" size={24} color="ghostwhite" />
+                </TouchableOpacity>
+                <View className="justify-center flex-1 items-center pr-4">
+                  <H2Text textCenter={true} text={"React"} />
+                </View>
               </View>
             </View>
-          </View>
-          <ProgressBar
-            completedQuestions={currentQuestion + 1}
-            allQuestions={questionsList.length}
-          />
-          <View className="flex-1">
-            <QuizeQuestionElement
-              question={questionsList[currentQuestion].question}
+            <ProgressBar
+              completedQuestions={currentQuestion + 1}
+              allQuestions={questionsList.length}
             />
-          </View>
-          <View>
-            {questionsList[currentQuestion].answers.map((answer, index) => {
-              return (
-                <TouchableOpacity
-                  disabled={isButtonDisabled}
-                  onPress={() => handleAnswerSelection(answer)}
-                >
-                  <QuizeAnswerElement
-                    key={index}
-                    answer={answer}
-                    chosenAnswer={chosenAnswer}
-                    currentQuestion={currentQuestion}
-                    chosenAnswersArray={chosenAnswersArray}
-                  />
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+            <View className="flex-1">
+              <QuizeQuestionElement
+                question={questionsList[currentQuestion].question}
+              />
+            </View>
+            <View>
+              {questionsList[currentQuestion].quiz_answer_options.map(
+                (answer: any, index: any) => {
+                  return (
+                    <TouchableOpacity
+                      disabled={isButtonDisabled}
+                      onPress={() => handleAnswerSelection(answer)}
+                    >
+                      <QuizeAnswerElement
+                        key={index}
+                        answer={answer}
+                        chosenAnswer={chosenAnswer}
+                        currentQuestion={currentQuestion}
+                        chosenAnswersArray={chosenAnswersArray}
+                      />
+                    </TouchableOpacity>
+                  );
+                },
+              )}
+            </View>
 
-          {showExplanation &&
-            (chosenAnswer || chosenAnswersArray[currentQuestion]) && (
-              <View>
-                <QuizeExplanationElement
-                  explanation={questionsList[currentQuestion].explanation}
-                />
-              </View>
-            )}
-        </View>
-      </ScrollView>
+            {showExplanation &&
+              (chosenAnswer || chosenAnswersArray[currentQuestion]) && (
+                <View>
+                  <QuizeExplanationElement
+                    explanation={questionsList[currentQuestion].explanation}
+                  />
+                </View>
+              )}
+          </View>
+        </ScrollView>
+      )}
       <View className="h-24 w-full bg-primary border  border-borderColorSemiTransparent bottom-0 absolute z-2 flex-1 flex-row justify-center items-center">
         <QuizeSecondaryButton
           onPress={() => {
