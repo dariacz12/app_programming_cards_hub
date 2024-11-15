@@ -14,6 +14,7 @@ import axios from "axios";
 
 const QuizeQuestion = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
+
   const [chosenAnswersArray, setChosenAnswerArray] = useState<any>([]);
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();

@@ -28,8 +28,8 @@ import { useNavigation } from "@react-navigation/native";
 import { UPLOADS_URL } from "../context/AuthContext";
 import { CardItem } from "../screens/CardsStudyPage";
 
-var negativeArray: number[] = [];
-var positiveArray: number[] = [];
+// var negativeArray: number[] = [];
+// var positiveArray: number[] = [];
 
 interface FlipCardsProps {
   documentId: string;
@@ -185,16 +185,14 @@ const FlipCard = ({
     setCurrentQuestionIndex(currentIndex + 1);
 
     if (translationX < 0) {
-      negativeArray.push(currentIndex);
-      setNegativeCount(negativeArray.length);
+      setNegativeCount(negativeCount + 1);
     } else if (translationX > 0) {
-      positiveArray.push(currentIndex);
-      setPositiveCount(positiveArray.length);
+      setPositiveCount(positiveCount + 1);
     }
     if (currentIndex === dataLength - 1) {
       navigation.navigate("CardsResultPage", {
-        negativeArray,
-        positiveArray,
+        negativeCount,
+        positiveCount,
         documentId,
       });
     }

@@ -57,7 +57,7 @@ export default function Tabbar() {
         <Tab.Screen
           name="CardsStudyPage"
           component={CardsStudyPage}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, unmountOnBlur: true }}
         ></Tab.Screen>
       </Tab.Group>
     </Tab.Navigator>
