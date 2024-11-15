@@ -25,28 +25,24 @@ import {
   PanGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import { UPLOADS_URL } from "../context/AuthContext";
+import { CardItem } from "../screens/CardsStudyPage";
 
 var negativeArray: number[] = [];
 var positiveArray: number[] = [];
 
 interface FlipCardsProps {
+  documentId: string;
   maxVisibleItem: number;
   cardStyle: { width: number; height: number };
   direction?: string;
   duration?: number;
-  currentCard: { question: string; answer: string };
+  currentCard: CardItem;
   index: number;
   dataLength: number;
   currentIndex: number;
   animatedValue: SharedValue<number>;
-  setNewData: React.Dispatch<
-    React.SetStateAction<
-      {
-        question: string;
-        answer: any;
-      }[]
-    >
-  >;
+  setNewData: React.Dispatch<React.SetStateAction<CardItem[]>>;
   setPositiveCount: React.Dispatch<React.SetStateAction<number>>;
   setNegativeCount: React.Dispatch<React.SetStateAction<number>>;
   setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -80,6 +76,7 @@ const regularContentStyles = StyleSheet.create({
 });
 
 const FlipCard = ({
+  documentId,
   index,
   cardStyle,
   direction = "y",
@@ -195,7 +192,11 @@ const FlipCard = ({
       setPositiveCount(positiveArray.length);
     }
     if (currentIndex === dataLength - 1) {
-      navigation.navigate("CardsResultPage", { negativeArray, positiveArray });
+      navigation.navigate("CardsResultPage", {
+        negativeArray,
+        positiveArray,
+        documentId,
+      });
     }
   };
   const animatedStyles = useAnimatedStyle(() => {
@@ -307,6 +308,7 @@ const FlipCard = ({
       opacity: index < maxVisibleItem + currentIndex ? 1 : opacity,
     };
   });
+
   return (
     <GestureDetector gesture={pan}>
       <Pressable onPress={handlePress}>
@@ -339,7 +341,9 @@ const FlipCard = ({
             >
               <View style={flippedContentStyles.card}>
                 <Image
-                  source={currentCard.answer}
+                  source={{
+                    uri: `${UPLOADS_URL}${currentCard.answerImage[0].url}`,
+                  }}
                   style={flippedContentStyles.image}
                 />
               </View>
