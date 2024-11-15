@@ -32,13 +32,12 @@ interface CardCategoryLogo {
   documentId: string;
   url: string;
 }
-type CardsCategoryProps = {
+export type CardsCategoryProps = {
   nameCategory: string;
   iconCategory: CardCategoryLogo;
 };
 const CardsStartPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
-  console.log("documentId", documentId);
 
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
@@ -244,6 +243,7 @@ const CardsStartPage = ({ route }: { route: any }) => {
                 <ActiveButton
                   onPress={() =>
                     navigation.navigate("AccessUnlocked", {
+                      documentId,
                       // id,
                       // logo,
                       // name,

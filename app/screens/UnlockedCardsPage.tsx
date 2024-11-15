@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -23,14 +23,16 @@ import ModalPopup from "../components/ModalPopup";
 import { LinearGradient } from "expo-linear-gradient";
 import CategoryElement from "../components/CategoryElement";
 import ProgressCircular from "../components/ProgressCircular";
+import axios from "axios";
+import { API_URL } from "../context/AuthContext";
+import { CardsCategoryProps } from "./CardsStartPage";
 type FormData = {
   kod: string;
 };
 
 const UnlockedCardsPage = ({ route }: { route: any }) => {
-  const { id, name, percentage, color, logo } = route?.params;
+  const { documentId } = route?.params;
 
-  // const { id } = route?.params;
   const cardsPhotos = [
     { id: "1", src: require("../../assets/react1.png") },
     // {id: '2',
@@ -91,108 +93,141 @@ const UnlockedCardsPage = ({ route }: { route: any }) => {
     },
   });
   const [modalVisible, setModalVisible] = useState(false);
+  const [cardData, setCardData] = useState<any>();
+  console.log("cardData", cardData);
+
+  useEffect(() => {
+    const getCardData = async () => {
+      try {
+        const data = await axios.get(
+          `${API_URL}/cards/${documentId}?populate[sliderPhotos]=*&populate[cards_categories][populate][iconCategory]=*`,
+        );
+        console.log("data1", data);
+        setCardData(data.data.data);
+      } catch (e) {
+        console.log("e", e);
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getCardData();
+  }, [documentId]);
   return (
     <>
-      <ScrollView ref={scrollView} className="bg-primary ">
-        <View className=" pb-[60] mb-4 ">
-          <View className="flex relative">
-            <TouchableOpacity
-              className="absolute z-10 p-2 left-10 top-16"
-              onPress={() =>
-                navigation.navigate("Tabbar", {
-                  screen: "Home",
-                })
-              }
-            >
-              <AntDesign name="left" size={24} color="ghostwhite" />
-            </TouchableOpacity>
+      {cardData && (
+        <ScrollView ref={scrollView} className="bg-primary ">
+          <View className=" pb-[60] mb-4 ">
+            <View className="flex relative">
+              <TouchableOpacity
+                className="absolute z-10 p-2 left-10 top-16"
+                onPress={() =>
+                  navigation.navigate("Tabbar", {
+                    screen: "Home",
+                  })
+                }
+              >
+                <AntDesign name="left" size={24} color="ghostwhite" />
+              </TouchableOpacity>
 
-            <View className="mb-4 flex-1  w-full">
-              <Slider quizePhotos={cardsPhotos} />
+              <View className="mb-4 flex-1  w-full">
+                <Slider photos={cardData.sliderPhotos} />
+              </View>
             </View>
-          </View>
 
-          <View className="bg-primary bottom-12 rounded-2xl ">
-            <View className="mt-2 mx-10">
-              <View className="w-full flex-1 h-full   flex-row">
-                <View className="pr-6 mt-5">
-                  <TouchableOpacity
-                    className=""
-                    onPress={() =>
-                      navigation.navigate("Tabbar", {
-                        screen: "Home",
-                      })
-                    }
-                  >
-                    <ProgressCircular
-                      name={name}
-                      percentage={percentage}
-                      radius={11}
-                      strokeWidth={5}
-                      duration={500}
-                      color={color}
-                      delay={0}
-                      max={100}
-                    />
-                  </TouchableOpacity>
+            <View className="bg-primary bottom-12 rounded-2xl ">
+              <View className="mt-2 mx-10">
+                <View className="w-full flex-1 h-full   flex-row">
+                  <View className="pr-6 mt-5">
+                    <TouchableOpacity
+                      className=""
+                      onPress={() =>
+                        navigation.navigate("Tabbar", {
+                          screen: "Home",
+                        })
+                      }
+                    >
+                      <ProgressCircular
+                        name={cardData.name}
+                        percentage={80}
+                        radius={11}
+                        strokeWidth={5}
+                        duration={500}
+                        color={cardData.circleProgressColor}
+                        delay={0}
+                        max={100}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View className="justify-center items-start ">
+                    <H1Text text={cardData.name} />
+                    <Text className="text-sm  text-secondary">
+                      rozwiązano 65 z 100 pytań
+                    </Text>
+                  </View>
                 </View>
-                <View className="justify-center items-start ">
-                  <H1Text text={name} />
-                  <Text className="text-sm  text-secondary">
-                    rozwiązano 65 z 100 pytań
-                  </Text>
+              </View>
+              <View>
+                <View className="items-start ml-6 mb-3 mt-7 ">
+                  <H3Text text={"Mixuj pytania z rónych kategorii"} />
                 </View>
-              </View>
-            </View>
-            <View>
-              <View className="items-start ml-6 mb-3 mt-7 ">
-                <H3Text text={"Mixuj pytania z rónych kategorii"} />
-              </View>
 
-              <View className="flex-1 py-5 justify-center items-center w-full">
-                <ActiveButton
-                  onPress={() => navigation.navigate("CardsStudyPage")}
-                  text={"Ucz się"}
-                />
+                <View className="flex-1 py-5 justify-center items-center w-full">
+                  <ActiveButton
+                    onPress={() => navigation.navigate("CardsStudyPage")}
+                    text={"Ucz się"}
+                  />
+                </View>
+                <View className="mx-8  mt-2  bg-block h-1 rounded-lg " />
               </View>
-              <View className="mx-8  mt-2  bg-block h-1 rounded-lg " />
-            </View>
-            <View className="items-start ml-6 my-8">
-              <H3Text text={"Wybierz kategorie kart"} />
-            </View>
-            <View className="flex w-full justify-center mb-4 flex-wrap flex-row">
-              {categoriesPhotos.map(({ src, text }) => {
+              <View className="items-start ml-6 my-8">
+                <H3Text text={"Wybierz kategorie kart"} />
+              </View>
+              <View className="flex w-full justify-center mb-4 flex-wrap flex-row">
+                {cardData.cards_categories.map(
+                  (cardCategory: CardsCategoryProps) => {
+                    return (
+                      <TouchableOpacity onPress={() => navigation.navigate("")}>
+                        <CategoryElement
+                          nameCategory={cardCategory.nameCategory}
+                          url={cardCategory.iconCategory.url}
+                        ></CategoryElement>
+                      </TouchableOpacity>
+                    );
+                  },
+                )}
+                {/* {categoriesPhotos.map(({ src, text }) => {
                 return (
                   <TouchableOpacity onPress={() => navigation.navigate("")}>
-                    <CategoryElement text={text}>{src}</CategoryElement>
+                    <CategoryElement    nameCategory={cardCategory.nameCategory}
+                        url={cardCategory.iconCategory.url}></CategoryElement>
                   </TouchableOpacity>
                 );
-              })}
+              })} */}
+              </View>
+              <InfoCard welcomeScreen={false}>
+                <Text className="leading-5 text-base text-secondary px-4">
+                  Programujesz w JavaScript? 👨‍💻 A może dopiero myślisz o pracy
+                  jako Front-end developer? 🚀 Według nas niezależnie od
+                  doświadczenia i stanowiska warto rozwijać swoją wiedzę, gdyż
+                  to ona jest w cenie! 📖
+                  {"\n"}Z naszymi kartami:
+                  {"\n"}🚀 Poznasz lepiej swoje narzędzie pracy. W przypadku
+                  programisty najcenniejsza jest wiedza!
+                  {"\n"}🚀 Zobaczysz, jak działa JavaScript! Pojęcia typu: Call
+                  Stack, Stack, Event Queue, IFEE, Closure, Event Capturing,
+                  dziedziczenie prototypowe czy też mutacja danych nie będą
+                  więcej Ci obce!
+                  {"\n"}🚀 Przygotujesz się do technicznej części rozmowy
+                  rekrutacyjnej.
+                  {"\n"}🚀 Poznasz zagadnienia często pomijane w kursach i
+                  tutorialach
+                  {"\n"}🚀 Przetestujesz przykłady bez przepisywania kodu!
+                  Wystarczy zeskanować kod QR z karty.
+                </Text>
+              </InfoCard>
             </View>
-            <InfoCard welcomeScreen={false}>
-              <Text className="leading-5 text-base text-secondary px-4">
-                Programujesz w JavaScript? 👨‍💻 A może dopiero myślisz o pracy
-                jako Front-end developer? 🚀 Według nas niezależnie od
-                doświadczenia i stanowiska warto rozwijać swoją wiedzę, gdyż to
-                ona jest w cenie! 📖
-                {"\n"}Z naszymi kartami:
-                {"\n"}🚀 Poznasz lepiej swoje narzędzie pracy. W przypadku
-                programisty najcenniejsza jest wiedza!
-                {"\n"}🚀 Zobaczysz, jak działa JavaScript! Pojęcia typu: Call
-                Stack, Stack, Event Queue, IFEE, Closure, Event Capturing,
-                dziedziczenie prototypowe czy też mutacja danych nie będą więcej
-                Ci obce!
-                {"\n"}🚀 Przygotujesz się do technicznej części rozmowy
-                rekrutacyjnej.
-                {"\n"}🚀 Poznasz zagadnienia często pomijane w kursach i
-                tutorialach
-                {"\n"}🚀 Przetestujesz przykłady bez przepisywania kodu!
-                Wystarczy zeskanować kod QR z karty.
-              </Text>
-            </InfoCard>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
     </>
   );
 };
