@@ -10,7 +10,24 @@ import QuizeQuestionElement from "../components/QuizeComponents/QuizeQuestionEle
 import QuizeSecondaryButton from "../components/QuizeComponents/QuizeSeccondaryButton";
 import QuizeActiveButton from "../components/QuizeComponents/QuizeActiveButton";
 import { API_URL } from "../context/AuthContext";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+
+type Answer = {
+  documentId: string;
+  isCorrect: boolean;
+  answerLetter: string;
+  status: boolean;
+};
+type UserAnswer = {
+  questionId: string;
+  answerId: string;
+};
+type QuestionData = {
+  documentId: string;
+  explanation: string;
+  question: string;
+  quiz_answer_options: Answer[];
+};
 
 const QuizeQuestion = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
@@ -22,10 +39,30 @@ const QuizeQuestion = ({ route }: { route: any }) => {
   const [chosenAnswer, setChosenAnswer] = useState<any>(null);
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [questionsList, setQuestionsList] = useState<QuestionData[]>([]);
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
+  const [userId, setUserId] = useState<any>();
+  console.log("userId", userId);
+  // console.log("questionList", questionsList?.[currentQuestion]);
+  // console.log("quizeQuestionsData", questionsList?.[currentQuestion].documentId);
+  let currentQuestionId = questionsList?.[currentQuestion]?.documentId;
+  // console.log("quizeQuestionsid", currentQuestionId);
+  // console.log("answer",questionsList?.[currentQuestion].quiz_answer_options)
+  // userAnswers && console.log("useranswers", userAnswers)
 
-  const [questionsList, setQuestionsList] = useState<any>();
-  console.log("quizeQuestionsData", questionsList?.[0]);
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const user = await axios.get(`${API_URL}/users/me`);
+        console.log(771, user.data);
 
+        setUserId(user.data.documentId);
+      } catch (e) {
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getUserData();
+  }, []);
   useEffect(() => {
     const getQuizData = async () => {
       try {
@@ -47,7 +84,23 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       ? setIsButtonDisabled(true)
       : setIsButtonDisabled(false);
   }, [currentQuestion]);
-  const handleAnswerSelection = (answer: any) => {
+
+  const handleAnswerSelection = (answer: Answer) => {
+    setUserAnswers((prev) => {
+      const existing = prev.find((ans) => ans.questionId === currentQuestionId);
+      if (existing) {
+        return prev.map((ans) =>
+          ans.questionId === currentQuestionId
+            ? { ...ans, answerId: answer.documentId }
+            : ans,
+        );
+      } else {
+        return [
+          ...prev,
+          { questionId: currentQuestionId, answerId: answer.documentId },
+        ];
+      }
+    });
     setChosenAnswer(answer.answerLetter);
     setIsButtonDisabled(true);
     if (!answer.status) {
@@ -73,15 +126,101 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       //  setIsButtonDisabled(true)
     });
   };
+
   const nextQuestion = (chosenAnswer: string) => {
-    chosenAnswer || chosenAnswersArray[currentQuestion]
-      ? currentQuestion < questionsList.length - 1
-        ? changeCurrentQuestion(currentQuestion + 1)
-        : navigation.navigate("QuizeResultPage")
-      : null;
-    chosenAnswer && setChosenAnswerArray([...chosenAnswersArray, chosenAnswer]);
-    //  setIsButtonDisabled(true);
+    if (chosenAnswer || chosenAnswersArray[currentQuestion]) {
+      if (currentQuestion < questionsList.length - 1) {
+        changeCurrentQuestion(currentQuestion + 1);
+      } else {
+        saveQuizResult();
+        navigation.navigate("QuizeResultPage");
+      }
+      if (chosenAnswer) {
+        setChosenAnswerArray([...chosenAnswersArray, chosenAnswer]);
+      }
+    }
     setChosenAnswer(null);
+  };
+
+  const saveQuizResult = async () => {
+    try {
+      const correctAnswers: UserAnswer[] = questionsList
+        .map((question) => {
+          const correctAnswer = question.quiz_answer_options.find(
+            (ans) => ans.isCorrect,
+          );
+          if (correctAnswer) {
+            return {
+              questionId: question.documentId,
+              answerId: correctAnswer.documentId,
+            };
+          }
+          return null;
+        })
+        .filter((answer) => answer !== null) as UserAnswer[];
+      console.log("correctAnswers", correctAnswers);
+
+      let score = 0;
+      let incorrect = 0;
+      const answersResult = userAnswers.map((userAnswer) => {
+        const isCorrect = correctAnswers.some(
+          (correctAnswer) =>
+            correctAnswer.questionId === userAnswer.questionId &&
+            correctAnswer.answerId === userAnswer.answerId,
+        );
+
+        if (isCorrect) {
+          score++;
+        } else {
+          incorrect++;
+        }
+
+        return {
+          question: userAnswer.questionId,
+          isCorrect,
+        };
+      });
+
+      const totalQuestions = questionsList.length;
+      console.log("totalQuestions", totalQuestions);
+      console.log("score", score);
+      console.log("incorecrt", incorrect);
+      const answersString = JSON.stringify(answersResult);
+
+      const quizAttempt = {
+        data: {
+          users_permissions_user: userId,
+          quize: documentId,
+          answers: answersString,
+          score,
+          totalQuestions,
+          incorrectAnswers: incorrect,
+        },
+      };
+      console.log("quizAttempt", quizAttempt);
+      // Zapisz wynik w Strapi
+      const response = await axios.post(
+        `${API_URL}/quize-attempts`,
+        quizAttempt,
+      );
+      if (response.status === 201) {
+        console.log("Wynik quizu zapisany:", response.data);
+      } else {
+        console.error("Failed to save quiz result, status:", response.status);
+        console.error("Error response:", response.data);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Type guard for AxiosError
+        console.error("Error response data:", error.response?.data);
+        console.error("Error response status:", error.response?.status);
+      } else if (error instanceof Error) {
+        // Fallback to general Error type
+        console.error("Error message:", error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
   };
 
   return (
@@ -107,13 +246,15 @@ const QuizeQuestion = ({ route }: { route: any }) => {
               completedQuestions={currentQuestion + 1}
               allQuestions={questionsList.length}
             />
-            <View className="flex-1">
-              <QuizeQuestionElement
-                question={questionsList[currentQuestion].question}
-              />
-            </View>
+            {questionsList && (
+              <View className="flex-1">
+                <QuizeQuestionElement
+                  question={questionsList[currentQuestion]?.question}
+                />
+              </View>
+            )}
             <View>
-              {questionsList[currentQuestion].quiz_answer_options.map(
+              {questionsList[currentQuestion]?.quiz_answer_options.map(
                 (answer: any, index: any) => {
                   return (
                     <TouchableOpacity
