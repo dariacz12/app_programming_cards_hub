@@ -1,6 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import H2Text from "../components/H2Text";
 import QuizeSecondaryButton from "../components/QuizeComponents/QuizeSeccondaryButton";
@@ -10,13 +10,51 @@ import Animation from "../components/Animation";
 import H3Text from "../components/H3Text";
 import InfoCard from "../components/InfoCard";
 import ProgressCircular from "../components/ProgressCircular";
+import axios from "axios";
+import { API_URL } from "../context/AuthContext";
 
-function QuizeResultPage() {
+function QuizeResultPage({ route }: { route: any }) {
+  const { documentId, userId } = route?.params;
   const animationSource = require("../../assets/congratulations.json");
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
   const name = "React";
   const percentage = 50;
+  const [latestQuizeAtttemtResult, setLatestQuizeAtttemtResult] =
+    useState<any>();
+
+  const [quizAttemptResults, setQuizAttemptResults] = useState<any>();
+
+  useEffect(() => {
+    if (!userId) {
+      console.log("Skipping quiz fetch as userId is undefined.");
+      return;
+    }
+
+    const getQuizData = async () => {
+      console.log("Fetching quiz data for userId:", userId);
+      console.log("Before API request...");
+
+      try {
+        const { data } = await axios.get(`${API_URL}/quize-attempts`);
+
+        console.log("After API request...");
+        console.log("Full API response:", data);
+        setQuizAttemptResults(data.data);
+      } catch (e) {
+        console.error("Error in API request:", e.message);
+        return {
+          error: true,
+          msg: e.response ? e.response.data.msg : "Unknown error",
+        };
+      }
+    };
+
+    getQuizData();
+  }, [userId]);
+  // useEffect(() => {
+
+  // }, [quizAttemptResults]);
   return (
     <>
       <SafeAreaView className="flex-1  bg-primary ">

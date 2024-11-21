@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "app_programming_cards_hub",
+    "newArchEnabled": true,
     "slug": "app_programming_cards_hub",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,12 +24,16 @@
       "fonts": [
         {
           "src": "./assets/fonts/FontAwesome.ttf"
+        },
+        {
+          "src": "./assets/fonts/FontAwesome.ttf"
         }
       ],
       "supportsTablet": true,
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "bundleIdentifier": "com.daria-czupreta.app-programming-cards-hub"
     },
     "android": {
       "adaptiveIcon": {

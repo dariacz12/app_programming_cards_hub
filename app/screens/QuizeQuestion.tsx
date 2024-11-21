@@ -31,7 +31,7 @@ type QuestionData = {
 
 const QuizeQuestion = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
-
+  console.log("documentId", documentId);
   const [chosenAnswersArray, setChosenAnswerArray] = useState<any>([]);
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
@@ -133,7 +133,13 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         changeCurrentQuestion(currentQuestion + 1);
       } else {
         saveQuizResult();
-        navigation.navigate("QuizeResultPage");
+        navigation.navigate("Tabbar", {
+          screen: "QuizeResultPage",
+          params: {
+            documentId,
+            userId,
+          },
+        });
       }
       if (chosenAnswer) {
         setChosenAnswerArray([...chosenAnswersArray, chosenAnswer]);
@@ -203,7 +209,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         `${API_URL}/quize-attempts`,
         quizAttempt,
       );
-      if (response.status === 201) {
+      if (response.status === 200) {
         console.log("Wynik quizu zapisany:", response.data);
       } else {
         console.error("Failed to save quiz result, status:", response.status);
