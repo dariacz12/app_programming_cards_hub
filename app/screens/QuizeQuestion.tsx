@@ -66,10 +66,10 @@ const QuizeQuestion = ({ route }: { route: any }) => {
   useEffect(() => {
     const getQuizData = async () => {
       try {
-        const data = await axios.get(
+        const { data } = await axios.get(
           `${API_URL}/quizes/${documentId}?populate[quiz_questions_elements][populate][quiz_answer_options]=*`,
         );
-        setQuestionsList(data.data.data.quiz_questions_elements);
+        setQuestionsList(data.data.quiz_questions_elements);
       } catch (e) {
         console.log("e", e);
         return { error: true, msg: (e as any).response.data.msg };
@@ -133,12 +133,9 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         changeCurrentQuestion(currentQuestion + 1);
       } else {
         saveQuizResult();
-        navigation.navigate("Tabbar", {
-          screen: "QuizeResultPage",
-          params: {
-            documentId,
-            userId,
-          },
+        navigation.navigate("QuizeResultPage", {
+          documentId: documentId,
+          userId: userId,
         });
       }
       if (chosenAnswer) {
