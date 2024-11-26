@@ -30,78 +30,10 @@ import ArrowBack from "../components/ArrowBack";
 import { eventEmitter } from "../components/BottomTabs/CustomBottomTab";
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
-
-const quizes = [
-  {
-    logo: require("../../assets/react.png"),
-    level: [1, 2, 3],
-    name: "React",
-    percentage: 70,
-    color: "#9E4784",
-  },
-  {
-    logo: require("../../assets/css.png"),
-    level: [1],
-    name: "CSS",
-    percentage: 35,
-    color: "#66347F",
-  },
-  {
-    logo: require("../../assets/php.png"),
-    level: [1, 2, 3],
-    name: "PHP",
-    percentage: 90,
-    color: "#37306B",
-  },
-  {
-    logo: require("../../assets/html.png"),
-    level: [1],
-    name: "HTML",
-    percentage: 0,
-    color: "#9E4784",
-  },
-  {
-    logo: require("../../assets/java.png"),
-    level: [1, 2],
-    name: "Java",
-    percentage: 80,
-    color: "#66347F",
-  },
-];
-const blockes = [
-  {
-    id: 1,
-    logo: require("../../assets/javascript.png"),
-    access: true,
-    name: "JavaScript",
-    percentage: 80,
-    color: "#66347F",
-  },
-  {
-    id: 2,
-    logo: require("../../assets/css.png"),
-    access: false,
-    name: "CSS",
-    percentage: 0,
-    color: "#9E4784",
-  },
-  {
-    id: 3,
-    logo: require("../../assets/react.png"),
-    access: false,
-    name: "React",
-    percentage: 35,
-    color: "#66347F",
-  },
-  {
-    id: 4,
-    logo: require("../../assets/java.png"),
-    access: false,
-    name: "Java",
-    percentage: 35,
-    color: "#66347F",
-  },
-];
+import { QuizAttempt } from "./QuizeQuestion";
+// color: "#9E4784",
+//  color: "#66347F",
+//  color: "#37306B",
 
 export interface Quiz {
   circleProgressColor: string;
@@ -110,6 +42,7 @@ export interface Quiz {
   documentId: string;
   level: number;
   name: string;
+  quize_attempts: QuizAttempt[];
 }
 export interface Card {
   circleProgressColor: string;
@@ -124,6 +57,7 @@ const Home = () => {
   const [notifications, setNotifications] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [userName, setUserName] = useState<string>();
+  const [refreshAnimation, setRefreshAnimation] = useState(false);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -140,18 +74,33 @@ const Home = () => {
   }, []);
 
   const [quizesData, setQuizesData] = useState<Quiz[]>([]);
+  console.log("quizesData:", quizesData);
+  console.log("curentQuizeCircle:", curentQuizeCircle);
+  console.log("quizesData[curentQuizeCircle]:", quizesData[curentQuizeCircle]);
 
   useEffect(() => {
-    const getQuizesData = async () => {
-      try {
-        const data = await axios.get(`${API_URL}/quizes?populate[logo]=*`);
-        setQuizesData(data.data.data);
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getQuizesData();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      const getQuizesData = async () => {
+        try {
+          const data = await axios.get(
+            `${API_URL}/quizes?populate[quize_attempts]=*&populate[logo]=*`,
+          );
+          setQuizesData(data.data.data);
+          setRefreshAnimation(true);
+        } catch (e) {
+          return { error: true, msg: (e as any).response.data.msg };
+        }
+      };
+      getQuizesData();
+    });
+    return unsubscribe; // Clean up the listener
+  }, [navigation]);
+
+  useEffect(() => {
+    if (refreshAnimation) {
+      setRefreshAnimation(false); // Reset after triggering
+    }
+  }, [refreshAnimation]);
 
   const [cardsData, setCardsData] = useState<Quiz[]>([]);
 
@@ -214,7 +163,7 @@ const Home = () => {
                 onPress={() =>
                   setCurentQuizeCircle(
                     curentQuizeCircle === 0
-                      ? quizes.length - 1
+                      ? quizesData.length - 1
                       : curentQuizeCircle - 1,
                   )
                 }
@@ -230,7 +179,7 @@ const Home = () => {
               <TouchableOpacity
                 onPress={() =>
                   setCurentQuizeCircle(
-                    curentQuizeCircle === quizes.length - 1
+                    curentQuizeCircle === quizesData.length - 1
                       ? 0
                       : curentQuizeCircle + 1,
                   )
@@ -242,17 +191,35 @@ const Home = () => {
               </TouchableOpacity>
             </View>
             <View className="  h-10 top-28 ">
-              <ProgressCircular
-                isHome={true}
-                name={quizes[curentQuizeCircle].name}
-                percentage={quizes[curentQuizeCircle].percentage}
-                radius={40}
-                strokeWidth={14}
-                duration={500}
-                color={quizes[curentQuizeCircle].color}
-                delay={0}
-                max={100}
-              />
+              {quizesData.length > 0 && quizesData[curentQuizeCircle] ? (
+                <ProgressCircular
+                  isHome={true}
+                  name={quizesData[curentQuizeCircle].name}
+                  percentage={
+                    quizesData[curentQuizeCircle].quize_attempts &&
+                    quizesData[curentQuizeCircle].quize_attempts.length > 0
+                      ? (quizesData[curentQuizeCircle].quize_attempts[
+                          quizesData[curentQuizeCircle].quize_attempts.length -
+                            1
+                        ].score *
+                          100) /
+                        quizesData[curentQuizeCircle].quize_attempts[
+                          quizesData[curentQuizeCircle].quize_attempts.length -
+                            1
+                        ].totalQuestions
+                      : 0
+                  }
+                  radius={40}
+                  strokeWidth={14}
+                  duration={500}
+                  color={quizesData[curentQuizeCircle].circleProgressColor}
+                  delay={0}
+                  max={100}
+                  key={refreshAnimation ? "true" : "false"}
+                />
+              ) : (
+                <Text className="text-white">Loading...</Text>
+              )}
             </View>
           </View>
 

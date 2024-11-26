@@ -36,7 +36,7 @@ type AnswerAttemt = {
   isCorrect: boolean;
   question: string;
 };
-type QuizAttempt = {
+export type QuizAttempt = {
   answers: AnswerAttemt[];
   quize: Quize;
   incorrectAnswers: number;
@@ -44,7 +44,7 @@ type QuizAttempt = {
   totalQuestions: number;
 };
 
-type QuizAttemptsResults = {
+export type QuizAttemptsResults = {
   results: QuizAttempt[];
 };
 
