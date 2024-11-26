@@ -14,6 +14,7 @@ import axios from "axios";
 import { API_URL } from "../context/AuthContext";
 type Quize = {
   documentId: string;
+  name: string;
 };
 type Answer = {
   isCorrect: boolean;
@@ -32,62 +33,19 @@ type QuizAttemptsResults = {
 };
 
 function QuizeResultPage({ route }: { route: any }) {
-  const { documentId, userId } = route?.params;
+  const { documentId } = route?.params;
   const animationSource = require("../../assets/congratulations.json");
-  const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
-  const name = "React";
-
   const [percentage, setPercentage] = useState<number>(0);
-  const [latestQuizeAtttemtResult, setLatestQuizeAtttemtResult] =
-    useState<any>();
-
   const [quizAttemptResult, setQuizAttemptResult] = useState<QuizAttempt>();
-  const [mergequizAttemptsResult, setMergeQuizAttemptsResults] =
-    useState<QuizAttempt>();
-  const [firstAttempt, setFirstAttempt] = useState<number>(0);
-  const [nextAttempt, setNextAttempt] = useState<number>(0);
-  const [combinedAnswers, setCombinedAnswers] = useState<any>();
-
-  // const getCombinedAnswers = () => {
-  //   const length = quizAttemptsResult.length;
-  //   if (length < 2) return [];
-  //   const lastAttemptAnswers = quizAttemptsResult[length - 1].answers;
-  //   const secondLastAttemptAnswers = quizAttemptsResult[length - 2].answers;
-  //   const correctAnswersFromLastAttempt = lastAttemptAnswers.filter(
-  //     (answer) => answer.isCorrect,
-  //   );
-  //   const correctAnswersFromSecondLastAttempt = secondLastAttemptAnswers.filter(
-  //     (answer) => answer.isCorrect,
-  //   );
-  //   const incorrectAnswersFromLastAttempt = lastAttemptAnswers.filter(
-  //     (answer) => !answer.isCorrect,
-  //   );
-  //   const combinedAnswersResults = [
-  //     ...correctAnswersFromLastAttempt,
-  //     ...correctAnswersFromSecondLastAttempt,
-  //     ...incorrectAnswersFromLastAttempt,
-  //   ];
-  //   const uniqueAnswers = combinedAnswersResults.filter(
-  //     (answer, index, self) =>
-  //       index === self.findIndex((a) => a.question === answer.question),
-  //   );
-
-  //   return uniqueAnswers;
-  // };
-  // console.log("combinedanswers", combinedAnswers);
 
   useEffect(() => {
-    setCombinedAnswers(null);
     const getQuizData = async () => {
       console.log("Before API request...");
       try {
         const { data } = await axios.get(
           `${API_URL}/quize-attempts?populate[quize]=*`,
         );
-
-        console.log("After API request...");
-        console.log("Full API response:", data);
         const quizAttemptsResult = data.data.results.filter(
           (attempt: QuizAttempt) => attempt.quize.documentId === documentId,
         );
@@ -105,90 +63,7 @@ function QuizeResultPage({ route }: { route: any }) {
         (quizAttemptResult.score * 100) / quizAttemptResult.totalQuestions,
       );
   }, [quizAttemptResult, documentId]);
-  // useEffect(() => {
-  //   if (allQuizAttemptsResults?.results.length > 0) {
-  //     const quizAttemptsResult = allQuizAttemptsResults.results.filter(
-  //       (attempt) => attempt.quize.documentId === documentId,
-  //     );
-  //     setQuizAttemptsResults(quizAttemptsResult);
-  //     quizAttemptsResult.length === 1 &&
-  //       setFirstAttempt(
-  //         (quizAttemptsResult[quizAttemptsResult.length - 1].score * 100) /
-  //           quizAttemptsResult[quizAttemptsResult.length - 1].totalQuestions,
-  //       );
-  //     quizAttemptsResult.length > 1 &&
-  //       mergequizAttemptsResult &&
-  //       setNextAttempt(
-  //         (mergequizAttemptsResult.score * 100) /
-  //           mergequizAttemptsResult.totalQuestions,
-  //       );
-  //   }
-  // }, [allQuizAttemptsResults, documentId]);
-  // useEffect(() => {
-  //   if (quizAttemptsResult.length > 1) {
-  //     const combined = getCombinedAnswers();
-  //     console.log("Combined Answers Computed:", combined);
-  //     setCombinedAnswers(combined);
-  //   }
-  // }, [quizAttemptsResult]);
-  // useEffect(() => {
-  //   if (quizAttemptsResult.length > 1 && combinedAnswers) {
-  //     setMergeQuizAttemptsResults({
-  //       answers: combinedAnswers,
-  //       quize: { documentId },
-  //       incorrectAnswers:
-  //         quizAttemptsResult[quizAttemptsResult.length - 1].incorrectAnswers,
-  //       score:
-  //         quizAttemptsResult[quizAttemptsResult.length - 1].score +
-  //           quizAttemptsResult[quizAttemptsResult.length - 2].score || 0,
-  //       totalQuestions:
-  //         quizAttemptsResult[quizAttemptsResult.length - 1].totalQuestions,
-  //     });
-  //   }
-  // }, [quizAttemptsResult, combinedAnswers]);
 
-  // useEffect(() => {
-  //   const saveQuizAttempt = async () => {
-  //     if (mergequizAttemptsResult) {
-  //       try {
-  //         const quizAttempt = {
-  //           data: {
-  //             users_permissions_user: userId,
-  //             quize: documentId,
-  //             answers: JSON.stringify(combinedAnswers),
-  //             score: mergequizAttemptsResult.score,
-  //             totalQuestions: mergequizAttemptsResult.totalQuestions,
-  //             incorrectAnswers: mergequizAttemptsResult.incorrectAnswers,
-  //           },
-  //         };
-  //         console.log("quizAttempt", quizAttempt);
-  //         const response = await axios.post(
-  //           `${API_URL}/quize-attempts`,
-  //           quizAttempt,
-  //         );
-  //         if (response.status === 200) {
-  //           console.log("Wynik quizu zapisany:", response.data);
-  //         } else {
-  //           console.error(
-  //             "Failed to save quiz result, status:",
-  //             response.status,
-  //           );
-  //           console.error("Error response:", response.data);
-  //         }
-  //       } catch (error) {
-  //         if (axios.isAxiosError(error)) {
-  //           console.error("Error response data:", error.response?.data);
-  //           console.error("Error response status:", error.response?.status);
-  //         } else if (error instanceof Error) {
-  //           console.error("Error message:", error.message);
-  //         } else {
-  //           console.error("Unexpected error:", error);
-  //         }
-  //       }
-  //     }
-  //   };
-  //   saveQuizAttempt();
-  // }, [mergequizAttemptsResult]);
   return (
     <>
       <SafeAreaView className="flex-1  bg-primary ">
@@ -199,7 +74,10 @@ function QuizeResultPage({ route }: { route: any }) {
             <AntDesign name="left" size={24} color="ghostwhite" />
           </TouchableOpacity>
           <View className=" flex-1 items-center pr-4">
-            <H2Text textCenter={true} text={name} />
+            <H2Text
+              textCenter={true}
+              text={quizAttemptResult?.quize.name || "Quiz Name"}
+            />
           </View>
         </View>
         <View className="flex-1 w-full relative z-30">
@@ -208,7 +86,7 @@ function QuizeResultPage({ route }: { route: any }) {
           </View>
           <View className="mt-44">
             <ProgressCircular
-              name={name}
+              name={quizAttemptResult?.quize.name || "Quize"}
               percentage={percentage}
               radius={35}
               strokeWidth={14}

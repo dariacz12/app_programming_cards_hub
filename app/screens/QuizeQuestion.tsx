@@ -50,7 +50,6 @@ type QuizAttemptsResults = {
 
 const QuizeQuestion = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
-  console.log("documentId", documentId);
   const [chosenAnswersArray, setChosenAnswerArray] = useState<any>([]);
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
@@ -64,22 +63,15 @@ const QuizeQuestion = ({ route }: { route: any }) => {
   const [filteredQuestionsList, setFilteredQuestionsList] =
     useState<QuestionData[]>();
   const [isFirstAttempt, setIsFirstAttempt] = useState(true);
-  const activeQuestionsList = isFirstAttempt
-    ? questionsList
-    : filteredQuestionsList;
+  const activeQuestionsList: QuestionData[] = isFirstAttempt
+    ? questionsList || []
+    : filteredQuestionsList || [];
   const [userId, setUserId] = useState<any>();
   let currentQuestionId = activeQuestionsList?.[currentQuestion]?.documentId;
-
-  console.log("questionsList:", questionsList);
-  console.log("filteredQuestionsList:", filteredQuestionsList);
-  console.log("activeQuestionsList:", activeQuestionsList);
-
   const [lastQuizAttemptsResultAnswers, setLastQuizAttemptsResultsAnswers] =
     useState<AnswerAttemt[]>([]);
   const [lastQuizAttemptsResult, setLastQuizAttemptsResult] =
     useState<QuizAttempt>();
-  console.log("lastattempt", lastQuizAttemptsResult);
-  console.log("lastanswers", lastQuizAttemptsResultAnswers);
 
   useEffect(() => {
     if (lastQuizAttemptsResultAnswers.length > 0) {
@@ -88,25 +80,20 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       setIsFirstAttempt(true);
     }
   }, [lastQuizAttemptsResultAnswers]);
+
   useEffect(() => {
     const getQuizData = async () => {
-      console.log("Before API request...");
       try {
         const { data } = await axios.get(
-          `${API_URL}/quize-attempts?populate[quize]=*`,
-          // `${API_URL}/quize-attempts?populate[quize]=*&filters[quize][documentId][$eq]=${documentId}`
+          `${API_URL}/quize-attempts?filters[quize][documentId][$eq]=${documentId}`,
         );
         const allAttemtsResults = data.data;
-        console.log("allAttemtsResults333333333", allAttemtsResults);
         if (allAttemtsResults?.results.length > 0) {
-          const quizAttemptsResult = allAttemtsResults.results.filter(
-            (attempt: QuizAttempt) => attempt.quize.documentId === documentId,
-          );
           setLastQuizAttemptsResultsAnswers(
-            quizAttemptsResult[quizAttemptsResult.length - 1].answers,
+            allAttemtsResults[allAttemtsResults.length - 1].answers,
           );
           setLastQuizAttemptsResult(
-            quizAttemptsResult[quizAttemptsResult.length - 1],
+            allAttemtsResults[allAttemtsResults.length - 1],
           );
         } else {
           setLastQuizAttemptsResultsAnswers([]);
@@ -115,7 +102,6 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         return { error: true, msg: (e as any).response.data.msg };
       }
     };
-
     getQuizData();
   }, [documentId]);
 
@@ -123,8 +109,6 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     const getUserData = async () => {
       try {
         const user = await axios.get(`${API_URL}/users/me`);
-        console.log(771, user.data);
-
         setUserId(user.data.documentId);
       } catch (e) {
         return { error: true, msg: (e as any).response.data.msg };
@@ -189,21 +173,17 @@ const QuizeQuestion = ({ route }: { route: any }) => {
 
   useEffect(() => {
     if (chosenAnswer) {
-      const isShowExplanation = activeQuestionsList[
-        currentQuestion
-      ].quiz_answer_options.find(
-        (answer: any) => answer.answerLetter === chosenAnswer,
-      );
+      const isShowExplanation =
+        activeQuestionsList &&
+        activeQuestionsList[currentQuestion].quiz_answer_options.find(
+          (answer: any) => answer.answerLetter === chosenAnswer,
+        );
       setShowExplanation(isShowExplanation?.isCorrect ? false : true);
     }
   }, [chosenAnswer]);
 
   const goCurrentQuesttion = () => {
     currentQuestion > 0 && changeCurrentQuestion(currentQuestion - 1);
-    setTimeout(() => {
-      //  setChosenAnswer(chosenAnswersArray[currentQuestion - 1]);
-      //  setIsButtonDisabled(true)
-    });
   };
 
   const nextQuestion = (chosenAnswer: string) => {
@@ -225,8 +205,6 @@ const QuizeQuestion = ({ route }: { route: any }) => {
   };
 
   const getCombinedAnswers = (answersResultCurrentAttempt: AnswerAttemt[]) => {
-    // const length = quizAttemptsResult.length;
-    // if (length < 2) return [];
     const lastAttemptAnswers =
       lastQuizAttemptsResultAnswers.length > 0
         ? lastQuizAttemptsResultAnswers
@@ -269,8 +247,6 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         return null;
       })
       .filter((answer) => answer !== null) as UserAnswer[];
-
-    console.log("correctAnswers", correctAnswers);
     setCorrectAnswers(correctAnswers);
   }, [documentId, activeQuestionsList]);
 
@@ -299,12 +275,6 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       });
 
       const totalQuestions = questionsList?.length;
-      console.log("totalQuestions", totalQuestions);
-      console.log("score", score);
-      console.log("incorecrt", incorrect);
-
-      console.log("11111111111111", answersResultCurrentAttempt);
-
       let answersString;
       if (
         Array.isArray(lastQuizAttemptsResultAnswers) &&
@@ -315,7 +285,6 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         answersString = JSON.stringify(combinedanswers);
         lastQuizAttemptsResult &&
           (score = score + lastQuizAttemptsResult?.score);
-        // lastQuizAttemptsResult && ( incorrect= incorrect - lastQuizAttemptsResult?.score)
       } else {
         answersString = JSON.stringify(answersResultCurrentAttempt);
         console.log(" answersString", answersString);
@@ -330,8 +299,6 @@ const QuizeQuestion = ({ route }: { route: any }) => {
           incorrectAnswers: incorrect,
         },
       };
-      console.log("quizAttempt", quizAttempt);
-
       const response = await axios.post(
         `${API_URL}/quize-attempts`,
         quizAttempt,
