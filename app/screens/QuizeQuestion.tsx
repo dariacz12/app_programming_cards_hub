@@ -18,11 +18,11 @@ type Answer = {
   answerLetter: string;
   status: boolean;
 };
-type UserAnswer = {
+export type UserAnswer = {
   questionId: string;
   answerId: string;
 };
-type QuestionData = {
+export type QuestionData = {
   documentId: string;
   explanation: string;
   question: string;
@@ -50,6 +50,7 @@ export type QuizAttemptsResults = {
 
 const QuizeQuestion = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
+
   const [chosenAnswersArray, setChosenAnswerArray] = useState<any>([]);
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
@@ -72,15 +73,17 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     useState<AnswerAttemt[]>([]);
   const [lastQuizAttemptsResult, setLastQuizAttemptsResult] =
     useState<QuizAttempt>();
-
-  useEffect(() => {
-    if (lastQuizAttemptsResultAnswers.length > 0) {
+console.log("lastQuizAttemptsResultAnswers.length", lastQuizAttemptsResultAnswers.length)
+  
+useEffect(() => {
+   if (lastQuizAttemptsResultAnswers.length > 0) {
       setIsFirstAttempt(false);
     } else {
       setIsFirstAttempt(true);
     }
   }, [lastQuizAttemptsResultAnswers]);
-
+  
+  
   useEffect(() => {
     const getQuizData = async () => {
       try {

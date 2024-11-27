@@ -20,7 +20,7 @@ type Answer = {
   isCorrect: boolean;
   question: string;
 };
-type QuizAttempt = {
+export type QuizAttempt = {
   answers: Answer[];
   quize: Quize;
   incorrectAnswers: number;
