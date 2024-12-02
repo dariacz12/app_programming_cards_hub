@@ -14,26 +14,19 @@ import axios from "axios";
 import { API_URL } from "../context/AuthContext";
 
 function CardsResultPage({ route }: any) {
-  // const negativeArray = route.params?.negativeArray;
-  // const positiveArray = route.params?.positiveArray;
+  const userId = route.params?.userId;
   const documentId = route.params?.documentId;
   const animationSource = require("../../assets/congratulations.json");
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
   const all = 18; //pobrać z serwera
-  // const numberDone = positiveArray?.length ? positiveArray.length : 0;
-  // const numberInProgress = negativeArray?.length ? negativeArray.length : 0;
-  // const numberToDo = all - numberDone - numberInProgress;
 
-  // const percentage = (numberDone * 100) / all;
   const [cardData, setCardData] = useState<any>();
-  console.log("cardData", cardData);
 
   useEffect(() => {
     const getCardData = async () => {
       try {
         const data = await axios.get(`${API_URL}/cards/${documentId}`);
-        console.log("data1", data);
         setCardData(data.data.data);
       } catch (e) {
         console.log("e", e);

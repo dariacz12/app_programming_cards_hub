@@ -25,11 +25,13 @@ import {
   PanGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
-import { UPLOADS_URL } from "../context/AuthContext";
+import { API_URL, UPLOADS_URL } from "../context/AuthContext";
 import { CardItem } from "../screens/CardsStudyPage";
-
-// var negativeArray: number[] = [];
-// var positiveArray: number[] = [];
+import axios from "axios";
+export type UserAnswer = {
+  questionId: string;
+  isCorrect: boolean;
+};
 
 interface FlipCardsProps {
   documentId: string;
@@ -43,11 +45,10 @@ interface FlipCardsProps {
   currentIndex: number;
   animatedValue: SharedValue<number>;
   setNewData: React.Dispatch<React.SetStateAction<CardItem[]>>;
-  setPositiveCount: React.Dispatch<React.SetStateAction<number>>;
-  setNegativeCount: React.Dispatch<React.SetStateAction<number>>;
   setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
-  positiveCount: number;
-  negativeCount: number;
+  activeQuestionsList: CardItem[];
+  userAnswers: UserAnswer[];
+  setUserAnswers: React.Dispatch<React.SetStateAction<UserAnswer[]>>;
 }
 
 const flippedContentStyles = StyleSheet.create({
@@ -88,26 +89,12 @@ const FlipCard = ({
   animatedValue,
   setCurrentQuestionIndex,
   setNewData,
-  setPositiveCount,
-  setNegativeCount,
-  positiveCount,
-  negativeCount,
+  activeQuestionsList,
+  userAnswers,
+  setUserAnswers,
 }: FlipCardsProps) => {
   const isDirectionX = direction === "x";
   const isFlipped = useSharedValue(false);
-
-  // useEffect(()=>{
-  // console.log('negative:', negativeArray.length);
-  //  setNegativeCount(negativeArray.length)
-  //  console.log('count changed negative:', negativeArray.length);
-  // },[negativeArray.length])
-
-  // useEffect(()=>{
-  //   console.log('positive:', positiveArray.length);
-  //   setPositiveCount(positiveArray.length)
-  //   console.log('count change positive:', positiveArray.length);
-  //  },[positiveArray.length])
-
   const handlePress = () => {
     if (currentIndex === index) {
       isFlipped.value = !isFlipped.value;
@@ -135,68 +122,70 @@ const FlipCard = ({
       ],
     };
   });
-
-  // console.log("swipedNegativeIndexArray1", swipedNegativeIndexArray);
-
   const navigation = useNavigation<any>();
   const isPressed = useSharedValue(false);
   const offset = useSharedValue({ x: 0, y: 0 });
   const { width } = useWindowDimensions();
 
-  // useEffect(() => {
-  //   console.log("swipedNegativeIndexArray updated:", swipedNegativeIndexArray);
-  // }, [swipedNegativeIndexArray]);
+  const updateUserAnswers = (isCorrect: boolean, userAnswers: UserAnswer[]) => {
+    console.log("Update called with:", isCorrect);
 
-  // const zrobWszystko = (currentIndex: number, e: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => {
-  //   setCurrentQuestionIndex(currentIndex + 1);
-  //   console.log("zrobWszystko called with currentIndex:", currentIndex, "e:", e);
-  //   if (e.translationX < 0) {
-  //     console.log("Swiped left:", currentIndex);
-  //     setSwipedNegativeIndexArray(prev => {
-  //       const newArray = [...prev, currentIndex];
-  //       console.log("Updated swipedNegativeIndexArray (inside):", newArray);
-  //       return newArray;
-  //     });
-  //   } else if (e.translationX > 0) {
-  //     console.log("Swiped right:", currentIndex);
-  //     setSwipedPositiveIndexArray(prev => [...prev, currentIndex]);
-  //   }
-  // };
-  // const zrobWszystko = (currentIndex: number, translationX: number) => {
-  //   setCurrentQuestionIndex(currentIndex + 1);
+    const updatedAnswers = [
+      // ...prev.filter((ans) => ans.questionId !== currentCard.documentId),
+      ...userAnswers,
+      // Remove existing answer for the same question
+      { questionId: currentCard.documentId, isCorrect }, // Add the new answer
+    ];
 
-  //   console.log("Swiping. Current Index:", currentIndex, "TranslationX:", translationX);
+    console.log("joined", updatedAnswers);
 
-  //   if (translationX < 0) {
-  //     setSwipedNegativeIndexArray(prev => {
-  //       const newArray = [...prev, currentIndex];
-  //       console.log("Updated swipedNegativeIndexArray:", newArray);
-  //       return newArray;
-  //     });
-  //   } else if (translationX > 0) {
-  //     setSwipedPositiveIndexArray(prev => {
-  //       const newArray = [...prev, currentIndex];
-  //       console.log("Updated swipedPositiveIndexArray:", newArray);
-  //       return newArray;
-  //     });
-  //   }
-  // }
-  const swipeLogic = (currentIndex: number, translationX: number) => {
+    setUserAnswers(updatedAnswers);
+
+    return updatedAnswers;
+  };
+  console.log("userAnswers", userAnswers);
+
+  console.log("currentIndex", currentIndex);
+
+  const swipeLogic = (
+    currentIndex: number,
+    translationX: number,
+    userAnswers: UserAnswer[],
+  ) => {
+    console.log("test", userAnswers);
     setCurrentQuestionIndex(currentIndex + 1);
 
-    if (translationX < 0) {
-      setNegativeCount(negativeCount + 1);
-    } else if (translationX > 0) {
-      setPositiveCount(positiveCount + 1);
-    }
+    const isCorrect = translationX > 0;
+    const result = updateUserAnswers(isCorrect, userAnswers);
+
+    console.log("Update called with:", isCorrect);
+
+    // setUserAnswers((prev) => {
+    //   const updatedAnswers = [
+    //     ...prev, // Remove existing answer for the same question
+    //     { questionId: currentCard.documentId, isCorrect }, // Add the new answer
+    //   ];
+
+    //   console.log("Previous state:", prev);
+    //   console.log("New state:", updatedAnswers);
+    //   return updatedAnswers;
+    // });
+    // ///
+    // setUserAnswers([{questionId: "123", isCorrect: false}])
+
     if (currentIndex === dataLength - 1) {
+      userAnswers && saveCardsResult(result);
       navigation.navigate("CardsResultPage", {
-        negativeCount,
-        positiveCount,
+        userId: userId,
         documentId,
       });
     }
   };
+
+  useEffect(() => {
+    console.log("Current userAnswers state:", userAnswers);
+  }, [userAnswers]);
+
   const animatedStyles = useAnimatedStyle(() => {
     return {
       transform: [
@@ -213,7 +202,6 @@ const FlipCard = ({
   const directionX = useSharedValue(0);
   const pan = Gesture.Pan()
     .onUpdate((e) => {
-      // console.log(e.translationX);
       const isSwipeRight = e.translationX > 0;
       directionX.value = isSwipeRight ? 1 : -1;
       if (currentIndex === index) {
@@ -223,7 +211,6 @@ const FlipCard = ({
           [0, width],
           [index, index + 1],
         );
-        // console.log(animatedValue.value);
       }
     })
     .onEnd((e) => {
@@ -233,31 +220,7 @@ const FlipCard = ({
             1.5 * width * directionX.value,
             {},
             () => {
-              runOnJS(swipeLogic)(currentIndex, e.translationX);
-              // runOnJS(zrobWszystko)(currentIndex, e.translationX);
-              // runOnJS(zrobWszystko)(currentIndex, e)
-              // runOnJS((swipedNegativeIndexArray: number[], swipedPositiveIndexArray: number[]) => {
-
-              //   // runOnJS(setSwipedNegativeIndexArray)([currentIndex]);
-
-              // })(swipedNegativeIndexArray, swipedPositiveIndexArray)
-              // runOnJS(setCurrentQuestionIndex)(currentIndex + 1);
-              //   if(e.translationX<0){
-              //     console.log("zopka 1")
-              //     runOnJS(setSwipedNegativeIndexArray)([currentIndex]);
-
-              //   // runOnJS(() => {
-
-              //   //   setSwipedNegativeIndexArray([...swipedNegativeIndexArray,currentIndex])
-              //   // }
-              //   // )
-              // }
-              //     if(e.translationX>0){
-              //     runOnJS(() => {
-
-              //     setSwipedPositiveIndexArray([...swipedPositiveIndexArray,currentIndex])
-
-              // }) }
+              runOnJS(swipeLogic)(currentIndex, e.translationX, userAnswers);
             },
           );
           animatedValue.value = withTiming(currentIndex + 1);
@@ -306,6 +269,74 @@ const FlipCard = ({
       opacity: index < maxVisibleItem + currentIndex ? 1 : opacity,
     };
   });
+
+  const [userId, setUserId] = useState<any>();
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const user = await axios.get(`${API_URL}/users/me`);
+        setUserId(user.data.documentId);
+      } catch (e) {
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getUserData();
+  }, []);
+
+  const saveCardsResult = async (currentUserAnswers: UserAnswer[]) => {
+    try {
+      let score = 0;
+      let incorrect = 0;
+      const answersResultCurrentAttempt = currentUserAnswers.map(
+        (userAnswer) => {
+          const isCorrect = userAnswer.isCorrect;
+          if (isCorrect) {
+            score++;
+          } else {
+            incorrect++;
+          }
+          return {
+            question: userAnswer.questionId,
+            isCorrect,
+          };
+        },
+      );
+
+      const totalQuestions = activeQuestionsList?.length;
+      const answersString = JSON.stringify(answersResultCurrentAttempt);
+      console.log(" answersString", answersString);
+
+      const cardsAttempt = {
+        data: {
+          card: documentId,
+          answers: answersString,
+          score,
+          totalQuestions,
+          incorrectAnswers: incorrect,
+        },
+      };
+      console.log("111cardsAttempt", cardsAttempt);
+      const response = await axios.post(
+        `${API_URL}/cards-attempts`,
+        cardsAttempt,
+      );
+      if (response.status === 200) {
+        console.log("Wynik cardAttempt zapisany:", response.data);
+      } else {
+        console.error("Failed to save  result, status:", response.status);
+        console.error("Error response:", response.data);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error response data:", error.response?.data);
+        console.error("Error response status:", error.response?.status);
+      } else if (error instanceof Error) {
+        console.error("Error message:", error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
+  };
 
   return (
     <GestureDetector gesture={pan}>

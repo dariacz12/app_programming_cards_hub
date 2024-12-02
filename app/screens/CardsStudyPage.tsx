@@ -25,24 +25,41 @@ import {
 } from "react-native-gesture-handler";
 import { API_URL } from "../context/AuthContext";
 import axios from "axios";
-
+type AnswerAttemt = {
+  isCorrect: boolean;
+  question: string;
+};
+type Card = {
+  documentId: string;
+};
+type CardsAttempt = {
+  answers: AnswerAttemt[];
+  card: Card;
+  incorrectAnswers: number;
+  score: number;
+  totalQuestions: number;
+};
 export interface CardItem {
   question: string;
   answerImage: { url: string }[];
+  documentId: string;
 }
+
+export type UserAnswer = {
+  questionId: string;
+  isCorrect: boolean;
+};
+
 const CardsStudyPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
   const navigation = useNavigation<any>();
-  const numberWrong = 4;
-  const numberRight = 15;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<any>(0);
   const [negativeCount, setNegativeCount] = useState<number>(0);
   const [positiveCount, setPositiveCount] = useState<number>(0);
-
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const animatedValue = useSharedValue(0);
 
   const [cardData, setCardData] = useState<CardItem[]>([]);
-  cardData && console.log("cardData Cards", cardData[0]);
 
   useEffect(() => {
     const getCardData = async () => {
@@ -50,9 +67,6 @@ const CardsStudyPage = ({ route }: { route: any }) => {
         const data = await axios.get(
           `${API_URL}/cards-items?populate[answerImage]=*&populate[cards_categories]=*&populate[cards]=*`,
         );
-        console.log("data1", data);
-
-        // setCardData(data.data.data)
         setCardData(
           data.data.data.filter(
             (item: any) => item.cards[0].documentId === documentId,
@@ -66,14 +80,70 @@ const CardsStudyPage = ({ route }: { route: any }) => {
     getCardData();
   }, [documentId]);
 
-  const [newData, setNewData] = useState(cardData);
+  const [isFirstAttempt, setIsFirstAttempt] = useState(true);
+  const [filteredQuestionsList, setFilteredQuestionsList] =
+    useState<CardItem[]>();
+  const activeQuestionsList: CardItem[] = isFirstAttempt
+    ? cardData || []
+    : filteredQuestionsList || [];
+  const [lastCardsAttemptsResultAnswers, setLastCardsAttemptsResultsAnswers] =
+    useState<AnswerAttemt[]>([]);
+  const [lastCardsAttemptsResult, setLastCardsAttemptsResult] =
+    useState<CardsAttempt>();
+  console.log("lastCardsAttemptsResultAnswers", lastCardsAttemptsResultAnswers);
+  console.log("lastCardsAttemptsResult", lastCardsAttemptsResult);
+  console.log("isFirstAttempt", isFirstAttempt);
+
+  useEffect(() => {
+    if (lastCardsAttemptsResultAnswers.length > 0) {
+      setIsFirstAttempt(false);
+    } else {
+      setIsFirstAttempt(true);
+    }
+  }, [lastCardsAttemptsResultAnswers]);
+
+  const [newData, setNewData] = useState(activeQuestionsList);
   const MAX = 3;
   useEffect(() => {
-    setNewData(cardData);
-  }, [cardData]);
+    setNewData(activeQuestionsList);
+  }, [activeQuestionsList]);
+
+  useEffect(() => {
+    const getQuizData = async () => {
+      try {
+        const { data } = await axios.get(
+          `${API_URL}/cards-attempts?filters[card][documentId][$eq]=${documentId}`,
+        );
+        const allAttemtsResults = data.data;
+        if (allAttemtsResults?.length > 0) {
+          setLastCardsAttemptsResultsAnswers(
+            allAttemtsResults[allAttemtsResults.length - 1].answers,
+          );
+          setLastCardsAttemptsResult(
+            allAttemtsResults[allAttemtsResults.length - 1],
+          );
+        } else {
+          setLastCardsAttemptsResultsAnswers([]);
+        }
+      } catch (e) {
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getQuizData();
+  }, [documentId]);
+
+  useEffect(() => {
+    const incorrectQuestionIds = lastCardsAttemptsResultAnswers
+      .filter((attempt) => !attempt.isCorrect)
+      .map((attempt) => attempt.question);
+    const filteredQuestionsList = cardData.filter((question) =>
+      incorrectQuestionIds.includes(question.documentId),
+    );
+    setFilteredQuestionsList(filteredQuestionsList);
+  }, [cardData, lastCardsAttemptsResultAnswers]);
   return (
     <>
-      {cardData && (
+      {activeQuestionsList && (
         <SafeAreaView className="flex-1  bg-primary ">
           <View>
             <View className="flex mt-6 mb-7  mx-10 flex-row ">
@@ -88,7 +158,7 @@ const CardsStudyPage = ({ route }: { route: any }) => {
             </View>
             <ProgressBar
               completedQuestions={currentQuestionIndex + 1}
-              allQuestions={cardData.length}
+              allQuestions={activeQuestionsList.length}
             />
             <View className="flex mt-1 mb-16 flex-row justify-between relative">
               <View className="absolute right-[325] mr-2 w-20 h-12 border-2 border-redError rounded-full flex items-end pr-5 justify-center">
@@ -112,7 +182,7 @@ const CardsStudyPage = ({ route }: { route: any }) => {
                       return (
                         <View
                           key={index}
-                          style={{ zIndex: cardData.length - index }}
+                          style={{ zIndex: activeQuestionsList.length - index }}
                         >
                           <FlipCard
                             documentId={documentId}
@@ -120,16 +190,19 @@ const CardsStudyPage = ({ route }: { route: any }) => {
                             currentCard={item}
                             index={index}
                             key={index}
-                            dataLength={cardData.length}
+                            dataLength={activeQuestionsList.length}
                             maxVisibleItem={MAX}
                             currentIndex={currentQuestionIndex}
                             animatedValue={animatedValue}
                             setCurrentQuestionIndex={setCurrentQuestionIndex}
                             setNewData={setNewData}
-                            setNegativeCount={setNegativeCount}
-                            setPositiveCount={setPositiveCount}
-                            negativeCount={negativeCount}
-                            positiveCount={positiveCount}
+                            activeQuestionsList={activeQuestionsList}
+                            userAnswers={userAnswers}
+                            setUserAnswers={setUserAnswers}
+                            // setNegativeCount={setNegativeCount}
+                            // setPositiveCount={setPositiveCount}
+                            // negativeCount={negativeCount}
+                            // positiveCount={positiveCount}
                           />
                         </View>
                       );

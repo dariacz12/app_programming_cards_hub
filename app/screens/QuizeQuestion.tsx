@@ -79,9 +79,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     "lastQuizAttemptsResultAnswers.length",
     lastQuizAttemptsResultAnswers.length,
   );
-  console.log("filtredQuestionList", filteredQuestionsList);
-  console.log("isFirstAttempt", isFirstAttempt);
-  console.log("activeQuestionsList", activeQuestionsList);
+
   useEffect(() => {
     if (lastQuizAttemptsResultAnswers.length > 0) {
       setIsFirstAttempt(false);
@@ -300,7 +298,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       }
       const quizAttempt = {
         data: {
-          users_permissions_user: userId,
+          // users_permissions_user: userId,
           quize: documentId,
           answers: answersString,
           score,
