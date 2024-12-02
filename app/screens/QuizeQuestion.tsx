@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import H2Text from "../components/H2Text";
 import QuizeAnswerElement from "../components/QuizeComponents/QuizeAnswerElement";
@@ -51,6 +51,8 @@ export type QuizAttemptsResults = {
 const QuizeQuestion = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
 
+  useFocusEffect(() => {});
+
   const [chosenAnswersArray, setChosenAnswerArray] = useState<any>([]);
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
@@ -73,17 +75,21 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     useState<AnswerAttemt[]>([]);
   const [lastQuizAttemptsResult, setLastQuizAttemptsResult] =
     useState<QuizAttempt>();
-console.log("lastQuizAttemptsResultAnswers.length", lastQuizAttemptsResultAnswers.length)
-  
-useEffect(() => {
-   if (lastQuizAttemptsResultAnswers.length > 0) {
+  console.log(
+    "lastQuizAttemptsResultAnswers.length",
+    lastQuizAttemptsResultAnswers.length,
+  );
+  console.log("filtredQuestionList", filteredQuestionsList);
+  console.log("isFirstAttempt", isFirstAttempt);
+  console.log("activeQuestionsList", activeQuestionsList);
+  useEffect(() => {
+    if (lastQuizAttemptsResultAnswers.length > 0) {
       setIsFirstAttempt(false);
     } else {
       setIsFirstAttempt(true);
     }
   }, [lastQuizAttemptsResultAnswers]);
-  
-  
+
   useEffect(() => {
     const getQuizData = async () => {
       try {
@@ -91,7 +97,7 @@ useEffect(() => {
           `${API_URL}/quize-attempts?filters[quize][documentId][$eq]=${documentId}`,
         );
         const allAttemtsResults = data.data;
-        if (allAttemtsResults?.results.length > 0) {
+        if (allAttemtsResults?.length > 0) {
           setLastQuizAttemptsResultsAnswers(
             allAttemtsResults[allAttemtsResults.length - 1].answers,
           );

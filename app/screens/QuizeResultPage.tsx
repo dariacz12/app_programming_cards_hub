@@ -46,7 +46,7 @@ function QuizeResultPage({ route }: { route: any }) {
         const { data } = await axios.get(
           `${API_URL}/quize-attempts?populate[quize]=*`,
         );
-        const quizAttemptsResult = data.data.results.filter(
+        const quizAttemptsResult = data.data.filter(
           (attempt: QuizAttempt) => attempt.quize.documentId === documentId,
         );
         setQuizAttemptResult(quizAttemptsResult[quizAttemptsResult.length - 1]);

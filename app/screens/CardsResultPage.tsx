@@ -14,20 +14,18 @@ import axios from "axios";
 import { API_URL } from "../context/AuthContext";
 
 function CardsResultPage({ route }: any) {
-  const negativeArray = route.params?.negativeArray;
-  const positiveArray = route.params?.positiveArray;
+  // const negativeArray = route.params?.negativeArray;
+  // const positiveArray = route.params?.positiveArray;
   const documentId = route.params?.documentId;
-  console.log("route.params", route.params);
-  console.log("negativeArray", negativeArray);
   const animationSource = require("../../assets/congratulations.json");
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
   const all = 18; //pobrać z serwera
-  const numberDone = positiveArray?.length ? positiveArray.length : 0;
-  const numberInProgress = negativeArray?.length ? negativeArray.length : 0;
-  const numberToDo = all - numberDone - numberInProgress;
+  // const numberDone = positiveArray?.length ? positiveArray.length : 0;
+  // const numberInProgress = negativeArray?.length ? negativeArray.length : 0;
+  // const numberToDo = all - numberDone - numberInProgress;
 
-  const percentage = (numberDone * 100) / all;
+  // const percentage = (numberDone * 100) / all;
   const [cardData, setCardData] = useState<any>();
   console.log("cardData", cardData);
 
@@ -67,7 +65,7 @@ function CardsResultPage({ route }: any) {
             <View className="mt-44 ">
               <ProgressCircular
                 name={cardData.name}
-                percentage={percentage}
+                percentage={90}
                 radius={35}
                 strokeWidth={14}
                 duration={500}
@@ -89,9 +87,7 @@ function CardsResultPage({ route }: any) {
                     <View className="flex flex-row justify-between items-center">
                       <Text className="font-bold text-greanColor">Umiem</Text>
                       <View className="mr-2 w-9 h-8 border-2 border-greanColor rounded-full flex items-center justify-center">
-                        <Text className="font-bold text-white">
-                          {numberDone}
-                        </Text>
+                        <Text className="font-bold text-white">{90}</Text>
                       </View>
                     </View>
                     <View className="h-2"></View>
@@ -100,9 +96,7 @@ function CardsResultPage({ route }: any) {
                         Wciąż ucze się
                       </Text>
                       <View className="mr-2 w-9 h-8 border-2 border-redError rounded-full flex items-center justify-center">
-                        <Text className="font-bold text-white">
-                          {numberInProgress}
-                        </Text>
+                        <Text className="font-bold text-white">{80}</Text>
                       </View>
                     </View>
                     <View className="h-2"></View>
@@ -111,9 +105,7 @@ function CardsResultPage({ route }: any) {
                         Liczba pozostałych pojęć
                       </Text>
                       <View className="mr-2 w-9 h-8 border-2 border-grey rounded-full flex items-center justify-center">
-                        <Text className="font-bold text-white">
-                          {numberToDo}
-                        </Text>
+                        <Text className="font-bold text-white">{60}</Text>
                       </View>
                     </View>
                   </View>

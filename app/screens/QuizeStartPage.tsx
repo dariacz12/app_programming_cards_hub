@@ -67,7 +67,7 @@ const QuizeStartPage = ({ route }: { route: any }) => {
   //     }
   //       return null;
   //     }) .filter((answer) => answer !== null) as UserAnswer[];
-   
+
   //     let answersString = JSON.stringify(answersAllFalse);
   //   const quizAttempt = {
   //     data: {
@@ -79,7 +79,7 @@ const QuizeStartPage = ({ route }: { route: any }) => {
   //       incorrectAnswers: questionsList?.length,
   //     },
   //   };
-    
+
   //   const response = await axios.post(
   //     `${API_URL}/quize-attempts`,
   //     quizAttempt,
@@ -104,7 +104,7 @@ const QuizeStartPage = ({ route }: { route: any }) => {
   //     documentId: documentId,
   //     reset: true,
   //   })
-  
+
   // }
 
   useEffect(() => {
@@ -123,29 +123,31 @@ const QuizeStartPage = ({ route }: { route: any }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-    const getQuizData = async () => {
-      try {
-        const { data } = await axios.get(
-          `${API_URL}/quize-attempts?populate[quize]=*`,
-        );
-        const quizAttemptsResult = data.data.results.filter(
-          (attempt: QuizAttempt) => attempt.quize.documentId === documentId,
-        );
-        setQuizAttemptResult(quizAttemptsResult[quizAttemptsResult.length - 1]);
-        setRefreshAnimation(true);
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
+      const getQuizData = async () => {
+        try {
+          const { data } = await axios.get(
+            `${API_URL}/quize-attempts?populate[quize]=*`,
+          );
+          const quizAttemptsResult = data.data.filter(
+            (attempt: QuizAttempt) => attempt.quize.documentId === documentId,
+          );
+          setQuizAttemptResult(
+            quizAttemptsResult[quizAttemptsResult.length - 1],
+          );
+          setRefreshAnimation(true);
+        } catch (e) {
+          return { error: true, msg: (e as any).response.data.msg };
+        }
+      };
 
-    getQuizData();
-  });
-  return unsubscribe; 
+      getQuizData();
+    });
+    return unsubscribe;
   }, [navigation, documentId]);
 
   useEffect(() => {
     if (refreshAnimation) {
-      setRefreshAnimation(false); 
+      setRefreshAnimation(false);
     }
   }, [refreshAnimation]);
   useEffect(() => {
@@ -214,7 +216,7 @@ const QuizeStartPage = ({ route }: { route: any }) => {
               </Text>
             </InfoCard>
             <View className="flex-1 pt-1 justify-center items-center w-full">
-             {/* {percentage===100 ? <ActiveButton
+              {/* {percentage===100 ? <ActiveButton
               onPress={() =>resetQuize()}
               text={"Resetuj"}
           
@@ -231,7 +233,6 @@ const QuizeStartPage = ({ route }: { route: any }) => {
                 onPress={() =>
                   navigation.navigate("QuizeQuestion", {
                     documentId: documentId,
-                   
                   })
                 }
                 text={"Rozpocznij"}
