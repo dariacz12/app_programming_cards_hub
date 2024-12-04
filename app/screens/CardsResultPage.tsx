@@ -12,6 +12,7 @@ import InfoCard from "../components/InfoCard";
 import ProgressCircular from "../components/ProgressCircular";
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
+import { CardsAttempt } from "./CardsStudyPage";
 
 function CardsResultPage({ route }: any) {
   const userId = route.params?.userId;
@@ -20,8 +21,26 @@ function CardsResultPage({ route }: any) {
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
   const all = 18; //pobrać z serwera
-
+  const [lastCardsAttemptsResult, setLastCardsAttemptsResult] =
+    useState<CardsAttempt>();
   const [cardData, setCardData] = useState<any>();
+  const [percentage, setPercentage] = useState<number>(0);
+  const [remainingQuestions, setRemainingQuestions] = useState<number>(0);
+  console.log("lastCardsAttemptsResult", lastCardsAttemptsResult);
+
+  useEffect(() => {
+    lastCardsAttemptsResult &&
+      setPercentage(
+        (lastCardsAttemptsResult.score * 100) /
+          lastCardsAttemptsResult.totalQuestions,
+      );
+    lastCardsAttemptsResult &&
+      setRemainingQuestions(
+        lastCardsAttemptsResult.totalQuestions -
+          lastCardsAttemptsResult.score -
+          lastCardsAttemptsResult.incorrectAnswers,
+      );
+  }, [lastCardsAttemptsResult, documentId]);
 
   useEffect(() => {
     const getCardData = async () => {
@@ -34,6 +53,25 @@ function CardsResultPage({ route }: any) {
       }
     };
     getCardData();
+  }, [documentId]);
+
+  useEffect(() => {
+    const getQuizData = async () => {
+      try {
+        const { data } = await axios.get(
+          `${API_URL}/cards-attempts?filters[card][documentId][$eq]=${documentId}`,
+        );
+        const allAttemtsResults = data.data;
+        if (allAttemtsResults?.length > 0) {
+          setLastCardsAttemptsResult(
+            allAttemtsResults[allAttemtsResults.length - 1],
+          );
+        }
+      } catch (e) {
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getQuizData();
   }, [documentId]);
   return (
     <>
@@ -58,7 +96,7 @@ function CardsResultPage({ route }: any) {
             <View className="mt-44 ">
               <ProgressCircular
                 name={cardData.name}
-                percentage={90}
+                percentage={percentage}
                 radius={35}
                 strokeWidth={14}
                 duration={500}
@@ -80,7 +118,9 @@ function CardsResultPage({ route }: any) {
                     <View className="flex flex-row justify-between items-center">
                       <Text className="font-bold text-greanColor">Umiem</Text>
                       <View className="mr-2 w-9 h-8 border-2 border-greanColor rounded-full flex items-center justify-center">
-                        <Text className="font-bold text-white">{90}</Text>
+                        <Text className="font-bold text-white">
+                          {lastCardsAttemptsResult?.score}
+                        </Text>
                       </View>
                     </View>
                     <View className="h-2"></View>
@@ -89,7 +129,9 @@ function CardsResultPage({ route }: any) {
                         Wciąż ucze się
                       </Text>
                       <View className="mr-2 w-9 h-8 border-2 border-redError rounded-full flex items-center justify-center">
-                        <Text className="font-bold text-white">{80}</Text>
+                        <Text className="font-bold text-white">
+                          {lastCardsAttemptsResult?.incorrectAnswers}
+                        </Text>
                       </View>
                     </View>
                     <View className="h-2"></View>
@@ -98,7 +140,9 @@ function CardsResultPage({ route }: any) {
                         Liczba pozostałych pojęć
                       </Text>
                       <View className="mr-2 w-9 h-8 border-2 border-grey rounded-full flex items-center justify-center">
-                        <Text className="font-bold text-white">{60}</Text>
+                        <Text className="font-bold text-white">
+                          {remainingQuestions}
+                        </Text>
                       </View>
                     </View>
                   </View>

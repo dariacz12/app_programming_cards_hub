@@ -32,7 +32,7 @@ export type QuestionData = {
 type Quize = {
   documentId: string;
 };
-type AnswerAttemt = {
+export type AnswerAttemt = {
   isCorrect: boolean;
   question: string;
 };
@@ -50,7 +50,8 @@ export type QuizAttemptsResults = {
 
 const QuizeQuestion = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
-
+  const { reset } = route?.params;
+  console.log("reset", reset);
   useFocusEffect(() => {});
 
   const [chosenAnswersArray, setChosenAnswerArray] = useState<any>([]);
@@ -66,27 +67,45 @@ const QuizeQuestion = ({ route }: { route: any }) => {
   const [filteredQuestionsList, setFilteredQuestionsList] =
     useState<QuestionData[]>();
   const [isFirstAttempt, setIsFirstAttempt] = useState(true);
-  const activeQuestionsList: QuestionData[] = isFirstAttempt
-    ? questionsList || []
-    : filteredQuestionsList || [];
-  const [userId, setUserId] = useState<any>();
-  let currentQuestionId = activeQuestionsList?.[currentQuestion]?.documentId;
   const [lastQuizAttemptsResultAnswers, setLastQuizAttemptsResultsAnswers] =
     useState<AnswerAttemt[]>([]);
   const [lastQuizAttemptsResult, setLastQuizAttemptsResult] =
     useState<QuizAttempt>();
-  console.log(
-    "lastQuizAttemptsResultAnswers.length",
-    lastQuizAttemptsResultAnswers.length,
-  );
 
+  const activeQuestionsList: QuestionData[] = isFirstAttempt
+    ? questionsList || []
+    : filteredQuestionsList || [];
+
+  const [userId, setUserId] = useState<any>();
+  let currentQuestionId = activeQuestionsList?.[currentQuestion]?.documentId;
+
+  console.log("lastQuizAttemptsResult", lastQuizAttemptsResult);
+  console.log("isFirstAttempt", isFirstAttempt);
+  console.log("activeQuestionsList", activeQuestionsList);
+  // useEffect(() => {
+  //   if (lastQuizAttemptsResultAnswers.length > 0) {
+  //     setIsFirstAttempt(false);
+  //   }
+  //    else {
+  //     setIsFirstAttempt(true);
+  //   }
+  // }, [lastQuizAttemptsResultAnswers, reset]);
+  // useEffect(() => {
+  //   if (reset) {
+  //     setIsFirstAttempt(true);
+  //   } else {
+  //     setIsFirstAttempt(lastQuizAttemptsResultAnswers.length === 0);
+  //   }
+  // }, [lastQuizAttemptsResultAnswers, reset]);
   useEffect(() => {
-    if (lastQuizAttemptsResultAnswers.length > 0) {
+    if (reset) {
+      setIsFirstAttempt(true);
+    } else if (lastQuizAttemptsResultAnswers.length > 0) {
       setIsFirstAttempt(false);
     } else {
       setIsFirstAttempt(true);
     }
-  }, [lastQuizAttemptsResultAnswers]);
+  }, [lastQuizAttemptsResultAnswers, reset]);
 
   useEffect(() => {
     const getQuizData = async () => {

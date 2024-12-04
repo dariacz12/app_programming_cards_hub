@@ -13,7 +13,7 @@ import ProgressCircular from "../components/ProgressCircular";
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
 import { QuizAttempt } from "./QuizeResultPage";
-import { QuestionData, UserAnswer } from "./QuizeQuestion";
+import { AnswerAttemt, QuestionData, UserAnswer } from "./QuizeQuestion";
 
 const QuizeStartPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
@@ -53,59 +53,60 @@ const QuizeStartPage = ({ route }: { route: any }) => {
     getQuizData();
   }, [documentId]);
 
-  // const resetQuize= async () => {
-  //   try {
-  //   const answersAllFalse = questionsList?.map((question) => {
-  //     const incorrectAnswer = question.quiz_answer_options.find(
-  //       (ans) => !ans.isCorrect
-  //     );
-  //     if (incorrectAnswer) {
-  //       return {
-  //         questionId: question.documentId,
-  //         answerId: incorrectAnswer.documentId,
-  //       }
-  //     }
-  //       return null;
-  //     }) .filter((answer) => answer !== null) as UserAnswer[];
+  const resetQuize = async () => {
+    try {
+      const answersAllFalse = questionsList
+        ?.map((question) => {
+          // const incorrectAnswer = question.quiz_answer_options.find(
+          //   (ans) => !ans.isCorrect
+          // );
+          // if (incorrectAnswer) {
+          return {
+            question: question.documentId,
+            isCorrect: false,
+            // }
+          };
+          return null;
+        })
+        .filter((answer) => answer !== null) as AnswerAttemt[];
 
-  //     let answersString = JSON.stringify(answersAllFalse);
-  //   const quizAttempt = {
-  //     data: {
-  //       users_permissions_user: userId,
-  //       quize: documentId,
-  //       answers: answersString,
-  //       score:0,
-  //       totalQuestions: questionsList?.length,
-  //       incorrectAnswers: questionsList?.length,
-  //     },
-  //   };
+      let answersString = JSON.stringify(answersAllFalse);
+      const quizAttempt = {
+        data: {
+          users_permissions_user: userId,
+          quize: documentId,
+          answers: answersString,
+          score: 0,
+          totalQuestions: questionsList?.length,
+          incorrectAnswers: questionsList?.length,
+        },
+      };
 
-  //   const response = await axios.post(
-  //     `${API_URL}/quize-attempts`,
-  //     quizAttempt,
-  //   );
-  //   if (response.status === 200) {
-  //     console.log("Wynik quizu zapisany:", response.data);
-  //   } else {
-  //     console.error("Failed to save quiz result, status:", response.status);
-  //     console.error("Error response:", response.data);
-  //   }
-  // } catch (error) {
-  //   if (axios.isAxiosError(error)) {
-  //     console.error("Error response data:", error.response?.data);
-  //     console.error("Error response status:", error.response?.status);
-  //   } else if (error instanceof Error) {
-  //     console.error("Error message:", error.message);
-  //   } else {
-  //     console.error("Unexpected error:", error);
-  //   }
-  // }
-  //   navigation.navigate("QuizeQuestion", {
-  //     documentId: documentId,
-  //     reset: true,
-  //   })
-
-  // }
+      const response = await axios.post(
+        `${API_URL}/quize-attempts`,
+        quizAttempt,
+      );
+      if (response.status === 200) {
+        console.log("Wynik quizu zapisany:", response.data);
+      } else {
+        console.error("Failed to save quiz result, status:", response.status);
+        console.error("Error response:", response.data);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error response data:", error.response?.data);
+        console.error("Error response status:", error.response?.status);
+      } else if (error instanceof Error) {
+        console.error("Error message:", error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
+    navigation.navigate("QuizeQuestion", {
+      documentId: documentId,
+      reset: true,
+    });
+  };
 
   useEffect(() => {
     const getQuizData = async () => {
@@ -216,27 +217,18 @@ const QuizeStartPage = ({ route }: { route: any }) => {
               </Text>
             </InfoCard>
             <View className="flex-1 pt-1 justify-center items-center w-full">
-              {/* {percentage===100 ? <ActiveButton
-              onPress={() =>resetQuize()}
-              text={"Resetuj"}
-          
-            />:<ActiveButton
-                onPress={() =>
-                  navigation.navigate("QuizeQuestion", {
-                    documentId: documentId,
-                    reset: false
-                  })
-                }
-                text={"Rozpocznij"}
-              />} */}
-              <ActiveButton
-                onPress={() =>
-                  navigation.navigate("QuizeQuestion", {
-                    documentId: documentId,
-                  })
-                }
-                text={"Rozpocznij"}
-              />
+              {percentage === 100 ? (
+                <ActiveButton onPress={() => resetQuize()} text={"Resetuj"} />
+              ) : (
+                <ActiveButton
+                  onPress={() =>
+                    navigation.navigate("QuizeQuestion", {
+                      documentId: documentId,
+                    })
+                  }
+                  text={"Rozpocznij"}
+                />
+              )}
             </View>
           </View>
         </ScrollView>

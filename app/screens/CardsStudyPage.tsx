@@ -32,7 +32,7 @@ type AnswerAttemt = {
 type Card = {
   documentId: string;
 };
-type CardsAttempt = {
+export type CardsAttempt = {
   answers: AnswerAttemt[];
   card: Card;
   incorrectAnswers: number;
