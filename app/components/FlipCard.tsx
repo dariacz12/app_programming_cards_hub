@@ -49,6 +49,10 @@ interface FlipCardsProps {
   activeQuestionsList: CardItem[];
   userAnswers: UserAnswer[];
   setUserAnswers: React.Dispatch<React.SetStateAction<UserAnswer[]>>;
+  score: number;
+  setScore: React.Dispatch<React.SetStateAction<number>>;
+  incorrect: number;
+  setIncorrect: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const flippedContentStyles = StyleSheet.create({
@@ -92,6 +96,10 @@ const FlipCard = ({
   activeQuestionsList,
   userAnswers,
   setUserAnswers,
+  score,
+  setScore,
+  incorrect,
+  setIncorrect,
 }: FlipCardsProps) => {
   const isDirectionX = direction === "x";
   const isFlipped = useSharedValue(false);
@@ -131,12 +139,14 @@ const FlipCard = ({
     console.log("Update called with:", isCorrect);
 
     const updatedAnswers = [
-      // ...prev.filter((ans) => ans.questionId !== currentCard.documentId),
       ...userAnswers,
-      // Remove existing answer for the same question
-      { questionId: currentCard.documentId, isCorrect }, // Add the new answer
+      { questionId: currentCard.documentId, isCorrect },
     ];
-
+    if (isCorrect) {
+      setScore((prevScore) => prevScore + 1);
+    } else {
+      setIncorrect((prevIncorrect) => prevIncorrect + 1);
+    }
     console.log("joined", updatedAnswers);
 
     setUserAnswers(updatedAnswers);
@@ -156,22 +166,10 @@ const FlipCard = ({
     setCurrentQuestionIndex(currentIndex + 1);
 
     const isCorrect = translationX > 0;
+
     const result = updateUserAnswers(isCorrect, userAnswers);
 
     console.log("Update called with:", isCorrect);
-
-    // setUserAnswers((prev) => {
-    //   const updatedAnswers = [
-    //     ...prev, // Remove existing answer for the same question
-    //     { questionId: currentCard.documentId, isCorrect }, // Add the new answer
-    //   ];
-
-    //   console.log("Previous state:", prev);
-    //   console.log("New state:", updatedAnswers);
-    //   return updatedAnswers;
-    // });
-    // ///
-    // setUserAnswers([{questionId: "123", isCorrect: false}])
 
     if (currentIndex === dataLength - 1) {
       userAnswers && saveCardsResult(result);

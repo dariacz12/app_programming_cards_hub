@@ -54,13 +54,14 @@ const CardsStudyPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
   const navigation = useNavigation<any>();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<any>(0);
-  const [negativeCount, setNegativeCount] = useState<number>(0);
-  const [positiveCount, setPositiveCount] = useState<number>(0);
+  const [score, setScore] = useState<number>(0);
+  const [incorrect, setIncorrect] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const animatedValue = useSharedValue(0);
-
+  console.log("currentQuestionIndex", currentQuestionIndex);
   const [cardData, setCardData] = useState<CardItem[]>([]);
-
+  console.log("score", score);
+  console.log("incorrect", incorrect);
   useEffect(() => {
     const getCardData = async () => {
       try {
@@ -162,10 +163,10 @@ const CardsStudyPage = ({ route }: { route: any }) => {
             />
             <View className="flex mt-1 mb-16 flex-row justify-between relative">
               <View className="absolute right-[325] mr-2 w-20 h-12 border-2 border-redError rounded-full flex items-end pr-5 justify-center">
-                <Text className="font-bold text-white">{negativeCount}</Text>
+                <Text className="font-bold text-white">{incorrect}</Text>
               </View>
               <View className="absolute left-[335] mr-2 w-20 h-12 border-2 border-greanColor rounded-full flex items-start pl-5 justify-center">
-                <Text className="font-bold text-white">{positiveCount}</Text>
+                <Text className="font-bold text-white">{score}</Text>
               </View>
             </View>
             <View className="flex justify-center items-center">
@@ -199,6 +200,10 @@ const CardsStudyPage = ({ route }: { route: any }) => {
                             activeQuestionsList={activeQuestionsList}
                             userAnswers={userAnswers}
                             setUserAnswers={setUserAnswers}
+                            score={score}
+                            setScore={setScore}
+                            incorrect={incorrect}
+                            setIncorrect={setIncorrect}
                             // setNegativeCount={setNegativeCount}
                             // setPositiveCount={setPositiveCount}
                             // negativeCount={negativeCount}

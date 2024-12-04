@@ -7,11 +7,13 @@ interface BarProps {
 }
 const ProgressBar = ({ completedQuestions, allQuestions }: BarProps) => {
   const [donePercent, setDonePercent] = useState<number>(0);
+
   useEffect(() => {
-    if (completedQuestions) {
-      setDonePercent((completedQuestions * 100) / allQuestions);
+    if (completedQuestions >= 0) {
+      setDonePercent((completedQuestions / allQuestions) * 100);
     }
-  }, [completedQuestions]);
+  }, [completedQuestions, allQuestions]);
+
   return (
     <View className="flex-1 justify-center items-center px-8 pb-4 ">
       <View className="h-1 w-full  bg-block rounded-3xl">
