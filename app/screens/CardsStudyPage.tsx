@@ -25,12 +25,23 @@ import {
 } from "react-native-gesture-handler";
 import { API_URL } from "../context/AuthContext";
 import axios from "axios";
+import { CardsCategoryProps } from "./CardsStartPage";
 type AnswerAttemt = {
   isCorrect: boolean;
   question: string;
 };
-type Card = {
+type SliderPhoto = {
+  url: string;
   documentId: string;
+};
+
+export type Card = {
+  documentId: string;
+  cards_items: CardItem[];
+  sliderPhotos: SliderPhoto[];
+  name: string;
+  circleProgressColor: string;
+  cards_categories: CardsCategoryProps[];
 };
 export type CardsAttempt = {
   answers: AnswerAttemt[];
@@ -51,7 +62,7 @@ export type UserAnswer = {
 };
 
 const CardsStudyPage = ({ route }: { route: any }) => {
-  const { documentId } = route?.params;
+  const { documentId, reset } = route?.params;
   const navigation = useNavigation<any>();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<any>(0);
   const [score, setScore] = useState<number>(0);
@@ -96,12 +107,14 @@ const CardsStudyPage = ({ route }: { route: any }) => {
   console.log("isFirstAttempt", isFirstAttempt);
 
   useEffect(() => {
-    if (lastCardsAttemptsResultAnswers.length > 0) {
+    if (reset) {
+      setIsFirstAttempt(true);
+    } else if (lastCardsAttemptsResultAnswers.length > 0) {
       setIsFirstAttempt(false);
     } else {
       setIsFirstAttempt(true);
     }
-  }, [lastCardsAttemptsResultAnswers]);
+  }, [lastCardsAttemptsResultAnswers, reset]);
 
   const [newData, setNewData] = useState(activeQuestionsList);
   const MAX = 3;

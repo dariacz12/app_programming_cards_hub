@@ -9,22 +9,19 @@ import { Card } from "../screens/Home";
 const CardBlock = (block: Card) => {
   const navigation = useNavigation<any>();
   return (
-    // <TouchableOpacity onPress={() => navigation.navigate("")}>
     <View
-      // className={`flex-col m-4 w-40 h-38  px-5 py-7 ${access ? "bg-primary" : "bg-block border border-borderColorSemiTransparent"}  rounded-2xl`}
-      className={`flex-col m-4 w-40 h-38  px-5 py-7 ${"bg-block border border-borderColorSemiTransparent"}  rounded-2xl`}
+      className={`flex-col m-4 w-40 h-38  px-5 py-7 ${block.access ? "bg-primary" : "bg-block border border-borderColorSemiTransparent"}  rounded-2xl`}
     >
       <View className="flex justify-center items-center">
         <LanguageLogo isQuize={false} logo={block.logo} />
         <H3Text text={`${block.name}`} />
-        {/* {access ? (
+        {block.access ? (
           <Text className="text-white text-sm">pełny dostęp</Text>
-        ) : ( */}
-        <Text className="text-sm  text-secondary">odblokuj dostęp</Text>
-        {/* )} */}
+        ) : (
+          <Text className="text-sm  text-secondary">odblokuj dostęp</Text>
+        )}
       </View>
     </View>
-    // </TouchableOpacity>
   );
 };
 

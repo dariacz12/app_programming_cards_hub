@@ -31,6 +31,7 @@ import { eventEmitter } from "../components/BottomTabs/CustomBottomTab";
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
 import { QuizAttempt } from "./QuizeQuestion";
+import { CardsAttempt } from "./CardsStudyPage";
 // color: "#9E4784",
 //  color: "#66347F",
 //  color: "#37306B",
@@ -50,6 +51,8 @@ export interface Card {
   description: string;
   documentId: string;
   name: string;
+  cards_attempts: CardsAttempt[];
+  access: boolean;
 }
 const Home = () => {
   const navigation = useNavigation<any>();
@@ -93,16 +96,16 @@ const Home = () => {
       };
       getQuizesData();
     });
-    return unsubscribe; // Clean up the listener
+    return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
     if (refreshAnimation) {
-      setRefreshAnimation(false); // Reset after triggering
+      setRefreshAnimation(false);
     }
   }, [refreshAnimation]);
 
-  const [cardsData, setCardsData] = useState<Quiz[]>([]);
+  const [cardsData, setCardsData] = useState<Card[]>([]);
 
   useEffect(() => {
     const getCardsData = async () => {
@@ -295,24 +298,19 @@ const Home = () => {
                       onPress={() =>
                         navigation.navigate(
                           "Tabbar",
-                          // block.access
-                          //   ? {
-                          //       screen: "UnlockedCardsPage",
-                          //       params: {
-                          //         id: block.id,
-                          //         name: block.name,
-                          //         percentage: block.percentage,
-                          //         color: block.color,
-                          //         logo: block.logo,
-                          //       },
-                          //     }
-                          //   :
-                          {
-                            screen: "CardsStartPage",
-                            params: {
-                              documentId: block.documentId,
-                            },
-                          },
+                          block.access
+                            ? {
+                                screen: "UnlockedCardsPage",
+                                params: {
+                                  documentId: block.documentId,
+                                },
+                              }
+                            : {
+                                screen: "CardsStartPage",
+                                params: {
+                                  documentId: block.documentId,
+                                },
+                              },
                         )
                       }
                     >

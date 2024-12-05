@@ -13,6 +13,8 @@ import ProgressCircular from "../components/ProgressCircular";
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
 import { CardsAttempt } from "./CardsStudyPage";
+import ActiveButton from "../components/ActiveButton";
+import { resetCards } from "../hooks/resetCards";
 
 function CardsResultPage({ route }: any) {
   const userId = route.params?.userId;
@@ -20,7 +22,6 @@ function CardsResultPage({ route }: any) {
   const animationSource = require("../../assets/congratulations.json");
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
-  const all = 18; //pobrać z serwera
   const [lastCardsAttemptsResult, setLastCardsAttemptsResult] =
     useState<CardsAttempt>();
   const [cardData, setCardData] = useState<any>();
@@ -31,12 +32,11 @@ function CardsResultPage({ route }: any) {
   useEffect(() => {
     lastCardsAttemptsResult &&
       setPercentage(
-        (lastCardsAttemptsResult.score * 100) /
-          lastCardsAttemptsResult.totalQuestions,
+        (lastCardsAttemptsResult.score * 100) / cardData.cards_items.length,
       );
     lastCardsAttemptsResult &&
       setRemainingQuestions(
-        lastCardsAttemptsResult.totalQuestions -
+        cardData.cards_items.length -
           lastCardsAttemptsResult.score -
           lastCardsAttemptsResult.incorrectAnswers,
       );
@@ -73,6 +73,9 @@ function CardsResultPage({ route }: any) {
     };
     getQuizData();
   }, [documentId]);
+  const handleReset = () => {
+    resetCards(cardData, documentId, navigation);
+  };
   return (
     <>
       {cardData && (
@@ -152,20 +155,26 @@ function CardsResultPage({ route }: any) {
                 <QuizeSecondaryButton
                   isResultPage={true}
                   onPress={() =>
-                    navigation.navigate("UnlockedCardsPage", { id: 1 })
+                    navigation.navigate("UnlockedCardsPage", { documentId })
                   }
                 >
                   {"Wybierz kategorię"}
                 </QuizeSecondaryButton>
                 <View className="w-4"></View>
-                <QuizeActiveButton
-                  isResultPage={true}
-                  onPress={() => {
-                    navigation.navigate("CardsStudyPage", { id: 1 });
-                  }}
-                >
-                  {"Kontynuuj naukę"}
-                </QuizeActiveButton>
+                {percentage === 100 ? (
+                  <QuizeActiveButton isResultPage={true} onPress={handleReset}>
+                    {"Resetuj"}
+                  </QuizeActiveButton>
+                ) : (
+                  <QuizeActiveButton
+                    isResultPage={true}
+                    onPress={() => {
+                      navigation.navigate("CardsStudyPage", { documentId });
+                    }}
+                  >
+                    {"Kontynuuj naukę"}
+                  </QuizeActiveButton>
+                )}
               </View>
             </View>
           </View>

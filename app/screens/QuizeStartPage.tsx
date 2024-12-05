@@ -57,16 +57,10 @@ const QuizeStartPage = ({ route }: { route: any }) => {
     try {
       const answersAllFalse = questionsList
         ?.map((question) => {
-          // const incorrectAnswer = question.quiz_answer_options.find(
-          //   (ans) => !ans.isCorrect
-          // );
-          // if (incorrectAnswer) {
           return {
             question: question.documentId,
             isCorrect: false,
-            // }
           };
-          return null;
         })
         .filter((answer) => answer !== null) as AnswerAttemt[];
 

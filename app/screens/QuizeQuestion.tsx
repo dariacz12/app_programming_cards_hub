@@ -49,11 +49,7 @@ export type QuizAttemptsResults = {
 };
 
 const QuizeQuestion = ({ route }: { route: any }) => {
-  const { documentId } = route?.params;
-  const { reset } = route?.params;
-  console.log("reset", reset);
-  useFocusEffect(() => {});
-
+  const { documentId, reset } = route?.params;
   const [chosenAnswersArray, setChosenAnswerArray] = useState<any>([]);
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();

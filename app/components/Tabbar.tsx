@@ -47,7 +47,7 @@ export default function Tabbar() {
         <Tab.Screen
           name="UnlockedCardsPage"
           component={UnlockedCardsPage}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, unmountOnBlur: true }}
         ></Tab.Screen>
         <Tab.Screen
           name="CardsResultPage"

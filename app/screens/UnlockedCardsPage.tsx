@@ -26,6 +26,8 @@ import ProgressCircular from "../components/ProgressCircular";
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
 import { CardsCategoryProps } from "./CardsStartPage";
+import { Card, CardsAttempt } from "./CardsStudyPage";
+import { resetCards } from "../hooks/resetCards";
 type FormData = {
   kod: string;
 };
@@ -33,51 +35,6 @@ type FormData = {
 const UnlockedCardsPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
 
-  const cardsPhotos = [
-    { id: "1", src: require("../../assets/react1.png") },
-    // {id: '2',
-    //  src: require('../../assets/react2.png')
-    // },
-    { id: "3", src: require("../../assets/react3.png") },
-  ];
-  const categoriesPhotos = [
-    {
-      id: "1",
-      src: require("../../assets/categorycard1.png"),
-      text: "Zmienne, Operatory",
-    },
-    {
-      id: "2",
-      src: require("../../assets/categorycard2.png"),
-      text: "Tablice",
-    },
-    {
-      id: "3",
-      src: require("../../assets/categorycard3.png"),
-      text: "Funkcje",
-    },
-    {
-      id: "4",
-      src: require("../../assets/categorycard4.png"),
-      text: "Obiekty",
-    },
-    {
-      id: "5",
-      src: require("../../assets/categorycard5.png"),
-      text: "Pojęcia",
-    },
-    {
-      id: "6",
-      src: require("../../assets/categorycard6.png"),
-      text: "Silnik JavaScript",
-    },
-    {
-      id: "7",
-      src: require("../../assets/categorycard7.png"),
-      text: "REST API/HTTP",
-    },
-    { id: "8", src: require("../../assets/categorycard8.png"), text: "Eventy" },
-  ];
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
   const {
@@ -93,14 +50,15 @@ const UnlockedCardsPage = ({ route }: { route: any }) => {
     },
   });
   const [modalVisible, setModalVisible] = useState(false);
-  const [cardData, setCardData] = useState<any>();
-  console.log("cardData", cardData);
-
+  const [cardData, setCardData] = useState<Card>();
+  const [lastCardsAttemptsResult, setLastCardsAttemptsResult] =
+    useState<CardsAttempt>();
+  const [percentage, setPercentage] = useState<number>(0);
   useEffect(() => {
     const getCardData = async () => {
       try {
         const data = await axios.get(
-          `${API_URL}/cards/${documentId}?populate[sliderPhotos]=*&populate[cards_categories][populate][iconCategory]=*`,
+          `${API_URL}/cards/${documentId}?populate[sliderPhotos]=*&populate[cards_items]=*&populate[cards_categories][populate][iconCategory]=*`,
         );
         console.log("data1", data);
         setCardData(data.data.data);
@@ -111,6 +69,87 @@ const UnlockedCardsPage = ({ route }: { route: any }) => {
     };
     getCardData();
   }, [documentId]);
+  console.log("cardData", cardData);
+  useEffect(() => {
+    lastCardsAttemptsResult &&
+      setPercentage(
+        (lastCardsAttemptsResult.score * 100) /
+          lastCardsAttemptsResult.totalQuestions,
+      );
+  }, [lastCardsAttemptsResult, documentId]);
+
+  useEffect(() => {
+    const getQuizData = async () => {
+      try {
+        const { data } = await axios.get(
+          `${API_URL}/cards-attempts?filters[card][documentId][$eq]=${documentId}`,
+        );
+        const allAttemtsResults = data.data;
+        if (allAttemtsResults?.length > 0) {
+          setLastCardsAttemptsResult(
+            allAttemtsResults[allAttemtsResults.length - 1],
+          );
+        }
+      } catch (e) {
+        return { error: true, msg: (e as any).response.data.msg };
+      }
+    };
+    getQuizData();
+  }, [documentId]);
+
+  // const resetCards = async () => {
+  //   try {
+  //     const totalQuestions = cardData?.cards_items?.length;
+  //     let score = 0;
+  //     let incorrect = totalQuestions;
+  //     const answersResultCurrentAttempt = cardData?.cards_items.map(
+  //       (question) => {
+  //         return {
+  //           question: question.documentId,
+  //           isCorrect: false,
+  //         };
+  //       },
+  //     );
+  //     const answersString = JSON.stringify(answersResultCurrentAttempt);
+  //     const cardsAttempt = {
+  //       data: {
+  //         card: documentId,
+  //         answers: answersString,
+  //         score,
+  //         totalQuestions,
+  //         incorrectAnswers: incorrect,
+  //       },
+  //     };
+  //     console.log("111cardsAttempt", cardsAttempt);
+  //     const response = await axios.post(
+  //       `${API_URL}/cards-attempts`,
+  //       cardsAttempt,
+  //     );
+  //     if (response.status === 200) {
+  //       console.log("Wynik cardAttempt zapisany:", response.data);
+  //     } else {
+  //       console.error("Failed to save  result, status:", response.status);
+  //       console.error("Error response:", response.data);
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.error("Error response data:", error.response?.data);
+  //       console.error("Error response status:", error.response?.status);
+  //     } else if (error instanceof Error) {
+  //       console.error("Error message:", error.message);
+  //     } else {
+  //       console.error("Unexpected error:", error);
+  //     }
+  //   }
+  //   navigation.navigate("CardsStudyPage", {
+  //     documentId: documentId,
+  //     reset: true,
+  //   });
+  // };
+  const handleReset = () => {
+    resetCards(cardData, documentId, navigation);
+  };
+
   return (
     <>
       {cardData && (
@@ -147,7 +186,7 @@ const UnlockedCardsPage = ({ route }: { route: any }) => {
                     >
                       <ProgressCircular
                         name={cardData.name}
-                        percentage={80}
+                        percentage={percentage}
                         radius={11}
                         strokeWidth={5}
                         duration={500}
@@ -171,14 +210,18 @@ const UnlockedCardsPage = ({ route }: { route: any }) => {
                 </View>
 
                 <View className="flex-1 py-5 justify-center items-center w-full">
-                  <ActiveButton
-                    onPress={() => {
-                      navigation.navigate("CardsStudyPage", {
-                        documentId,
-                      });
-                    }}
-                    text={"Ucz się"}
-                  />
+                  {percentage === 100 ? (
+                    <ActiveButton onPress={handleReset} text={"Resetuj"} />
+                  ) : (
+                    <ActiveButton
+                      onPress={() => {
+                        navigation.navigate("CardsStudyPage", {
+                          documentId,
+                        });
+                      }}
+                      text={"Ucz się"}
+                    />
+                  )}
                 </View>
                 <View className="mx-8  mt-2  bg-block h-1 rounded-lg " />
               </View>

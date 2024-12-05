@@ -118,7 +118,7 @@ const CardsStartPage = ({ route }: { route: any }) => {
                     >
                       <ProgressCircular
                         name={cardData.name}
-                        percentage={80}
+                        percentage={0}
                         radius={11}
                         strokeWidth={5}
                         duration={500}
