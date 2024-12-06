@@ -26,7 +26,7 @@ import {
 import { API_URL } from "../context/AuthContext";
 import axios from "axios";
 import { CardsCategoryProps } from "./CardsStartPage";
-type AnswerAttemt = {
+export type AnswerAttemt = {
   isCorrect: boolean;
   question: string;
 };
@@ -40,6 +40,7 @@ export type Card = {
   cards_items: CardItem[];
   sliderPhotos: SliderPhoto[];
   name: string;
+  description: string;
   circleProgressColor: string;
   cards_categories: CardsCategoryProps[];
 };
@@ -54,6 +55,7 @@ export interface CardItem {
   question: string;
   answerImage: { url: string }[];
   documentId: string;
+  toTest: boolean;
 }
 
 export type UserAnswer = {
@@ -62,35 +64,69 @@ export type UserAnswer = {
 };
 
 const CardsStudyPage = ({ route }: { route: any }) => {
-  const { documentId, reset } = route?.params;
+  const { documentId, reset, cardCategoryId, cardTest } = route?.params;
   const navigation = useNavigation<any>();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<any>(0);
   const [score, setScore] = useState<number>(0);
   const [incorrect, setIncorrect] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const animatedValue = useSharedValue(0);
-  console.log("currentQuestionIndex", currentQuestionIndex);
   const [cardData, setCardData] = useState<CardItem[]>([]);
-  console.log("score", score);
-  console.log("incorrect", incorrect);
+  console.log("cardData", cardData);
+  console.log("cardCategoryId", cardCategoryId);
+  // useEffect(() => {
+  //   const getCardData = async () => {
+  //     try {
+  //       const data = await axios.get(
+  //         `${API_URL}/cards-items?populate[answerImage]=*&populate[cards_categories]=*&populate[cards]=*`,
+  //       );
+  //       setCardData(
+  //         data.data.data.filter(
+  //           (item: any) => item.cards[0].documentId === documentId,
+  //         ),
+  //       );
+  //     } catch (e) {
+  //       console.log("e", e);
+  //       return { error: true, msg: (e as any).response.data.msg };
+  //     }
+  //   };
+  //   getCardData();
+  // }, [documentId]);
   useEffect(() => {
     const getCardData = async () => {
       try {
-        const data = await axios.get(
-          `${API_URL}/cards-items?populate[answerImage]=*&populate[cards_categories]=*&populate[cards]=*`,
+        console.log(
+          "Fetching data with documentId:",
+          documentId,
+          "and cardCategoryId:",
+          cardCategoryId,
         );
-        setCardData(
-          data.data.data.filter(
-            (item: any) => item.cards[0].documentId === documentId,
-          ),
-        );
+        let response;
+        if (cardTest) {
+          response = await axios.get(
+            `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*&filters[cards_items][toTest][$eq]=${cardTest}`,
+          );
+        } else if (cardCategoryId) {
+          response = await axios.get(
+            `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*&filters[cards_categories][documentId][$eq]=${cardCategoryId}`,
+          );
+        } else {
+          response = await axios.get(
+            `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*`,
+          );
+        }
+        setCardData(response.data.data.cards_items);
       } catch (e) {
-        console.log("e", e);
-        return { error: true, msg: (e as any).response.data.msg };
+        console.log("Error fetching card data:", e);
+        return {
+          error: true,
+          msg: (e as any).response?.data?.msg || "An error occurred",
+        };
       }
     };
+
     getCardData();
-  }, [documentId]);
+  }, [documentId, cardCategoryId, cardTest]);
 
   const [isFirstAttempt, setIsFirstAttempt] = useState(true);
   const [filteredQuestionsList, setFilteredQuestionsList] =
@@ -102,9 +138,6 @@ const CardsStudyPage = ({ route }: { route: any }) => {
     useState<AnswerAttemt[]>([]);
   const [lastCardsAttemptsResult, setLastCardsAttemptsResult] =
     useState<CardsAttempt>();
-  console.log("lastCardsAttemptsResultAnswers", lastCardsAttemptsResultAnswers);
-  console.log("lastCardsAttemptsResult", lastCardsAttemptsResult);
-  console.log("isFirstAttempt", isFirstAttempt);
 
   useEffect(() => {
     if (reset) {
@@ -217,10 +250,11 @@ const CardsStudyPage = ({ route }: { route: any }) => {
                             setScore={setScore}
                             incorrect={incorrect}
                             setIncorrect={setIncorrect}
-                            // setNegativeCount={setNegativeCount}
-                            // setPositiveCount={setPositiveCount}
-                            // negativeCount={negativeCount}
-                            // positiveCount={positiveCount}
+                            cardData={cardData}
+                            lastCardsAttemptsResultAnswers={
+                              lastCardsAttemptsResultAnswers
+                            }
+                            lastCardsAttemptsResult={lastCardsAttemptsResult}
                           />
                         </View>
                       );

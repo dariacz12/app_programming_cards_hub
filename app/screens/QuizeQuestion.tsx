@@ -75,24 +75,6 @@ const QuizeQuestion = ({ route }: { route: any }) => {
   const [userId, setUserId] = useState<any>();
   let currentQuestionId = activeQuestionsList?.[currentQuestion]?.documentId;
 
-  console.log("lastQuizAttemptsResult", lastQuizAttemptsResult);
-  console.log("isFirstAttempt", isFirstAttempt);
-  console.log("activeQuestionsList", activeQuestionsList);
-  // useEffect(() => {
-  //   if (lastQuizAttemptsResultAnswers.length > 0) {
-  //     setIsFirstAttempt(false);
-  //   }
-  //    else {
-  //     setIsFirstAttempt(true);
-  //   }
-  // }, [lastQuizAttemptsResultAnswers, reset]);
-  // useEffect(() => {
-  //   if (reset) {
-  //     setIsFirstAttempt(true);
-  //   } else {
-  //     setIsFirstAttempt(lastQuizAttemptsResultAnswers.length === 0);
-  //   }
-  // }, [lastQuizAttemptsResultAnswers, reset]);
   useEffect(() => {
     if (reset) {
       setIsFirstAttempt(true);
@@ -303,17 +285,14 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         lastQuizAttemptsResultAnswers?.length > 0
       ) {
         const combinedanswers = getCombinedAnswers(answersResultCurrentAttempt);
-        console.log("combinedanswers", combinedanswers);
         answersString = JSON.stringify(combinedanswers);
         lastQuizAttemptsResult &&
           (score = score + lastQuizAttemptsResult?.score);
       } else {
         answersString = JSON.stringify(answersResultCurrentAttempt);
-        console.log(" answersString", answersString);
       }
       const quizAttempt = {
         data: {
-          // users_permissions_user: userId,
           quize: documentId,
           answers: answersString,
           score,

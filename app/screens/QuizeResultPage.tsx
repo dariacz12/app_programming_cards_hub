@@ -41,7 +41,6 @@ function QuizeResultPage({ route }: { route: any }) {
 
   useEffect(() => {
     const getQuizData = async () => {
-      console.log("Before API request...");
       try {
         const { data } = await axios.get(
           `${API_URL}/quize-attempts?populate[quize]=*`,
@@ -64,6 +63,7 @@ function QuizeResultPage({ route }: { route: any }) {
       );
   }, [quizAttemptResult, documentId]);
 
+  const handleReset = () => {};
   return (
     <>
       <SafeAreaView className="flex-1  bg-primary ">
@@ -137,14 +137,20 @@ function QuizeResultPage({ route }: { route: any }) {
             {"Wybierz quize"}
           </QuizeSecondaryButton>
           <View className="w-4"></View>
-          <QuizeActiveButton
-            isResultPage={true}
-            onPress={() => {
-              navigation.navigate("QuizeStartPage", { id: 1 });
-            }}
-          >
-            {"Powtórz quize"}
-          </QuizeActiveButton>
+          {percentage === 100 ? (
+            <QuizeActiveButton isResultPage={true} onPress={handleReset}>
+              {"Resetuj"}
+            </QuizeActiveButton>
+          ) : (
+            <QuizeActiveButton
+              isResultPage={true}
+              onPress={() => {
+                navigation.navigate("QuizeStartPage", { id: 1 });
+              }}
+            >
+              {"Powtórz quize"}
+            </QuizeActiveButton>
+          )}
         </View>
       </SafeAreaView>
     </>

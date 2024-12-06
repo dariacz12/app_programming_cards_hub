@@ -28,13 +28,16 @@ function CardsResultPage({ route }: any) {
   const [percentage, setPercentage] = useState<number>(0);
   const [remainingQuestions, setRemainingQuestions] = useState<number>(0);
   console.log("lastCardsAttemptsResult", lastCardsAttemptsResult);
+  console.log("cardData", cardData);
 
   useEffect(() => {
     lastCardsAttemptsResult &&
+      cardData &&
       setPercentage(
-        (lastCardsAttemptsResult.score * 100) / cardData.cards_items.length,
+        (lastCardsAttemptsResult.score * 100) / cardData?.cards_items.length,
       );
     lastCardsAttemptsResult &&
+      cardData &&
       setRemainingQuestions(
         cardData.cards_items.length -
           lastCardsAttemptsResult.score -
@@ -45,7 +48,9 @@ function CardsResultPage({ route }: any) {
   useEffect(() => {
     const getCardData = async () => {
       try {
-        const data = await axios.get(`${API_URL}/cards/${documentId}`);
+        const data = await axios.get(
+          `${API_URL}/cards/${documentId}?populate[sliderPhotos]=*&populate[cards_items]=*`,
+        );
         setCardData(data.data.data);
       } catch (e) {
         console.log("e", e);

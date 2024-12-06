@@ -35,6 +35,7 @@ interface CardCategoryLogo {
 export type CardsCategoryProps = {
   nameCategory: string;
   iconCategory: CardCategoryLogo;
+  documentId: string;
 };
 const CardsStartPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
@@ -158,7 +159,12 @@ const CardsStartPage = ({ route }: { route: any }) => {
               </InfoCard>
               <View className="flex-row mt-5 px-2 mx-4 justify-around items-center">
                 <SecondaryButton
-                  onPress={() => navigation.navigate("")}
+                  onPress={() => {
+                    navigation.navigate("CardsStudyPage", {
+                      documentId,
+                      cardTest: true,
+                    });
+                  }}
                   text={"Przetestuj"}
                 />
                 <ActiveButton onPress={openExternalLink} text={"Kup"} />
@@ -244,11 +250,6 @@ const CardsStartPage = ({ route }: { route: any }) => {
                   onPress={() =>
                     navigation.navigate("AccessUnlocked", {
                       documentId,
-                      // id,
-                      // logo,
-                      // name,
-                      // percentage,
-                      // color,
                     })
                   }
                   text={"Odblokuj dostęp"}

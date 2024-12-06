@@ -4,23 +4,16 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
-import Avatar from "../components/Avatar";
-import H4Text from "../components/H4Text";
 import H1Text from "../components/H1Text";
 import InfoCard from "../components/InfoCard";
 import ActiveButton from "../components/ActiveButton";
 import Slider from "../components/Slider";
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import SecondaryButton from "../components/SecondaryButton";
+import { AntDesign } from "@expo/vector-icons";
 import H3Text from "../components/H3Text";
-import { Controller, useForm } from "react-hook-form";
-import ModalPopup from "../components/ModalPopup";
-import { LinearGradient } from "expo-linear-gradient";
+import { useForm } from "react-hook-form";
 import CategoryElement from "../components/CategoryElement";
 import ProgressCircular from "../components/ProgressCircular";
 import axios from "axios";
@@ -31,10 +24,8 @@ import { resetCards } from "../hooks/resetCards";
 type FormData = {
   kod: string;
 };
-
 const UnlockedCardsPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
-
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
   const {
@@ -96,56 +87,6 @@ const UnlockedCardsPage = ({ route }: { route: any }) => {
     };
     getQuizData();
   }, [documentId]);
-
-  // const resetCards = async () => {
-  //   try {
-  //     const totalQuestions = cardData?.cards_items?.length;
-  //     let score = 0;
-  //     let incorrect = totalQuestions;
-  //     const answersResultCurrentAttempt = cardData?.cards_items.map(
-  //       (question) => {
-  //         return {
-  //           question: question.documentId,
-  //           isCorrect: false,
-  //         };
-  //       },
-  //     );
-  //     const answersString = JSON.stringify(answersResultCurrentAttempt);
-  //     const cardsAttempt = {
-  //       data: {
-  //         card: documentId,
-  //         answers: answersString,
-  //         score,
-  //         totalQuestions,
-  //         incorrectAnswers: incorrect,
-  //       },
-  //     };
-  //     console.log("111cardsAttempt", cardsAttempt);
-  //     const response = await axios.post(
-  //       `${API_URL}/cards-attempts`,
-  //       cardsAttempt,
-  //     );
-  //     if (response.status === 200) {
-  //       console.log("Wynik cardAttempt zapisany:", response.data);
-  //     } else {
-  //       console.error("Failed to save  result, status:", response.status);
-  //       console.error("Error response:", response.data);
-  //     }
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error)) {
-  //       console.error("Error response data:", error.response?.data);
-  //       console.error("Error response status:", error.response?.status);
-  //     } else if (error instanceof Error) {
-  //       console.error("Error message:", error.message);
-  //     } else {
-  //       console.error("Unexpected error:", error);
-  //     }
-  //   }
-  //   navigation.navigate("CardsStudyPage", {
-  //     documentId: documentId,
-  //     reset: true,
-  //   });
-  // };
   const handleReset = () => {
     resetCards(cardData, documentId, navigation);
   };
@@ -232,7 +173,14 @@ const UnlockedCardsPage = ({ route }: { route: any }) => {
                 {cardData.cards_categories.map(
                   (cardCategory: CardsCategoryProps) => {
                     return (
-                      <TouchableOpacity onPress={() => navigation.navigate("")}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          navigation.navigate("CardsStudyPage", {
+                            documentId,
+                            cardCategoryId: cardCategory.documentId,
+                          });
+                        }}
+                      >
                         <CategoryElement
                           nameCategory={cardCategory.nameCategory}
                           url={cardCategory.iconCategory.url}
@@ -241,34 +189,10 @@ const UnlockedCardsPage = ({ route }: { route: any }) => {
                     );
                   },
                 )}
-                {/* {categoriesPhotos.map(({ src, text }) => {
-                return (
-                  <TouchableOpacity onPress={() => navigation.navigate("")}>
-                    <CategoryElement    nameCategory={cardCategory.nameCategory}
-                        url={cardCategory.iconCategory.url}></CategoryElement>
-                  </TouchableOpacity>
-                );
-              })} */}
               </View>
               <InfoCard welcomeScreen={false}>
                 <Text className="leading-5 text-base text-secondary px-4">
-                  Programujesz w JavaScript? 👨‍💻 A może dopiero myślisz o pracy
-                  jako Front-end developer? 🚀 Według nas niezależnie od
-                  doświadczenia i stanowiska warto rozwijać swoją wiedzę, gdyż
-                  to ona jest w cenie! 📖
-                  {"\n"}Z naszymi kartami:
-                  {"\n"}🚀 Poznasz lepiej swoje narzędzie pracy. W przypadku
-                  programisty najcenniejsza jest wiedza!
-                  {"\n"}🚀 Zobaczysz, jak działa JavaScript! Pojęcia typu: Call
-                  Stack, Stack, Event Queue, IFEE, Closure, Event Capturing,
-                  dziedziczenie prototypowe czy też mutacja danych nie będą
-                  więcej Ci obce!
-                  {"\n"}🚀 Przygotujesz się do technicznej części rozmowy
-                  rekrutacyjnej.
-                  {"\n"}🚀 Poznasz zagadnienia często pomijane w kursach i
-                  tutorialach
-                  {"\n"}🚀 Przetestujesz przykłady bez przepisywania kodu!
-                  Wystarczy zeskanować kod QR z karty.
+                  {cardData.description}
                 </Text>
               </InfoCard>
             </View>

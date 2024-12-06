@@ -32,7 +32,7 @@ export default function Tabbar() {
         <Tab.Screen
           name="QuizeStartPage"
           component={QuizeStartPage}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, unmountOnBlur: true }}
         ></Tab.Screen>
         <Tab.Screen
           name="Notifications"

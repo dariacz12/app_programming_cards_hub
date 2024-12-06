@@ -26,7 +26,11 @@ import {
 } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL, UPLOADS_URL } from "../context/AuthContext";
-import { CardItem } from "../screens/CardsStudyPage";
+import {
+  AnswerAttemt,
+  CardItem,
+  CardsAttempt,
+} from "../screens/CardsStudyPage";
 import axios from "axios";
 export type UserAnswer = {
   questionId: string;
@@ -53,6 +57,9 @@ interface FlipCardsProps {
   setScore: React.Dispatch<React.SetStateAction<number>>;
   incorrect: number;
   setIncorrect: React.Dispatch<React.SetStateAction<number>>;
+  cardData: CardItem[];
+  lastCardsAttemptsResultAnswers: AnswerAttemt[];
+  lastCardsAttemptsResult?: CardsAttempt;
 }
 
 const flippedContentStyles = StyleSheet.create({
@@ -100,6 +107,9 @@ const FlipCard = ({
   setScore,
   incorrect,
   setIncorrect,
+  cardData,
+  lastCardsAttemptsResultAnswers,
+  lastCardsAttemptsResult,
 }: FlipCardsProps) => {
   const isDirectionX = direction === "x";
   const isFlipped = useSharedValue(false);
@@ -136,8 +146,6 @@ const FlipCard = ({
   const { width } = useWindowDimensions();
 
   const updateUserAnswers = (isCorrect: boolean, userAnswers: UserAnswer[]) => {
-    console.log("Update called with:", isCorrect);
-
     const updatedAnswers = [
       ...userAnswers,
       { questionId: currentCard.documentId, isCorrect },
@@ -147,29 +155,20 @@ const FlipCard = ({
     } else {
       setIncorrect((prevIncorrect) => prevIncorrect + 1);
     }
-    console.log("joined", updatedAnswers);
 
     setUserAnswers(updatedAnswers);
 
     return updatedAnswers;
   };
-  console.log("userAnswers", userAnswers);
-
-  console.log("currentIndex", currentIndex);
 
   const swipeLogic = (
     currentIndex: number,
     translationX: number,
     userAnswers: UserAnswer[],
   ) => {
-    console.log("test", userAnswers);
     setCurrentQuestionIndex(currentIndex + 1);
-
     const isCorrect = translationX > 0;
-
     const result = updateUserAnswers(isCorrect, userAnswers);
-
-    console.log("Update called with:", isCorrect);
 
     if (currentIndex === dataLength - 1) {
       userAnswers && saveCardsResult(result);
@@ -179,10 +178,6 @@ const FlipCard = ({
       });
     }
   };
-
-  useEffect(() => {
-    console.log("Current userAnswers state:", userAnswers);
-  }, [userAnswers]);
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
@@ -281,6 +276,34 @@ const FlipCard = ({
     getUserData();
   }, []);
 
+  const getCombinedAnswers = (answersResultCurrentAttempt: AnswerAttemt[]) => {
+    const lastAttemptAnswers =
+      lastCardsAttemptsResultAnswers.length > 0
+        ? lastCardsAttemptsResultAnswers
+        : [];
+
+    const currentAttemptAnswers = answersResultCurrentAttempt;
+    const correctAnswersFromLastAttempt = lastAttemptAnswers.filter(
+      (answer) => answer.isCorrect,
+    );
+    const correctAnswersFromSecondLastAttempt = currentAttemptAnswers.filter(
+      (answer) => answer.isCorrect,
+    );
+    const incorrectAnswersFromLastAttempt = lastAttemptAnswers.filter(
+      (answer) => !answer.isCorrect,
+    );
+    const combinedAnswersResults = [
+      ...correctAnswersFromLastAttempt,
+      ...correctAnswersFromSecondLastAttempt,
+      ...incorrectAnswersFromLastAttempt,
+    ];
+    const uniqueAnswers = combinedAnswersResults.filter(
+      (answer, index, self) =>
+        index === self.findIndex((a) => a.question === answer.question),
+    );
+
+    return uniqueAnswers;
+  };
   const saveCardsResult = async (currentUserAnswers: UserAnswer[]) => {
     try {
       let score = 0;
@@ -300,9 +323,19 @@ const FlipCard = ({
         },
       );
 
-      const totalQuestions = activeQuestionsList?.length;
-      const answersString = JSON.stringify(answersResultCurrentAttempt);
-      console.log(" answersString", answersString);
+      const totalQuestions = cardData?.length;
+      let answersString;
+      if (
+        Array.isArray(lastCardsAttemptsResultAnswers) &&
+        lastCardsAttemptsResultAnswers?.length > 0
+      ) {
+        const combinedanswers = getCombinedAnswers(answersResultCurrentAttempt);
+        answersString = JSON.stringify(combinedanswers);
+        lastCardsAttemptsResult &&
+          (score = score + lastCardsAttemptsResult?.score);
+      } else {
+        answersString = JSON.stringify(answersResultCurrentAttempt);
+      }
 
       const cardsAttempt = {
         data: {
@@ -313,7 +346,7 @@ const FlipCard = ({
           incorrectAnswers: incorrect,
         },
       };
-      console.log("111cardsAttempt", cardsAttempt);
+
       const response = await axios.post(
         `${API_URL}/cards-attempts`,
         cardsAttempt,
