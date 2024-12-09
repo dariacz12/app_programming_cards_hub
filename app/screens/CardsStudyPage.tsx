@@ -107,9 +107,14 @@ const CardsStudyPage = ({ route }: { route: any }) => {
             `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*&filters[cards_items][toTest][$eq]=${cardTest}`,
           );
         } else if (cardCategoryId) {
+          console.log("dupka", cardCategoryId);
+          // Uzycie koncowki cards/id zwraca jedną karte zgodnie ze swaggerem i nie działają dla nich filtry
+          // Trzeba uzyć koncowki [GET] /cards i na niej filtrami pofiltorwać po kursie i po kategorii
           response = await axios.get(
             `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*&filters[cards_categories][documentId][$eq]=${cardCategoryId}`,
           );
+          console.log(9998, response.data.data.cards_items);
+          console.log("-----------------------------------------------");
         } else {
           response = await axios.get(
             `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*`,
@@ -195,7 +200,11 @@ const CardsStudyPage = ({ route }: { route: any }) => {
           <View>
             <View className="flex mt-6 mb-7  mx-10 flex-row ">
               <TouchableOpacity
-                onPress={() => navigation.navigate("Home", { id: 1 })}
+                onPress={() =>
+                  navigation.navigate("CardsStartPage", {
+                    documentId: documentId,
+                  })
+                }
               >
                 <AntDesign name="left" size={24} color="ghostwhite" />
               </TouchableOpacity>

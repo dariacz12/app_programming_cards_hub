@@ -199,6 +199,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         navigation.navigate("QuizeResultPage", {
           documentId: documentId,
           userId: userId,
+          questionsList: questionsList,
         });
       }
       if (chosenAnswer) {
@@ -331,7 +332,9 @@ const QuizeQuestion = ({ route }: { route: any }) => {
               <View className="flex-1 items-center flex-row ">
                 <TouchableOpacity
                   onPress={() =>
-                    navigation.navigate("QuizeStartPage", { id: 1 })
+                    navigation.navigate("QuizeStartPage", {
+                      documentId: documentId,
+                    })
                   }
                 >
                   <AntDesign name="left" size={24} color="ghostwhite" />

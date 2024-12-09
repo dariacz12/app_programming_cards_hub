@@ -12,6 +12,7 @@ import InfoCard from "../components/InfoCard";
 import ProgressCircular from "../components/ProgressCircular";
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
+import { resetQuize } from "../hooks/resetQuize";
 type Quize = {
   documentId: string;
   name: string;
@@ -33,29 +34,34 @@ type QuizAttemptsResults = {
 };
 
 function QuizeResultPage({ route }: { route: any }) {
-  const { documentId } = route?.params;
+  const { documentId, userId, questionsList } = route?.params;
   const animationSource = require("../../assets/congratulations.json");
   const navigation = useNavigation<any>();
   const [percentage, setPercentage] = useState<number>(0);
   const [quizAttemptResult, setQuizAttemptResult] = useState<QuizAttempt>();
 
   useEffect(() => {
-    const getQuizData = async () => {
-      try {
-        const { data } = await axios.get(
-          `${API_URL}/quize-attempts?populate[quize]=*`,
-        );
-        const quizAttemptsResult = data.data.filter(
-          (attempt: QuizAttempt) => attempt.quize.documentId === documentId,
-        );
-        setQuizAttemptResult(quizAttemptsResult[quizAttemptsResult.length - 1]);
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
+    const unsubscribe = navigation.addListener("focus", () => {
+      const getQuizData = async () => {
+        try {
+          const { data } = await axios.get(
+            `${API_URL}/quize-attempts?populate[quize]=*`,
+          );
+          const quizAttemptsResult = data.data.filter(
+            (attempt: QuizAttempt) => attempt.quize.documentId === documentId,
+          );
+          setQuizAttemptResult(
+            quizAttemptsResult[quizAttemptsResult.length - 1],
+          );
+        } catch (e) {
+          return { error: true, msg: (e as any).response.data.msg };
+        }
+      };
 
-    getQuizData();
-  }, []);
+      getQuizData();
+    });
+    return unsubscribe;
+  }, [[navigation, documentId]]);
   useEffect(() => {
     quizAttemptResult &&
       setPercentage(
@@ -63,7 +69,6 @@ function QuizeResultPage({ route }: { route: any }) {
       );
   }, [quizAttemptResult, documentId]);
 
-  const handleReset = () => {};
   return (
     <>
       <SafeAreaView className="flex-1  bg-primary ">
@@ -99,7 +104,7 @@ function QuizeResultPage({ route }: { route: any }) {
         </View>
 
         <View className="mt-44 bg-semi-transparent h-full  flex items-center justify-center  border border-t-borderColorSemiTransparent ">
-          <View className="flex-1 flex-col top-44">
+          <View className="flex-1 flex-col top-36">
             <View className="">
               <H3Text color={"green"} text={"Świetnie Ci idzie!"}></H3Text>
             </View>
@@ -125,7 +130,7 @@ function QuizeResultPage({ route }: { route: any }) {
             ></View>
           </View>
         </View>
-        <View className="h-28 w-full bg-primary border  border-borderColorSemiTransparent bottom-0 absolute z-2 flex-1 flex-row justify-center items-center">
+        <View className="h-28 w-full bottom-24 absolute z-2 flex-1 flex-row justify-center items-center">
           <QuizeSecondaryButton
             isResultPage={true}
             onPress={() =>
@@ -138,14 +143,21 @@ function QuizeResultPage({ route }: { route: any }) {
           </QuizeSecondaryButton>
           <View className="w-4"></View>
           {percentage === 100 ? (
-            <QuizeActiveButton isResultPage={true} onPress={handleReset}>
+            <QuizeActiveButton
+              isResultPage={true}
+              onPress={() =>
+                resetQuize(navigation, questionsList, userId, documentId)
+              }
+            >
               {"Resetuj"}
             </QuizeActiveButton>
           ) : (
             <QuizeActiveButton
               isResultPage={true}
               onPress={() => {
-                navigation.navigate("QuizeStartPage", { id: 1 });
+                navigation.navigate("QuizeQuestion", {
+                  documentId: documentId,
+                });
               }}
             >
               {"Powtórz quize"}

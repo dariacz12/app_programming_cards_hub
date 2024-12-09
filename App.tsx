@@ -57,11 +57,11 @@ export const Layout = () => {
                 component={QuizeQuestion}
                 options={{ headerShown: false }}
               ></Stack.Screen>
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="QuizeResultPage"
                 component={QuizeResultPage}
                 options={{ headerShown: false }}
-              ></Stack.Screen>
+              ></Stack.Screen> */}
               <Stack.Screen
                 name="AccessUnlocked"
                 component={AccessUnlocked}

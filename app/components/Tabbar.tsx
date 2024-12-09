@@ -35,6 +35,11 @@ export default function Tabbar() {
           options={{ headerShown: false, unmountOnBlur: true }}
         ></Tab.Screen>
         <Tab.Screen
+          name="QuizeResultPage"
+          component={QuizeResultPage}
+          options={{ headerShown: false, unmountOnBlur: true }}
+        ></Tab.Screen>
+        <Tab.Screen
           name="Notifications"
           component={Notifications}
           options={{ headerShown: false }}
