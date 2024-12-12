@@ -19,6 +19,7 @@ function AccessUnlocked({ route }: { route?: any }) {
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
 
+  // --------------------
   const [cardData, setCardData] = useState<any>();
   console.log("cardData", cardData);
 
@@ -37,6 +38,9 @@ function AccessUnlocked({ route }: { route?: any }) {
     };
     getCardData();
   }, [documentId]);
+  // ------------------------
+  //const {data, loading, error} = useCardData({id: documentId});
+  // use
   return (
     <>
       {cardData && (

@@ -1,0 +1,40 @@
+import { useState, useEffect } from "react";
+import axios, { AxiosError } from "axios";
+import { API_URL } from "../../context/AuthContext";
+import { Quiz } from "../../types/Quize";
+interface ErrorResponse {
+  msg: string;
+}
+const useQuizeList = (navigation: any) => {
+  const [data, setData] = useState<Quiz[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      const fetchData = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+          const response = await axios.get(
+            `${API_URL}/quizes?populate[quize_attempts]=*&populate[logo]=*`,
+          );
+          setData(response.data.data);
+        } catch (err) {
+          const axiosError = err as AxiosError<ErrorResponse>;
+          console.error("Error fetching card data:", axiosError);
+          setError(axiosError.response?.data?.msg || "An error occurred.");
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchData();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  return { data, loading, error };
+};
+
+export default useQuizeList;

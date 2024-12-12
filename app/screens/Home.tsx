@@ -32,28 +32,14 @@ import axios from "axios";
 import { API_URL } from "../context/AuthContext";
 import { QuizAttempt } from "./QuizeQuestion";
 import { CardsAttempt } from "./CardsStudyPage";
+import LoadingScreen from "./LoadingScreen";
+import useCardListData from "../hooks/api/useCardList";
+import useCardList from "../hooks/api/useCardList";
+import useQuizeList from "../hooks/api/useQuizeList";
 // color: "#9E4784",
 //  color: "#66347F",
 //  color: "#37306B",
 
-export interface Quiz {
-  circleProgressColor: string;
-  logo: string;
-  description: string;
-  documentId: string;
-  level: number;
-  name: string;
-  quize_attempts: QuizAttempt[];
-}
-export interface Card {
-  circleProgressColor: string;
-  logo: string;
-  description: string;
-  documentId: string;
-  name: string;
-  cards_attempts: CardsAttempt[];
-  access: boolean;
-}
 const Home = () => {
   const navigation = useNavigation<any>();
   const [curentQuizeCircle, setCurentQuizeCircle] = useState<number>(0);
@@ -76,48 +62,27 @@ const Home = () => {
     getUserData();
   }, []);
 
-  const [quizesData, setQuizesData] = useState<Quiz[]>([]);
-  console.log("quizesData:", quizesData);
-  console.log("curentQuizeCircle:", curentQuizeCircle);
-  console.log("quizesData[curentQuizeCircle]:", quizesData[curentQuizeCircle]);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      const getQuizesData = async () => {
-        try {
-          const data = await axios.get(
-            `${API_URL}/quizes?populate[quize_attempts]=*&populate[logo]=*`,
-          );
-          setQuizesData(data.data.data);
-          setRefreshAnimation(true);
-        } catch (e) {
-          return { error: true, msg: (e as any).response.data.msg };
-        }
-      };
-      getQuizesData();
-    });
-    return unsubscribe;
-  }, [navigation]);
-
   useEffect(() => {
     if (refreshAnimation) {
       setRefreshAnimation(false);
     }
   }, [refreshAnimation]);
 
-  const [cardsData, setCardsData] = useState<Card[]>([]);
+  const {
+    data: quizeList,
+    loading: loadingQuizeList,
+    error: erroQuizList,
+  } = useQuizeList(navigation);
+  const {
+    data: cardList,
+    loading: loadingCardlist,
+    error: errorCardList,
+  } = useCardList();
 
-  useEffect(() => {
-    const getCardsData = async () => {
-      try {
-        const data = await axios.get(`${API_URL}/cards?populate[logo]=*`);
-        setCardsData(data.data.data);
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getCardsData();
-  }, []);
+  if (loadingQuizeList || loadingCardlist) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
       <ScrollView className="bg-primary">
@@ -166,7 +131,7 @@ const Home = () => {
                 onPress={() =>
                   setCurentQuizeCircle(
                     curentQuizeCircle === 0
-                      ? quizesData.length - 1
+                      ? quizeList.length - 1
                       : curentQuizeCircle - 1,
                   )
                 }
@@ -182,7 +147,7 @@ const Home = () => {
               <TouchableOpacity
                 onPress={() =>
                   setCurentQuizeCircle(
-                    curentQuizeCircle === quizesData.length - 1
+                    curentQuizeCircle === quizeList.length - 1
                       ? 0
                       : curentQuizeCircle + 1,
                   )
@@ -194,28 +159,26 @@ const Home = () => {
               </TouchableOpacity>
             </View>
             <View className="  h-10 top-28 ">
-              {quizesData.length > 0 && quizesData[curentQuizeCircle] ? (
+              {quizeList.length > 0 && quizeList[curentQuizeCircle] ? (
                 <ProgressCircular
                   isHome={true}
-                  name={quizesData[curentQuizeCircle].name}
+                  name={quizeList[curentQuizeCircle].name}
                   percentage={
-                    quizesData[curentQuizeCircle].quize_attempts &&
-                    quizesData[curentQuizeCircle].quize_attempts.length > 0
-                      ? (quizesData[curentQuizeCircle].quize_attempts[
-                          quizesData[curentQuizeCircle].quize_attempts.length -
-                            1
+                    quizeList[curentQuizeCircle].quize_attempts &&
+                    quizeList[curentQuizeCircle].quize_attempts.length > 0
+                      ? (quizeList[curentQuizeCircle].quize_attempts[
+                          quizeList[curentQuizeCircle].quize_attempts.length - 1
                         ].score *
                           100) /
-                        quizesData[curentQuizeCircle].quize_attempts[
-                          quizesData[curentQuizeCircle].quize_attempts.length -
-                            1
+                        quizeList[curentQuizeCircle].quize_attempts[
+                          quizeList[curentQuizeCircle].quize_attempts.length - 1
                         ].totalQuestions
                       : 0
                   }
                   radius={40}
                   strokeWidth={14}
                   duration={500}
-                  color={quizesData[curentQuizeCircle].circleProgressColor}
+                  color={quizeList[curentQuizeCircle].circleProgressColor}
                   delay={0}
                   max={100}
                   key={refreshAnimation ? "true" : "false"}
@@ -232,7 +195,7 @@ const Home = () => {
                 <View className="right-24 mt-7">
                   <H3Text text={"Bezpłatne quizy"} />
                 </View>
-                {quizesData?.map((quiz, index) => {
+                {quizeList?.map((quiz, index) => {
                   return (
                     <TouchableOpacity
                       key={index}
@@ -292,7 +255,7 @@ const Home = () => {
               </View>
 
               <View className="flex-wrap flex-row flex w-full m-4 mb-32">
-                {cardsData.map((block, index) => {
+                {cardList?.map((block, index) => {
                   return (
                     <TouchableOpacity
                       onPress={() =>

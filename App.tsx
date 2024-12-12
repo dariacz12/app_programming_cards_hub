@@ -18,6 +18,7 @@ import QuizeResultPage from "./app/screens/QuizeResultPage";
 import AccessUnlocked from "./app/screens/AccessUnlocked";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { usePushNotifications } from "./app/hooks/usePushNotifications";
+import LoadingScreen from "./app/screens/LoadingScreen";
 
 AppRegistry.registerComponent("main", () => App);
 if (Platform.OS === "web") {
@@ -40,7 +41,10 @@ export default function App() {
 }
 
 export const Layout = () => {
-  const { authState, onLogout } = useAuth();
+  const { authState, loading, onLogout } = useAuth();
+  if (loading) {
+    return <LoadingScreen />;
+  }
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
@@ -57,11 +61,6 @@ export const Layout = () => {
                 component={QuizeQuestion}
                 options={{ headerShown: false }}
               ></Stack.Screen>
-              {/* <Stack.Screen
-                name="QuizeResultPage"
-                component={QuizeResultPage}
-                options={{ headerShown: false }}
-              ></Stack.Screen> */}
               <Stack.Screen
                 name="AccessUnlocked"
                 component={AccessUnlocked}
@@ -70,6 +69,11 @@ export const Layout = () => {
             </React.Fragment>
           ) : (
             <React.Fragment>
+              {/* <Stack.Screen
+                name="LoadingScreen"
+                component={LoadingScreen}
+                options={{ headerShown: false }}
+              ></Stack.Screen> */}
               <Stack.Screen
                 name="WelcomeScreen"
                 component={WelcomeScreen}
