@@ -12,6 +12,7 @@ import InfoCard from "../components/InfoCard";
 import LanguageLogo from "../components/LanguageLogo";
 import { API_URL, UPLOADS_URL } from "../context/AuthContext";
 import axios from "axios";
+import useCardSetData from "../hooks/api/useCardSetData";
 
 function AccessUnlocked({ route }: { route?: any }) {
   const { documentId } = route?.params;
@@ -20,27 +21,11 @@ function AccessUnlocked({ route }: { route?: any }) {
   const navigation = useNavigation<any>();
 
   // --------------------
-  const [cardData, setCardData] = useState<any>();
-  console.log("cardData", cardData);
-
-  useEffect(() => {
-    const getCardData = async () => {
-      try {
-        const data = await axios.get(
-          `${API_URL}/cards/${documentId}?populate[logo]=*`,
-        );
-        console.log("data1", data);
-        setCardData(data.data.data);
-      } catch (e) {
-        console.log("e", e);
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getCardData();
-  }, [documentId]);
-  // ------------------------
-  //const {data, loading, error} = useCardData({id: documentId});
-  // use
+  const {
+    data: cardData,
+    loading: loadingCardData,
+    error: errorCardData,
+  } = useCardSetData(documentId);
   return (
     <>
       {cardData && (

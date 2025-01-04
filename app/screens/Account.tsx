@@ -34,6 +34,7 @@ import { format } from "date-fns";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
+import useCurrentUser from "../hooks/api/useCurrentUser";
 
 interface Form1Data {
   name: string;
@@ -184,6 +185,7 @@ const Account = () => {
   const deleteUser = async (id: number) => {
     try {
       const result = await axios.delete(`${API_URL}/users/${id}`);
+      onLogout!();
       console.log("usunięto");
       return result;
     } catch (e) {
@@ -193,19 +195,11 @@ const Account = () => {
       };
     }
   };
-  const [userData, setUserData] = useState<any>();
-
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const user = await axios.get(`${API_URL}/users/me`);
-        setUserData(user.data);
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getUserData();
-  }, []);
+  const {
+    data: userData,
+    loading: loadingUser,
+    error: errorUser,
+  } = useCurrentUser();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalUploadPhotoVisible, setModalUploadPhotoVisible] = useState(false);
@@ -586,10 +580,12 @@ const Account = () => {
                         <Text className="text-base  text-primary">Cofnij</Text>
                       </TouchableOpacity>
                       <View className="w-2"></View>
-                      <ActiveButton
-                        onPress={() => deleteUser(userData.id)}
-                        text={"Usuń"}
-                      ></ActiveButton>
+                      {userData && (
+                        <ActiveButton
+                          onPress={() => deleteUser(userData.id)}
+                          text={"Usuń"}
+                        ></ActiveButton>
+                      )}
                     </View>
                   </LinearGradient>
                 </TouchableWithoutFeedback>

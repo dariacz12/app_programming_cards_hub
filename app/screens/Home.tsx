@@ -36,6 +36,7 @@ import LoadingScreen from "./LoadingScreen";
 import useCardListData from "../hooks/api/useCardList";
 import useCardList from "../hooks/api/useCardList";
 import useQuizeList from "../hooks/api/useQuizeList";
+import useCurrentUser from "../hooks/api/useCurrentUser";
 // color: "#9E4784",
 //  color: "#66347F",
 //  color: "#37306B",
@@ -45,23 +46,13 @@ const Home = () => {
   const [curentQuizeCircle, setCurentQuizeCircle] = useState<number>(0);
   const [notifications, setNotifications] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [userName, setUserName] = useState<string>();
   const [refreshAnimation, setRefreshAnimation] = useState(false);
-
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const user = await axios.get(`${API_URL}/users/me`);
-        console.log(user);
-
-        setUserName(user.data.username);
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getUserData();
-  }, []);
-
+  const {
+    data: userData,
+    loading: loadingUser,
+    error: errorUser,
+  } = useCurrentUser();
+  console.log("userData", userData);
   useEffect(() => {
     if (refreshAnimation) {
       setRefreshAnimation(false);
@@ -79,7 +70,7 @@ const Home = () => {
     error: errorCardList,
   } = useCardList();
 
-  if (loadingQuizeList || loadingCardlist) {
+  if (loadingQuizeList || loadingCardlist || loadingUser) {
     return <LoadingScreen />;
   }
 
@@ -105,7 +96,9 @@ const Home = () => {
               </View>
               <View className="justify-center ml-3">
                 <H4Text text={"Dzień dobry!"} />
-                <Text className="text-sm  text-secondary">{userName}</Text>
+                <Text className="text-sm  text-secondary">
+                  {userData?.username}
+                </Text>
               </View>
             </View>
             <View className="justify-center">

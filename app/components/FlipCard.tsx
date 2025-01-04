@@ -32,6 +32,7 @@ import {
   CardsAttempt,
 } from "../screens/CardsStudyPage";
 import axios from "axios";
+import useCurrentUser from "../hooks/api/useCurrentUser";
 export type UserAnswer = {
   questionId: string;
   isCorrect: boolean;
@@ -173,7 +174,7 @@ const FlipCard = ({
     if (currentIndex === dataLength - 1) {
       userAnswers && saveCardsResult(result);
       navigation.navigate("CardsResultPage", {
-        userId: userId,
+        userId: userData?.documentId,
         documentId,
       });
     }
@@ -263,18 +264,11 @@ const FlipCard = ({
     };
   });
 
-  const [userId, setUserId] = useState<any>();
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const user = await axios.get(`${API_URL}/users/me`);
-        setUserId(user.data.documentId);
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getUserData();
-  }, []);
+  const {
+    data: userData,
+    loading: loadingUser,
+    error: errorUser,
+  } = useCurrentUser();
 
   const getCombinedAnswers = (answersResultCurrentAttempt: AnswerAttemt[]) => {
     const lastAttemptAnswers =
