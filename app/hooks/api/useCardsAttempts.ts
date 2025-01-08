@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { API_URL } from "../../context/AuthContext";
 import { Card } from "../../types/Card";
-import { CardSetData } from "../../types/CardSetData";
+import { CardsAttempt } from "../../types/CardAttempt";
 interface ErrorResponse {
   msg: string;
 }
-const useCardSetData = (documentId: string) => {
-  const [data, setData] = useState<CardSetData>();
+const useCardsAttempts = (documentId: string) => {
+  const [data, setData] = useState<CardsAttempt[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,21 +18,21 @@ const useCardSetData = (documentId: string) => {
 
       try {
         const response = await axios.get(
-          `${API_URL}/cards/${documentId}?populate[logo]=*&populate[sliderPhotos]=*&populate[cards_items]=*&populate[cards_categories][populate][iconCategory]=*`,
+          `${API_URL}/cards-attempts?filters[card][documentId][$eq]=${documentId}`,
         );
         setData(response.data.data);
       } catch (err) {
         const axiosError = err as AxiosError<ErrorResponse>;
-        console.error("Error fetching card set data:", axiosError);
+        console.error("Error fetching card data:", axiosError);
         setError(axiosError.response?.data?.msg || "An error occurred.");
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [documentId]);
+  }, []);
 
   return { data, loading, error };
 };
 
-export default useCardSetData;
+export default useCardsAttempts;

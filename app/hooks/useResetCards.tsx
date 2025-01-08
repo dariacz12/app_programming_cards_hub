@@ -1,9 +1,9 @@
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
-import { Card } from "../screens/CardsStudyPage";
+import { CardSetData } from "../types/CardSetData";
 
-export const resetCards = async (
-  cardData: Card | undefined,
+export const useResetCards = async (
+  cardData: CardSetData | undefined,
   documentId: string,
   navigation: any,
 ) => {

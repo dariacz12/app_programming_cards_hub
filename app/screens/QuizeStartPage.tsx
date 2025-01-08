@@ -14,7 +14,7 @@ import axios from "axios";
 import { API_URL } from "../context/AuthContext";
 import { QuizAttempt } from "./QuizeResultPage";
 import { AnswerAttemt, QuestionData, UserAnswer } from "./QuizeQuestion";
-import { resetQuize } from "../hooks/resetQuize";
+import { useResetQuize } from "../hooks/useResetQuize";
 
 const QuizeStartPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
@@ -215,7 +215,7 @@ const QuizeStartPage = ({ route }: { route: any }) => {
               {percentage === 100 ? (
                 <ActiveButton
                   onPress={() =>
-                    resetQuize(navigation, questionsList, userId, documentId)
+                    useResetQuize(navigation, questionsList, userId, documentId)
                   }
                   text={"Resetuj"}
                 />

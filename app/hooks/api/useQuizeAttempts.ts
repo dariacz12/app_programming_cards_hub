@@ -2,14 +2,18 @@ import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { API_URL } from "../../context/AuthContext";
 import { Card } from "../../types/Card";
-import { CardSetData } from "../../types/CardSetData";
+import { CardsAttempt } from "../../types/CardAttempt";
+import { QuizAttempt } from "../../types/QuizeAttempt";
 interface ErrorResponse {
   msg: string;
 }
-const useCardSetData = (documentId: string) => {
-  const [data, setData] = useState<CardSetData>();
+
+const useQuizeAttempts = (navigation: any) => {
+  const [data, setData] = useState<QuizAttempt[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,21 +22,26 @@ const useCardSetData = (documentId: string) => {
 
       try {
         const response = await axios.get(
-          `${API_URL}/cards/${documentId}?populate[logo]=*&populate[sliderPhotos]=*&populate[cards_items]=*&populate[cards_categories][populate][iconCategory]=*`,
+          `${API_URL}/quize-attempts?populate[quize]=*`,
         );
         setData(response.data.data);
       } catch (err) {
         const axiosError = err as AxiosError<ErrorResponse>;
-        console.error("Error fetching card set data:", axiosError);
+        console.error("Error fetching quiz data:", axiosError);
         setError(axiosError.response?.data?.msg || "An error occurred.");
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
-  }, [documentId]);
+
+    const unsubscribe = navigation.addListener("focus", fetchData);
+
+    return unsubscribe;
+  }, [navigation]);
 
   return { data, loading, error };
 };
 
-export default useCardSetData;
+export default useQuizeAttempts;

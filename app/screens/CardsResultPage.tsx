@@ -10,11 +10,11 @@ import Animation from "../components/Animation";
 import H3Text from "../components/H3Text";
 import InfoCard from "../components/InfoCard";
 import ProgressCircular from "../components/ProgressCircular";
-import axios from "axios";
-import { API_URL } from "../context/AuthContext";
-import { CardsAttempt } from "./CardsStudyPage";
-import ActiveButton from "../components/ActiveButton";
-import { resetCards } from "../hooks/resetCards";
+import { useResetCards } from "../hooks/useResetCards";
+import useCardSetData from "../hooks/api/useCardSetData";
+import LoadingScreen from "./LoadingScreen";
+import useCardsAttempts from "../hooks/api/useCardsAttempts";
+import { CardsAttempt } from "../types/CardAttempt";
 
 function CardsResultPage({ route }: any) {
   const userId = route.params?.userId;
@@ -24,12 +24,9 @@ function CardsResultPage({ route }: any) {
   const navigation = useNavigation<any>();
   const [lastCardsAttemptsResult, setLastCardsAttemptsResult] =
     useState<CardsAttempt>();
-  const [cardData, setCardData] = useState<any>();
   const [percentage, setPercentage] = useState<number>(0);
   const [remainingQuestions, setRemainingQuestions] = useState<number>(0);
-  console.log("lastCardsAttemptsResult", lastCardsAttemptsResult);
-  console.log("cardData", cardData);
-
+  console.log("lastaCardttempt", lastCardsAttemptsResult);
   useEffect(() => {
     lastCardsAttemptsResult &&
       cardData &&
@@ -44,43 +41,34 @@ function CardsResultPage({ route }: any) {
           lastCardsAttemptsResult.incorrectAnswers,
       );
   }, [lastCardsAttemptsResult, documentId]);
+  const {
+    data: cardData,
+    loading: loadingCardData,
+    error: errorCardData,
+  } = useCardSetData(documentId);
+  console.log("cardData", cardData);
 
+  const {
+    data: allAttemtsResults,
+    loading: loadingAllAttemtsResults,
+    error: errorAllAttemtsResults,
+  } = useCardsAttempts(documentId);
   useEffect(() => {
-    const getCardData = async () => {
-      try {
-        const data = await axios.get(
-          `${API_URL}/cards/${documentId}?populate[sliderPhotos]=*&populate[cards_items]=*`,
-        );
-        setCardData(data.data.data);
-      } catch (e) {
-        console.log("e", e);
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getCardData();
-  }, [documentId]);
+    if (allAttemtsResults?.length > 0) {
+      setLastCardsAttemptsResult(
+        allAttemtsResults[allAttemtsResults.length - 1],
+      );
+    }
+  }, [allAttemtsResults]);
+  console.log("allAttemtsResults", allAttemtsResults);
 
-  useEffect(() => {
-    const getQuizData = async () => {
-      try {
-        const { data } = await axios.get(
-          `${API_URL}/cards-attempts?filters[card][documentId][$eq]=${documentId}`,
-        );
-        const allAttemtsResults = data.data;
-        if (allAttemtsResults?.length > 0) {
-          setLastCardsAttemptsResult(
-            allAttemtsResults[allAttemtsResults.length - 1],
-          );
-        }
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getQuizData();
-  }, [documentId]);
   const handleReset = () => {
-    resetCards(cardData, documentId, navigation);
+    useResetCards(cardData, documentId, navigation);
   };
+  if (loadingCardData || loadingAllAttemtsResults) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
       {cardData && (

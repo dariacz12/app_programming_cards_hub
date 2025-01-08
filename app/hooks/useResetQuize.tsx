@@ -2,7 +2,7 @@ import axios from "axios";
 import { AnswerAttemt, QuestionData } from "../screens/QuizeQuestion";
 import { API_URL } from "../context/AuthContext";
 
-export const resetQuize = async (
+export const useResetQuize = async (
   navigation: any,
   questionsList: QuestionData[],
   userId: string,

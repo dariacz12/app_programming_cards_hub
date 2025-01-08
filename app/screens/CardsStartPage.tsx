@@ -23,19 +23,11 @@ import ModalPopup from "../components/ModalPopup";
 import { LinearGradient } from "expo-linear-gradient";
 import CategoryElement from "../components/CategoryElement";
 import ProgressCircular from "../components/ProgressCircular";
-import axios from "axios";
-import { API_URL } from "../context/AuthContext";
+import useCardSetData from "../hooks/api/useCardSetData";
+import LoadingScreen from "./LoadingScreen";
+import { CardsCategoryProps } from "../types/CardsCategoryProps";
 type FormData = {
   kod: string;
-};
-interface CardCategoryLogo {
-  documentId: string;
-  url: string;
-}
-export type CardsCategoryProps = {
-  nameCategory: string;
-  iconCategory: CardCategoryLogo;
-  documentId: string;
 };
 const CardsStartPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
@@ -65,25 +57,15 @@ const CardsStartPage = ({ route }: { route: any }) => {
     }
   };
 
-  const [cardData, setCardData] = useState<any>();
-  console.log("cardData", cardData);
+  const {
+    data: cardData,
+    loading: loadingCardData,
+    error: errorCardData,
+  } = useCardSetData(documentId);
 
-  useEffect(() => {
-    const getCardData = async () => {
-      try {
-        const data = await axios.get(
-          `${API_URL}/cards/${documentId}?populate[sliderPhotos]=*&populate[cards_categories][populate][iconCategory]=*`,
-        );
-        console.log("data1", data);
-        setCardData(data.data.data);
-      } catch (e) {
-        console.log("e", e);
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getCardData();
-  }, [documentId]);
-
+  if (loadingCardData) {
+    return <LoadingScreen />;
+  }
   return (
     <>
       {cardData && (

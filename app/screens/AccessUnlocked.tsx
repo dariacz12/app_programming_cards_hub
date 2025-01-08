@@ -10,9 +10,10 @@ import Animation from "../components/Animation";
 import H3Text from "../components/H3Text";
 import InfoCard from "../components/InfoCard";
 import LanguageLogo from "../components/LanguageLogo";
-import { API_URL, UPLOADS_URL } from "../context/AuthContext";
+import { UPLOADS_URL } from "../context/AuthContext";
 import axios from "axios";
 import useCardSetData from "../hooks/api/useCardSetData";
+import LoadingScreen from "./LoadingScreen";
 
 function AccessUnlocked({ route }: { route?: any }) {
   const { documentId } = route?.params;
@@ -20,12 +21,15 @@ function AccessUnlocked({ route }: { route?: any }) {
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
 
-  // --------------------
   const {
     data: cardData,
     loading: loadingCardData,
     error: errorCardData,
   } = useCardSetData(documentId);
+
+  if (loadingCardData) {
+    return <LoadingScreen />;
+  }
   return (
     <>
       {cardData && (

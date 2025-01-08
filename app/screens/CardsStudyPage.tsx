@@ -25,43 +25,11 @@ import {
 } from "react-native-gesture-handler";
 import { API_URL } from "../context/AuthContext";
 import axios from "axios";
-import { CardsCategoryProps } from "./CardsStartPage";
-export type AnswerAttemt = {
-  isCorrect: boolean;
-  question: string;
-};
-type SliderPhoto = {
-  url: string;
-  documentId: string;
-};
-
-export type Card = {
-  documentId: string;
-  cards_items: CardItem[];
-  sliderPhotos: SliderPhoto[];
-  name: string;
-  description: string;
-  circleProgressColor: string;
-  cards_categories: CardsCategoryProps[];
-};
-export type CardsAttempt = {
-  answers: AnswerAttemt[];
-  card: Card;
-  incorrectAnswers: number;
-  score: number;
-  totalQuestions: number;
-};
-export interface CardItem {
-  question: string;
-  answerImage: { url: string }[];
-  documentId: string;
-  toTest: boolean;
-}
-
-export type UserAnswer = {
-  questionId: string;
-  isCorrect: boolean;
-};
+import { CardsCategoryProps } from "../types/CardsCategoryProps";
+import { CardItem } from "../types/CardItem";
+import { CardsAttempt } from "../types/CardAttempt";
+import { AnswerAttemt } from "../types/AnswerAttemt";
+import { UserAnswer } from "../types/UserAnswer";
 
 const CardsStudyPage = ({ route }: { route: any }) => {
   const { documentId, reset, cardCategoryId, cardTest } = route?.params;

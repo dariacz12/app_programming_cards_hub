@@ -12,7 +12,8 @@ import InfoCard from "../components/InfoCard";
 import ProgressCircular from "../components/ProgressCircular";
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
-import { resetQuize } from "../hooks/resetQuize";
+import { useResetQuize } from "../hooks/useResetQuize";
+import useQuizeAttempts from "../hooks/api/useQuizeAttempts";
 type Quize = {
   documentId: string;
   name: string;
@@ -39,29 +40,23 @@ function QuizeResultPage({ route }: { route: any }) {
   const navigation = useNavigation<any>();
   const [percentage, setPercentage] = useState<number>(0);
   const [quizAttemptResult, setQuizAttemptResult] = useState<QuizAttempt>();
+  console.log("quizAttemptResult2222", quizAttemptResult);
+
+  const {
+    data: quizeAttempts,
+    loading: loadingQuizeAttempts,
+    error: errorQuizeAttempts,
+  } = useQuizeAttempts(navigation);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      const getQuizData = async () => {
-        try {
-          const { data } = await axios.get(
-            `${API_URL}/quize-attempts?populate[quize]=*`,
-          );
-          const quizAttemptsResult = data.data.filter(
-            (attempt: QuizAttempt) => attempt.quize.documentId === documentId,
-          );
-          setQuizAttemptResult(
-            quizAttemptsResult[quizAttemptsResult.length - 1],
-          );
-        } catch (e) {
-          return { error: true, msg: (e as any).response.data.msg };
-        }
-      };
+    if (quizeAttempts && quizeAttempts.length > 0) {
+      const quizAttemptsResult = quizeAttempts.filter(
+        (attempt: QuizAttempt) => attempt.quize.documentId === documentId,
+      );
+      setQuizAttemptResult(quizAttemptsResult[quizAttemptsResult.length - 1]);
+    }
+  }, [quizeAttempts, documentId]);
 
-      getQuizData();
-    });
-    return unsubscribe;
-  }, [[navigation, documentId]]);
   useEffect(() => {
     quizAttemptResult &&
       setPercentage(
@@ -146,7 +141,7 @@ function QuizeResultPage({ route }: { route: any }) {
             <QuizeActiveButton
               isResultPage={true}
               onPress={() =>
-                resetQuize(navigation, questionsList, userId, documentId)
+                useResetQuize(navigation, questionsList, userId, documentId)
               }
             >
               {"Resetuj"}
