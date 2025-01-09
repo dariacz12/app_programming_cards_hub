@@ -11,6 +11,10 @@ import QuizeSecondaryButton from "../components/QuizeComponents/QuizeSeccondaryB
 import QuizeActiveButton from "../components/QuizeComponents/QuizeActiveButton";
 import { API_URL } from "../context/AuthContext";
 import axios, { AxiosError } from "axios";
+import useCurrentUser from "../hooks/api/useCurrentUser";
+import LoadingScreen from "./LoadingScreen";
+import useQuizeSetData from "../hooks/api/useQuizeSetData";
+import useQuizeAttempts from "../hooks/api/useQuizeAttempts";
 
 type Answer = {
   documentId: string;
@@ -72,7 +76,6 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     ? questionsList || []
     : filteredQuestionsList || [];
 
-  const [userId, setUserId] = useState<any>();
   let currentQuestionId = activeQuestionsList?.[currentQuestion]?.documentId;
 
   useEffect(() => {
@@ -108,18 +111,18 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     };
     getQuizData();
   }, [documentId]);
+  // const {
+  //   data: quizeAttempts,
+  //   loading: loadingQuizeAttempts,
+  //   error: errorQuizeAttempts,
+  // } = useQuizeAttempts(navigation);
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const user = await axios.get(`${API_URL}/users/me`);
-        setUserId(user.data.documentId);
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getUserData();
-  }, []);
+  const {
+    data: userData,
+    loading: loadingUser,
+    error: errorUser,
+  } = useCurrentUser();
+
   useEffect(() => {
     const getQuizData = async () => {
       try {
@@ -198,7 +201,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         saveQuizResult();
         navigation.navigate("QuizeResultPage", {
           documentId: documentId,
-          userId: userId,
+          userId: userData?.id,
           questionsList: questionsList,
         });
       }
@@ -322,7 +325,9 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       }
     }
   };
-
+  if (loadingUser) {
+    return <LoadingScreen />;
+  }
   return (
     <>
       {activeQuestionsList && (

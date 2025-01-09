@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { API_URL } from "../../context/AuthContext";
-import { User } from "../../types/User";
+import { QuizeSetData } from "../../types/QuizeSetData";
 interface ErrorResponse {
   msg: string;
 }
-const useCurrentUser = () => {
-  const [data, setData] = useState<User>();
+const useQuizeSetData = (documentId: string) => {
+  const [data, setData] = useState<QuizeSetData>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,11 +16,13 @@ const useCurrentUser = () => {
       setError(null);
 
       try {
-        const response = await axios.get(`${API_URL}/users/me`);
-        setData(response.data);
+        const response = await axios.get(
+          `${API_URL}/quizes/${documentId}?populate[sliderPhotos]=*&populate[quiz_questions_elements][populate][quiz_answer_options]=*`,
+        );
+        setData(response.data.data);
       } catch (err) {
         const axiosError = err as AxiosError<ErrorResponse>;
-        console.error("Error fetching current user data:", axiosError);
+        console.error("Error fetching current quize set data:", axiosError);
         setError(axiosError.response?.data?.msg || "An error occurred.");
       } finally {
         setLoading(false);
@@ -32,4 +34,4 @@ const useCurrentUser = () => {
   return { data, loading, error };
 };
 
-export default useCurrentUser;
+export default useQuizeSetData;
