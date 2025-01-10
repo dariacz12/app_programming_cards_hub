@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Pressable,
-  SafeAreaView,
   View,
   StyleSheet,
   Text,
@@ -17,26 +16,15 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import H1Text from "./H1Text";
-import {
-  Gesture,
-  GestureDetector,
-  GestureStateChangeEvent,
-  PanGestureHandlerEventPayload,
-} from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
-import { API_URL, UPLOADS_URL } from "../context/AuthContext";
-import {
-  AnswerAttemt,
-  CardItem,
-  CardsAttempt,
-} from "../screens/CardsStudyPage";
-import axios from "axios";
+import { UPLOADS_URL } from "../context/AuthContext";
 import useCurrentUser from "../hooks/api/useCurrentUser";
-export type UserAnswer = {
-  questionId: string;
-  isCorrect: boolean;
-};
+import { CardItem } from "../types/CardItem";
+import { AnswerAttemt } from "../types/AnswerAttemt";
+import { CardsAttempt } from "../types/CardAttempt";
+import { saveCardsAttempt } from "../actions/saveCardsAttempt";
+import { UserCardAnswer } from "../types/UserCardAnswer";
 
 interface FlipCardsProps {
   documentId: string;
@@ -52,8 +40,8 @@ interface FlipCardsProps {
   setNewData: React.Dispatch<React.SetStateAction<CardItem[]>>;
   setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
   activeQuestionsList: CardItem[];
-  userAnswers: UserAnswer[];
-  setUserAnswers: React.Dispatch<React.SetStateAction<UserAnswer[]>>;
+  userAnswers: UserCardAnswer[];
+  setUserAnswers: React.Dispatch<React.SetStateAction<UserCardAnswer[]>>;
   score: number;
   setScore: React.Dispatch<React.SetStateAction<number>>;
   incorrect: number;
@@ -146,7 +134,10 @@ const FlipCard = ({
   const offset = useSharedValue({ x: 0, y: 0 });
   const { width } = useWindowDimensions();
 
-  const updateUserAnswers = (isCorrect: boolean, userAnswers: UserAnswer[]) => {
+  const updateUserAnswers = (
+    isCorrect: boolean,
+    userAnswers: UserCardAnswer[],
+  ) => {
     const updatedAnswers = [
       ...userAnswers,
       { questionId: currentCard.documentId, isCorrect },
@@ -162,21 +153,33 @@ const FlipCard = ({
     return updatedAnswers;
   };
 
-  const swipeLogic = (
+  const swipeLogic = async (
     currentIndex: number,
     translationX: number,
-    userAnswers: UserAnswer[],
+    userAnswers: UserCardAnswer[],
   ) => {
     setCurrentQuestionIndex(currentIndex + 1);
     const isCorrect = translationX > 0;
     const result = updateUserAnswers(isCorrect, userAnswers);
 
     if (currentIndex === dataLength - 1) {
-      userAnswers && saveCardsResult(result);
-      navigation.navigate("CardsResultPage", {
-        userId: userData?.documentId,
-        documentId,
-      });
+      try {
+        let response;
+        userAnswers &&
+          (response = await saveCardsAttempt(
+            result,
+            lastCardsAttemptsResultAnswers,
+            cardData,
+            lastCardsAttemptsResult,
+            documentId,
+          ));
+        if (response?.status === 200) {
+          navigation.navigate("CardsResultPage", {
+            userId: userData?.documentId,
+            documentId,
+          });
+        }
+      } catch {}
     }
   };
 
@@ -264,104 +267,7 @@ const FlipCard = ({
     };
   });
 
-  const {
-    data: userData,
-    loading: loadingUser,
-    error: errorUser,
-  } = useCurrentUser();
-
-  const getCombinedAnswers = (answersResultCurrentAttempt: AnswerAttemt[]) => {
-    const lastAttemptAnswers =
-      lastCardsAttemptsResultAnswers.length > 0
-        ? lastCardsAttemptsResultAnswers
-        : [];
-
-    const currentAttemptAnswers = answersResultCurrentAttempt;
-    const correctAnswersFromLastAttempt = lastAttemptAnswers.filter(
-      (answer) => answer.isCorrect,
-    );
-    const correctAnswersFromSecondLastAttempt = currentAttemptAnswers.filter(
-      (answer) => answer.isCorrect,
-    );
-    const incorrectAnswersFromLastAttempt = lastAttemptAnswers.filter(
-      (answer) => !answer.isCorrect,
-    );
-    const combinedAnswersResults = [
-      ...correctAnswersFromLastAttempt,
-      ...correctAnswersFromSecondLastAttempt,
-      ...incorrectAnswersFromLastAttempt,
-    ];
-    const uniqueAnswers = combinedAnswersResults.filter(
-      (answer, index, self) =>
-        index === self.findIndex((a) => a.question === answer.question),
-    );
-
-    return uniqueAnswers;
-  };
-  const saveCardsResult = async (currentUserAnswers: UserAnswer[]) => {
-    try {
-      let score = 0;
-      let incorrect = 0;
-      const answersResultCurrentAttempt = currentUserAnswers.map(
-        (userAnswer) => {
-          const isCorrect = userAnswer.isCorrect;
-          if (isCorrect) {
-            score++;
-          } else {
-            incorrect++;
-          }
-          return {
-            question: userAnswer.questionId,
-            isCorrect,
-          };
-        },
-      );
-
-      const totalQuestions = cardData?.length;
-      let answersString;
-      if (
-        Array.isArray(lastCardsAttemptsResultAnswers) &&
-        lastCardsAttemptsResultAnswers?.length > 0
-      ) {
-        const combinedanswers = getCombinedAnswers(answersResultCurrentAttempt);
-        answersString = JSON.stringify(combinedanswers);
-        lastCardsAttemptsResult &&
-          (score = score + lastCardsAttemptsResult?.score);
-      } else {
-        answersString = JSON.stringify(answersResultCurrentAttempt);
-      }
-
-      const cardsAttempt = {
-        data: {
-          card: documentId,
-          answers: answersString,
-          score,
-          totalQuestions,
-          incorrectAnswers: incorrect,
-        },
-      };
-
-      const response = await axios.post(
-        `${API_URL}/cards-attempts`,
-        cardsAttempt,
-      );
-      if (response.status === 200) {
-        console.log("Wynik cardAttempt zapisany:", response.data);
-      } else {
-        console.error("Failed to save  result, status:", response.status);
-        console.error("Error response:", response.data);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Error response data:", error.response?.data);
-        console.error("Error response status:", error.response?.status);
-      } else if (error instanceof Error) {
-        console.error("Error message:", error.message);
-      } else {
-        console.error("Unexpected error:", error);
-      }
-    }
-  };
+  const { data: userData } = useCurrentUser();
 
   return (
     <GestureDetector gesture={pan}>

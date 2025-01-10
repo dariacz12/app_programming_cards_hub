@@ -5,7 +5,7 @@ const H2Text = ({
   text,
   textCenter,
 }: {
-  text: string;
+  text?: string;
   textCenter: boolean;
 }) => {
   return (

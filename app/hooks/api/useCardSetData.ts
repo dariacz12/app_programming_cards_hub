@@ -6,7 +6,11 @@ import { CardSetData } from "../../types/CardSetData";
 interface ErrorResponse {
   msg: string;
 }
-const useCardSetData = (documentId: string) => {
+const useCardSetData = (
+  documentId: string,
+  cardTest?: boolean,
+  cardCategoryId?: string,
+) => {
   const [data, setData] = useState<CardSetData>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,9 +21,20 @@ const useCardSetData = (documentId: string) => {
       setError(null);
 
       try {
-        const response = await axios.get(
-          `${API_URL}/cards/${documentId}?populate[logo]=*&populate[sliderPhotos]=*&populate[cards_items]=*&populate[cards_categories][populate][iconCategory]=*`,
-        );
+        let response;
+        if (cardTest) {
+          response = await axios.get(
+            `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*&filters[cards_items][toTest][$eq]=${cardTest}`,
+          );
+        } else if (cardCategoryId) {
+          response = await axios.get(
+            `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*&filters[cards_categories][documentId][$eq]=${cardCategoryId}`,
+          );
+        } else {
+          response = await axios.get(
+            `${API_URL}/cards/${documentId}?populate[logo]=*&populate[sliderPhotos]=*&populate[cards_items][populate][answerImage]=*&populate[cards_categories][populate][iconCategory]=*`,
+          );
+        }
         setData(response.data.data);
       } catch (err) {
         const axiosError = err as AxiosError<ErrorResponse>;
@@ -30,7 +45,7 @@ const useCardSetData = (documentId: string) => {
       }
     };
     fetchData();
-  }, [documentId]);
+  }, [documentId, cardCategoryId, cardTest]);
 
   return { data, loading, error };
 };

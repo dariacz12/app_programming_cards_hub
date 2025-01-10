@@ -7,12 +7,11 @@ import ActiveButton from "../components/ActiveButton";
 import Slider from "../components/Slider";
 import { AntDesign } from "@expo/vector-icons";
 import ProgressCircular from "../components/ProgressCircular";
-import { QuizAttempt } from "./QuizeResultPage";
-import { useResetQuize } from "../hooks/useResetQuize";
+import { resetQuize } from "../actions/resetQuize";
 import useCurrentUser from "../hooks/api/useCurrentUser";
-import LoadingScreen from "./LoadingScreen";
 import useQuizeSetData from "../hooks/api/useQuizeSetData";
 import useQuizeAttempts from "../hooks/api/useQuizeAttempts";
+import { QuizAttempt } from "../types/QuizeAttempt";
 
 const QuizeStartPage = ({ route }: { route: any }) => {
   const { documentId } = route?.params;
@@ -21,31 +20,27 @@ const QuizeStartPage = ({ route }: { route: any }) => {
   const [quizAttemptResult, setQuizAttemptResult] = useState<QuizAttempt>();
   const [refreshAnimation, setRefreshAnimation] = useState(false);
   const [percentage, setPercentage] = useState<number>(0);
-  const {
-    data: userData,
-    loading: loadingUser,
-    error: errorUser,
-  } = useCurrentUser();
-  const {
-    data: quizeSetData,
-    loading: loadingQuizeSetData,
-    error: errorQuizeSetData,
-  } = useQuizeSetData(documentId);
+  const { data: userData } = useCurrentUser();
+  const { data: quizeSetData } = useQuizeSetData(documentId);
 
   const {
     data: quizeAttempts,
     loading: loadingQuizeAttempts,
     error: errorQuizeAttempts,
-  } = useQuizeAttempts(navigation);
+  } = useQuizeAttempts(navigation, documentId);
+
   useEffect(() => {
     if (quizeAttempts && quizeAttempts.length > 0) {
-      const quizAttemptsResult = quizeAttempts.filter(
-        (attempt: QuizAttempt) => attempt.quize.documentId === documentId,
-      );
-      setQuizAttemptResult(quizAttemptsResult[quizAttemptsResult.length - 1]);
-      setRefreshAnimation(true);
+      setQuizAttemptResult(quizeAttempts[quizeAttempts.length - 1]);
     }
   }, [quizeAttempts, documentId]);
+
+  useEffect(() => {
+    quizAttemptResult &&
+      setPercentage(
+        (quizAttemptResult.score * 100) / quizAttemptResult.totalQuestions,
+      );
+  }, [quizAttemptResult, documentId]);
 
   useEffect(() => {
     if (refreshAnimation) {
@@ -59,9 +54,25 @@ const QuizeStartPage = ({ route }: { route: any }) => {
       );
   }, [quizAttemptResult, documentId]);
 
-  if (loadingUser || loadingQuizeSetData || loadingQuizeAttempts) {
-    return <LoadingScreen />;
-  }
+  const handleReset = async () => {
+    try {
+      const response =
+        quizeSetData &&
+        userData &&
+        (await resetQuize(
+          quizeSetData.quiz_questions_elements,
+          userData.id,
+          documentId,
+        ));
+      if (response?.status === 200) {
+        navigation.navigate("QuizeQuestion", {
+          documentId: documentId,
+          reset: true,
+        });
+      }
+    } catch {}
+  };
+
   return (
     <>
       {quizeSetData && (
@@ -124,17 +135,7 @@ const QuizeStartPage = ({ route }: { route: any }) => {
               {percentage === 100 ? (
                 userData &&
                 quizeSetData && (
-                  <ActiveButton
-                    onPress={() =>
-                      useResetQuize(
-                        navigation,
-                        quizeSetData?.quiz_questions_elements,
-                        userData.id,
-                        documentId,
-                      )
-                    }
-                    text={"Resetuj"}
-                  />
+                  <ActiveButton onPress={handleReset} text={"Resetuj"} />
                 )
               ) : (
                 <ActiveButton

@@ -29,7 +29,10 @@ import { CardsCategoryProps } from "../types/CardsCategoryProps";
 import { CardItem } from "../types/CardItem";
 import { CardsAttempt } from "../types/CardAttempt";
 import { AnswerAttemt } from "../types/AnswerAttemt";
-import { UserAnswer } from "../types/UserAnswer";
+import { UserCardAnswer } from "../types/UserCardAnswer";
+import useCardsAttempts from "../hooks/api/useCardsAttempts";
+import LoadingScreen from "./LoadingScreen";
+import useCardSetData from "../hooks/api/useCardSetData";
 
 const CardsStudyPage = ({ route }: { route: any }) => {
   const { documentId, reset, cardCategoryId, cardTest } = route?.params;
@@ -37,75 +40,21 @@ const CardsStudyPage = ({ route }: { route: any }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<any>(0);
   const [score, setScore] = useState<number>(0);
   const [incorrect, setIncorrect] = useState<number>(0);
-  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
+  const [userAnswers, setUserAnswers] = useState<UserCardAnswer[]>([]);
   const animatedValue = useSharedValue(0);
-  const [cardData, setCardData] = useState<CardItem[]>([]);
-  console.log("cardData", cardData);
-  console.log("cardCategoryId", cardCategoryId);
-  // useEffect(() => {
-  //   const getCardData = async () => {
-  //     try {
-  //       const data = await axios.get(
-  //         `${API_URL}/cards-items?populate[answerImage]=*&populate[cards_categories]=*&populate[cards]=*`,
-  //       );
-  //       setCardData(
-  //         data.data.data.filter(
-  //           (item: any) => item.cards[0].documentId === documentId,
-  //         ),
-  //       );
-  //     } catch (e) {
-  //       console.log("e", e);
-  //       return { error: true, msg: (e as any).response.data.msg };
-  //     }
-  //   };
-  //   getCardData();
-  // }, [documentId]);
-  useEffect(() => {
-    const getCardData = async () => {
-      try {
-        console.log(
-          "Fetching data with documentId:",
-          documentId,
-          "and cardCategoryId:",
-          cardCategoryId,
-        );
-        let response;
-        if (cardTest) {
-          response = await axios.get(
-            `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*&filters[cards_items][toTest][$eq]=${cardTest}`,
-          );
-        } else if (cardCategoryId) {
-          console.log("dupka", cardCategoryId);
-          // Uzycie koncowki cards/id zwraca jedną karte zgodnie ze swaggerem i nie działają dla nich filtry
-          // Trzeba uzyć koncowki [GET] /cards i na niej filtrami pofiltorwać po kursie i po kategorii
-          response = await axios.get(
-            `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*&filters[cards_categories][documentId][$eq]=${cardCategoryId}`,
-          );
-          console.log(9998, response.data.data.cards_items);
-          console.log("-----------------------------------------------");
-        } else {
-          response = await axios.get(
-            `${API_URL}/cards/${documentId}?populate[cards_items][populate][answerImage]=*&populate[cards_categories]=*`,
-          );
-        }
-        setCardData(response.data.data.cards_items);
-      } catch (e) {
-        console.log("Error fetching card data:", e);
-        return {
-          error: true,
-          msg: (e as any).response?.data?.msg || "An error occurred",
-        };
-      }
-    };
 
-    getCardData();
-  }, [documentId, cardCategoryId, cardTest]);
+  console.log("cardCategoryId", cardCategoryId);
+  const {
+    data: cardData,
+    loading: loadingCardData,
+    error: errorCardData,
+  } = useCardSetData(documentId);
 
   const [isFirstAttempt, setIsFirstAttempt] = useState(true);
   const [filteredQuestionsList, setFilteredQuestionsList] =
     useState<CardItem[]>();
   const activeQuestionsList: CardItem[] = isFirstAttempt
-    ? cardData || []
+    ? cardData?.cards_items || []
     : filteredQuestionsList || [];
   const [lastCardsAttemptsResultAnswers, setLastCardsAttemptsResultsAnswers] =
     useState<AnswerAttemt[]>([]);
@@ -128,39 +77,41 @@ const CardsStudyPage = ({ route }: { route: any }) => {
     setNewData(activeQuestionsList);
   }, [activeQuestionsList]);
 
+  const {
+    data: allAttemtsResults,
+    loading: loadingAllAttemtsResults,
+    error: errorAllAttemtsResults,
+  } = useCardsAttempts(documentId);
+
   useEffect(() => {
     const getQuizData = async () => {
-      try {
-        const { data } = await axios.get(
-          `${API_URL}/cards-attempts?filters[card][documentId][$eq]=${documentId}`,
+      if (allAttemtsResults?.length > 0) {
+        setLastCardsAttemptsResultsAnswers(
+          allAttemtsResults[allAttemtsResults.length - 1].answers,
         );
-        const allAttemtsResults = data.data;
-        if (allAttemtsResults?.length > 0) {
-          setLastCardsAttemptsResultsAnswers(
-            allAttemtsResults[allAttemtsResults.length - 1].answers,
-          );
-          setLastCardsAttemptsResult(
-            allAttemtsResults[allAttemtsResults.length - 1],
-          );
-        } else {
-          setLastCardsAttemptsResultsAnswers([]);
-        }
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
+        setLastCardsAttemptsResult(
+          allAttemtsResults[allAttemtsResults.length - 1],
+        );
+      } else {
+        setLastCardsAttemptsResultsAnswers([]);
       }
     };
     getQuizData();
-  }, [documentId]);
+  }, [documentId, allAttemtsResults]);
 
   useEffect(() => {
     const incorrectQuestionIds = lastCardsAttemptsResultAnswers
       .filter((attempt) => !attempt.isCorrect)
       .map((attempt) => attempt.question);
-    const filteredQuestionsList = cardData.filter((question) =>
+    const filteredQuestionsList = cardData?.cards_items.filter((question) =>
       incorrectQuestionIds.includes(question.documentId),
     );
     setFilteredQuestionsList(filteredQuestionsList);
-  }, [cardData, lastCardsAttemptsResultAnswers]);
+  }, [cardData?.cards_items, lastCardsAttemptsResultAnswers]);
+
+  // if (loadingAllAttemtsResults) {
+  //   return <LoadingScreen />;
+  // }
   return (
     <>
       {activeQuestionsList && (
@@ -181,7 +132,7 @@ const CardsStudyPage = ({ route }: { route: any }) => {
               </View>
             </View>
             <ProgressBar
-              completedQuestions={currentQuestionIndex + 1}
+              completedQuestions={currentQuestionIndex}
               allQuestions={activeQuestionsList.length}
             />
             <View className="flex mt-1 mb-16 flex-row justify-between relative">
@@ -208,31 +159,33 @@ const CardsStudyPage = ({ route }: { route: any }) => {
                           key={index}
                           style={{ zIndex: activeQuestionsList.length - index }}
                         >
-                          <FlipCard
-                            documentId={documentId}
-                            cardStyle={styles.flipCard}
-                            currentCard={item}
-                            index={index}
-                            key={index}
-                            dataLength={activeQuestionsList.length}
-                            maxVisibleItem={MAX}
-                            currentIndex={currentQuestionIndex}
-                            animatedValue={animatedValue}
-                            setCurrentQuestionIndex={setCurrentQuestionIndex}
-                            setNewData={setNewData}
-                            activeQuestionsList={activeQuestionsList}
-                            userAnswers={userAnswers}
-                            setUserAnswers={setUserAnswers}
-                            score={score}
-                            setScore={setScore}
-                            incorrect={incorrect}
-                            setIncorrect={setIncorrect}
-                            cardData={cardData}
-                            lastCardsAttemptsResultAnswers={
-                              lastCardsAttemptsResultAnswers
-                            }
-                            lastCardsAttemptsResult={lastCardsAttemptsResult}
-                          />
+                          {cardData && (
+                            <FlipCard
+                              documentId={documentId}
+                              cardStyle={styles.flipCard}
+                              currentCard={item}
+                              index={index}
+                              key={index}
+                              dataLength={activeQuestionsList.length}
+                              maxVisibleItem={MAX}
+                              currentIndex={currentQuestionIndex}
+                              animatedValue={animatedValue}
+                              setCurrentQuestionIndex={setCurrentQuestionIndex}
+                              setNewData={setNewData}
+                              activeQuestionsList={activeQuestionsList}
+                              userAnswers={userAnswers}
+                              setUserAnswers={setUserAnswers}
+                              score={score}
+                              setScore={setScore}
+                              incorrect={incorrect}
+                              setIncorrect={setIncorrect}
+                              cardData={cardData.cards_items}
+                              lastCardsAttemptsResultAnswers={
+                                lastCardsAttemptsResultAnswers
+                              }
+                              lastCardsAttemptsResult={lastCardsAttemptsResult}
+                            />
+                          )}
                         </View>
                       );
                     })}

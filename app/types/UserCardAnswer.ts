@@ -1,4 +1,4 @@
-export type UserAnswer = {
+export type UserCardAnswer = {
   questionId: string;
   isCorrect: boolean;
 };

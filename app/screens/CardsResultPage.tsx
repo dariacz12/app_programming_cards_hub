@@ -10,7 +10,7 @@ import Animation from "../components/Animation";
 import H3Text from "../components/H3Text";
 import InfoCard from "../components/InfoCard";
 import ProgressCircular from "../components/ProgressCircular";
-import { useResetCards } from "../hooks/useResetCards";
+import { resetCards } from "../actions/resetCards";
 import useCardSetData from "../hooks/api/useCardSetData";
 import LoadingScreen from "./LoadingScreen";
 import useCardsAttempts from "../hooks/api/useCardsAttempts";
@@ -62,16 +62,21 @@ function CardsResultPage({ route }: any) {
   }, [allAttemtsResults]);
   console.log("allAttemtsResults", allAttemtsResults);
 
-  const handleReset = () => {
-    useResetCards(cardData, documentId, navigation);
+  const handleReset = async () => {
+    try {
+      const response = await resetCards(cardData, documentId);
+      if (response?.status === 200) {
+        navigation.navigate("CardsStudyPage", {
+          documentId: documentId,
+          reset: true,
+        });
+      }
+    } catch {}
   };
-  if (loadingCardData || loadingAllAttemtsResults) {
-    return <LoadingScreen />;
-  }
 
   return (
     <>
-      {cardData && (
+      {
         <SafeAreaView className="flex-1 justi bg-primary ">
           <View className="flex mt-6  mx-10 flex-row ">
             <TouchableOpacity
@@ -82,7 +87,7 @@ function CardsResultPage({ route }: any) {
               <AntDesign name="left" size={24} color="ghostwhite" />
             </TouchableOpacity>
             <View className=" flex-1 items-center pr-4">
-              <H2Text textCenter={true} text={cardData.name} />
+              <H2Text textCenter={true} text={cardData?.name} />
             </View>
           </View>
           <View className="flex-1 w-full relative z-30">
@@ -91,7 +96,7 @@ function CardsResultPage({ route }: any) {
             </View>
             <View className="mt-44 ">
               <ProgressCircular
-                name={cardData.name}
+                name={cardData?.name ?? ""}
                 percentage={percentage}
                 radius={35}
                 strokeWidth={14}
@@ -181,7 +186,7 @@ function CardsResultPage({ route }: any) {
           </View>
           <View></View>
         </SafeAreaView>
-      )}
+      }
     </>
   );
 }

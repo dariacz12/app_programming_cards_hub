@@ -15,42 +15,11 @@ import useCurrentUser from "../hooks/api/useCurrentUser";
 import LoadingScreen from "./LoadingScreen";
 import useQuizeSetData from "../hooks/api/useQuizeSetData";
 import useQuizeAttempts from "../hooks/api/useQuizeAttempts";
-
-type Answer = {
-  documentId: string;
-  isCorrect: boolean;
-  answerLetter: string;
-  status: boolean;
-};
-export type UserAnswer = {
-  questionId: string;
-  answerId: string;
-};
-export type QuestionData = {
-  documentId: string;
-  explanation: string;
-  question: string;
-  quiz_answer_options: Answer[];
-};
-
-type Quize = {
-  documentId: string;
-};
-export type AnswerAttemt = {
-  isCorrect: boolean;
-  question: string;
-};
-export type QuizAttempt = {
-  answers: AnswerAttemt[];
-  quize: Quize;
-  incorrectAnswers: number;
-  score: number;
-  totalQuestions: number;
-};
-
-export type QuizAttemptsResults = {
-  results: QuizAttempt[];
-};
+import { QuizAttempt } from "../types/QuizeAttempt";
+import { AnswerAttemt } from "../types/AnswerAttemt";
+import { QuestionItem } from "../types/QuizeItem";
+import { UserQuizeAnswer } from "../types/UserQuizeAnswer";
+import { AnswerAttemptQuize } from "../types/AnswerAttemptQuize";
 
 const QuizeQuestion = ({ route }: { route: any }) => {
   const { documentId, reset } = route?.params;
@@ -61,22 +30,15 @@ const QuizeQuestion = ({ route }: { route: any }) => {
   const [chosenAnswer, setChosenAnswer] = useState<any>(null);
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [questionsList, setQuestionsList] = useState<QuestionData[]>([]);
-  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
-  const [correctAnswers, setCorrectAnswers] = useState<UserAnswer[]>();
+  const [userAnswers, setUserAnswers] = useState<UserQuizeAnswer[]>([]);
+  const [correctAnswers, setCorrectAnswers] = useState<UserQuizeAnswer[]>();
   const [filteredQuestionsList, setFilteredQuestionsList] =
-    useState<QuestionData[]>();
+    useState<QuestionItem[]>();
   const [isFirstAttempt, setIsFirstAttempt] = useState(true);
   const [lastQuizAttemptsResultAnswers, setLastQuizAttemptsResultsAnswers] =
     useState<AnswerAttemt[]>([]);
   const [lastQuizAttemptsResult, setLastQuizAttemptsResult] =
     useState<QuizAttempt>();
-
-  const activeQuestionsList: QuestionData[] = isFirstAttempt
-    ? questionsList || []
-    : filteredQuestionsList || [];
-
-  let currentQuestionId = activeQuestionsList?.[currentQuestion]?.documentId;
 
   useEffect(() => {
     if (reset) {
@@ -88,34 +50,18 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     }
   }, [lastQuizAttemptsResultAnswers, reset]);
 
+  const { data: quizeAttempts } = useQuizeAttempts(navigation, documentId);
+
   useEffect(() => {
-    const getQuizData = async () => {
-      try {
-        const { data } = await axios.get(
-          `${API_URL}/quize-attempts?filters[quize][documentId][$eq]=${documentId}`,
-        );
-        const allAttemtsResults = data.data;
-        if (allAttemtsResults?.length > 0) {
-          setLastQuizAttemptsResultsAnswers(
-            allAttemtsResults[allAttemtsResults.length - 1].answers,
-          );
-          setLastQuizAttemptsResult(
-            allAttemtsResults[allAttemtsResults.length - 1],
-          );
-        } else {
-          setLastQuizAttemptsResultsAnswers([]);
-        }
-      } catch (e) {
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getQuizData();
-  }, [documentId]);
-  // const {
-  //   data: quizeAttempts,
-  //   loading: loadingQuizeAttempts,
-  //   error: errorQuizeAttempts,
-  // } = useQuizeAttempts(navigation);
+    if (quizeAttempts?.length > 0) {
+      setLastQuizAttemptsResultsAnswers(
+        quizeAttempts[quizeAttempts.length - 1].answers,
+      );
+      setLastQuizAttemptsResult(quizeAttempts[quizeAttempts.length - 1]);
+    } else {
+      setLastQuizAttemptsResultsAnswers([]);
+    }
+  }, [documentId, quizeAttempts]);
 
   const {
     data: userData,
@@ -123,30 +69,27 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     error: errorUser,
   } = useCurrentUser();
 
-  useEffect(() => {
-    const getQuizData = async () => {
-      try {
-        const { data } = await axios.get(
-          `${API_URL}/quizes/${documentId}?populate[quiz_questions_elements][populate][quiz_answer_options]=*`,
-        );
-        setQuestionsList(data.data.quiz_questions_elements);
-      } catch (e) {
-        console.log("e", e);
-        return { error: true, msg: (e as any).response.data.msg };
-      }
-    };
-    getQuizData();
-  }, [documentId]);
+  const {
+    data: quizeSetData,
+    loading: loadingQuizeSetData,
+    error: errorQuizeSetData,
+  } = useQuizeSetData(documentId);
+
+  const activeQuestionsList: QuestionItem[] = isFirstAttempt
+    ? quizeSetData?.quiz_questions_elements || []
+    : filteredQuestionsList || [];
+
+  let currentQuestionId = activeQuestionsList?.[currentQuestion]?.documentId;
 
   useEffect(() => {
     const incorrectQuestionIds = lastQuizAttemptsResultAnswers
       .filter((attempt) => !attempt.isCorrect)
       .map((attempt) => attempt.question);
-    const filteredQuestionsList = questionsList.filter((question) =>
-      incorrectQuestionIds.includes(question.documentId),
+    const filteredQuestionsList = quizeSetData?.quiz_questions_elements.filter(
+      (question) => incorrectQuestionIds.includes(question.documentId),
     );
     setFilteredQuestionsList(filteredQuestionsList);
-  }, [questionsList, lastQuizAttemptsResultAnswers]);
+  }, [quizeSetData?.quiz_questions_elements, lastQuizAttemptsResultAnswers]);
 
   useEffect(() => {
     setChosenAnswer(null);
@@ -155,7 +98,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       : setIsButtonDisabled(false);
   }, [currentQuestion]);
 
-  const handleAnswerSelection = (answer: Answer) => {
+  const handleAnswerSelection = (answer: AnswerAttemptQuize) => {
     setUserAnswers((prev) => {
       const existing = prev.find((ans) => ans.questionId === currentQuestionId);
       if (existing) {
@@ -202,7 +145,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         navigation.navigate("QuizeResultPage", {
           documentId: documentId,
           userId: userData?.id,
-          questionsList: questionsList,
+          questionsList: quizeSetData?.quiz_questions_elements,
         });
       }
       if (chosenAnswer) {
@@ -241,7 +184,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     return uniqueAnswers;
   };
   useEffect(() => {
-    const correctAnswers: UserAnswer[] = activeQuestionsList
+    const correctAnswers: UserQuizeAnswer[] = activeQuestionsList
       ?.map((question) => {
         const correctAnswer = question.quiz_answer_options.find(
           (ans) => ans.isCorrect,
@@ -254,7 +197,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         }
         return null;
       })
-      .filter((answer) => answer !== null) as UserAnswer[];
+      .filter((answer) => answer !== null) as UserQuizeAnswer[];
     setCorrectAnswers(correctAnswers);
   }, [documentId, activeQuestionsList]);
 
@@ -282,7 +225,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
         };
       });
 
-      const totalQuestions = questionsList?.length;
+      const totalQuestions = quizeSetData?.quiz_questions_elements?.length;
       let answersString;
       if (
         Array.isArray(lastQuizAttemptsResultAnswers) &&
@@ -325,9 +268,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       }
     }
   };
-  if (loadingUser) {
-    return <LoadingScreen />;
-  }
+
   return (
     <>
       {activeQuestionsList && (

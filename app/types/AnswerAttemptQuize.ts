@@ -1,4 +1,4 @@
-export type QuizeAnswer = {
+export type AnswerAttemptQuize = {
   documentId: string;
   isCorrect: boolean;
   answerLetter: string;

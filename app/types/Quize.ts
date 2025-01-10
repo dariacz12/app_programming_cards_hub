@@ -1,4 +1,4 @@
-import { QuizAttempt } from "../screens/QuizeQuestion";
+import { QuizAttempt } from "./QuizeAttempt";
 
 export interface Quiz {
   circleProgressColor: string;

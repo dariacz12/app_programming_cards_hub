@@ -28,10 +28,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import ProgressCircular from "../components/ProgressCircular";
 import ArrowBack from "../components/ArrowBack";
 import { eventEmitter } from "../components/BottomTabs/CustomBottomTab";
-import axios from "axios";
-import { API_URL } from "../context/AuthContext";
-import { QuizAttempt } from "./QuizeQuestion";
-import { CardsAttempt } from "./CardsStudyPage";
 import LoadingScreen from "./LoadingScreen";
 import useCardListData from "../hooks/api/useCardList";
 import useCardList from "../hooks/api/useCardList";
@@ -70,9 +66,9 @@ const Home = () => {
     error: errorCardList,
   } = useCardList();
 
-  if (loadingQuizeList || loadingCardlist || loadingUser) {
-    return <LoadingScreen />;
-  }
+  // if (loadingQuizeList || loadingCardlist || loadingUser) {
+  //   return <LoadingScreen />;
+  // }
 
   return (
     <>

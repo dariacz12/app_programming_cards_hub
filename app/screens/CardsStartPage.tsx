@@ -63,9 +63,6 @@ const CardsStartPage = ({ route }: { route: any }) => {
     error: errorCardData,
   } = useCardSetData(documentId);
 
-  if (loadingCardData) {
-    return <LoadingScreen />;
-  }
   return (
     <>
       {cardData && (

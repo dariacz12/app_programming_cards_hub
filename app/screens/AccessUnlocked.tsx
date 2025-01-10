@@ -27,9 +27,9 @@ function AccessUnlocked({ route }: { route?: any }) {
     error: errorCardData,
   } = useCardSetData(documentId);
 
-  if (loadingCardData) {
-    return <LoadingScreen />;
-  }
+  // if (loadingCardData) {
+  //   return <LoadingScreen />;
+  // }
   return (
     <>
       {cardData && (

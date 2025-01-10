@@ -16,7 +16,7 @@ import H3Text from "../components/H3Text";
 import { useForm } from "react-hook-form";
 import CategoryElement from "../components/CategoryElement";
 import ProgressCircular from "../components/ProgressCircular";
-import { useResetCards } from "../hooks/useResetCards";
+import { resetCards } from "../actions/resetCards";
 import { CardsAttempt } from "../types/CardAttempt";
 import { CardSetData } from "../types/CardSetData";
 import { CardsCategoryProps } from "../types/CardsCategoryProps";
@@ -76,13 +76,17 @@ const UnlockedCardsPage = ({ route }: { route: any }) => {
     }
   }, [allAttemtsResults]);
 
-  const handleReset = () => {
-    useResetCards(cardData, documentId, navigation);
+  const handleReset = async () => {
+    try {
+      const response = await resetCards(cardData, documentId);
+      if (response?.status === 200) {
+        navigation.navigate("CardsStudyPage", {
+          documentId: documentId,
+          reset: true,
+        });
+      }
+    } catch {}
   };
-
-  if (loadingAllAttemtsResults || loadingCardData) {
-    return <LoadingScreen />;
-  }
 
   return (
     <>
