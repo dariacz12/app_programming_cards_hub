@@ -6,7 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import H3Text from "./H3Text";
 import LanguageLogo from "./LanguageLogo";
-import { Quiz } from "../screens/Home";
+import { Quiz } from "../types/Quize";
+
 
 const QuizeBlock = (quiz: Quiz) => {
   return (

@@ -4,11 +4,9 @@ import {
   KeyboardAvoidingView,
   LayoutAnimation,
   Platform,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -16,15 +14,9 @@ import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import ActiveButton from "../components/ActiveButton";
 import InfoCard from "../components/InfoCard";
-import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { API_URL, useAuth } from "../context/AuthContext";
 import H2Text from "../components/H2Text";
-import axios from "axios";
-
-type FormData = {
-  email: string;
-};
+import { resetPassword } from "../actions/resetPassword";
 
 const minLength = 8;
 
@@ -67,7 +59,7 @@ const ForgotPassword = () => {
     control,
     reset,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<{email: string}>({
     defaultValues: {
       email: "",
     },
@@ -75,16 +67,14 @@ const ForgotPassword = () => {
   const [noEmail, setNoEmail] = useState<boolean>(false);
   const [email, setEmail] = useState("");
 
-  const resetPassword = async ({ email }: FormData) => {
+  const resetuserPassword = async ({ email}:{email:string}) => {
     try {
-      const result = await axios.post(`${API_URL}/auth/forgot-password`, {
-        email,
-      });
+      const result = await resetPassword(email);
       return result;
     } catch (e) {
       setNoEmail(true);
       return { error: true, msg: (e as any).response.data.msg };
-    }
+    } // dodać przekierowanie na stronę
   };
 
   return (
@@ -147,7 +137,7 @@ const ForgotPassword = () => {
           <View>
             <ActiveButton
               text="Resetuj hasło"
-              onPress={handleSubmit(resetPassword)}
+              onPress={handleSubmit(resetuserPassword)}
             />
           </View>
         </View>

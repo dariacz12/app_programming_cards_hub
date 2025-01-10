@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Image, Text, View } from "react-native";
+import { Image,  View } from "react-native";
 import H4Text from "./H4Text";
 import { UPLOADS_URL } from "../context/AuthContext";
 

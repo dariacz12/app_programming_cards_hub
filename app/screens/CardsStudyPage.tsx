@@ -1,9 +1,7 @@
 import { AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
-  Pressable,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,26 +10,18 @@ import {
 import H2Text from "../components/H2Text";
 import ProgressBar from "../components/ProgressBar";
 import { useNavigation } from "@react-navigation/native";
-import Animated, {
-  useAnimatedStyle,
+import  {
   useSharedValue,
-  withSpring,
 } from "react-native-reanimated";
 import FlipCard from "../components/FlipCard";
 import {
-  Gesture,
-  GestureDetector,
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
-import { API_URL } from "../context/AuthContext";
-import axios from "axios";
-import { CardsCategoryProps } from "../types/CardsCategoryProps";
 import { CardItem } from "../types/CardItem";
 import { CardsAttempt } from "../types/CardAttempt";
 import { AnswerAttemt } from "../types/AnswerAttemt";
 import { UserCardAnswer } from "../types/UserCardAnswer";
 import useCardsAttempts from "../hooks/api/useCardsAttempts";
-import LoadingScreen from "./LoadingScreen";
 import useCardSetData from "../hooks/api/useCardSetData";
 
 const CardsStudyPage = ({ route }: { route: any }) => {
@@ -43,11 +33,8 @@ const CardsStudyPage = ({ route }: { route: any }) => {
   const [userAnswers, setUserAnswers] = useState<UserCardAnswer[]>([]);
   const animatedValue = useSharedValue(0);
 
-  console.log("cardCategoryId", cardCategoryId);
   const {
     data: cardData,
-    loading: loadingCardData,
-    error: errorCardData,
   } = useCardSetData(documentId);
 
   const [isFirstAttempt, setIsFirstAttempt] = useState(true);
@@ -79,8 +66,6 @@ const CardsStudyPage = ({ route }: { route: any }) => {
 
   const {
     data: allAttemtsResults,
-    loading: loadingAllAttemtsResults,
-    error: errorAllAttemtsResults,
   } = useCardsAttempts(documentId);
 
   useEffect(() => {
@@ -109,9 +94,6 @@ const CardsStudyPage = ({ route }: { route: any }) => {
     setFilteredQuestionsList(filteredQuestionsList);
   }, [cardData?.cards_items, lastCardsAttemptsResultAnswers]);
 
-  // if (loadingAllAttemtsResults) {
-  //   return <LoadingScreen />;
-  // }
   return (
     <>
       {activeQuestionsList && (

@@ -4,7 +4,6 @@ import {
   KeyboardAvoidingView,
   LayoutAnimation,
   Platform,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -19,11 +18,8 @@ import InfoCard from "../components/InfoCard";
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
+import { FormData } from "../types/FormData";
 
-type FormData = {
-  email: string;
-  password: string;
-};
 
 const minLength = 8;
 

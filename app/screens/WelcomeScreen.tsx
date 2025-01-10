@@ -1,9 +1,8 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animation from "../components/Animation";
 import Dots from "../components/Dots";
-import { LinearGradient } from "expo-linear-gradient";
 import InfoCard from "../components/InfoCard";
 import H1Text from "../components/H1Text";
 import ActiveButton from "../components/ActiveButton";

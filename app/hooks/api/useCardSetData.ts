@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { API_URL } from "../../context/AuthContext";
-import { Card } from "../../types/Card";
 import { CardSetData } from "../../types/CardSetData";
-interface ErrorResponse {
-  msg: string;
-}
+import { ErrorResponse } from "../../types/ErrorResponse";
 const useCardSetData = (
   documentId: string,
   cardTest?: boolean,

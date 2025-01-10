@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { API_URL } from "../../context/AuthContext";
 import { User } from "../../types/User";
-interface ErrorResponse {
-  msg: string;
-}
+import { ErrorResponse } from "../../types/ErrorResponse";
+
 const useCurrentUser = () => {
   const [data, setData] = useState<User>();
   const [loading, setLoading] = useState(true);

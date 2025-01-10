@@ -4,7 +4,6 @@ import {
   KeyboardAvoidingView,
   LayoutAnimation,
   Platform,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -18,15 +17,8 @@ import ActiveButton from "../components/ActiveButton";
 import InfoCard from "../components/InfoCard";
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useAuth } from "../context/AuthContext";
 import H2Text from "../components/H2Text";
-import axios from "axios";
-
-export const API_URL = "";
-type FormData = {
-  password_repeat: string;
-  password: string;
-};
+import { FormNewPasswordData } from "../types/FormNewPasswordData";
 
 const minLength = 8;
 
@@ -73,7 +65,7 @@ const NewPassword = () => {
     reset,
     watch,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<FormNewPasswordData>({
     defaultValues: {
       password_repeat: "",
       password: "",

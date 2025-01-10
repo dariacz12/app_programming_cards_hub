@@ -17,7 +17,6 @@ export type IconLibrary = {
 const ICON_LIBRARIES: IconLibrary = {
   Feather: () => Feather,
   MaterialCommunityIcons: () => MaterialCommunityIcons,
-  // add more libraries as needed
 };
 
 export type IconButtonProps = PressableProps & {

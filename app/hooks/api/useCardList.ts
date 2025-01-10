@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { API_URL } from "../../context/AuthContext";
 import { Card } from "../../types/Card";
-interface ErrorResponse {
-  msg: string;
-}
+import { ErrorResponse } from "../../types/ErrorResponse";
+
 const useCardList = () => {
   const [data, setData] = useState<Card[]>();
   const [loading, setLoading] = useState(true);

@@ -24,7 +24,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import CategoryElement from "../components/CategoryElement";
 import ProgressCircular from "../components/ProgressCircular";
 import useCardSetData from "../hooks/api/useCardSetData";
-import LoadingScreen from "./LoadingScreen";
 import { CardsCategoryProps } from "../types/CardsCategoryProps";
 type FormData = {
   kod: string;
@@ -59,8 +58,6 @@ const CardsStartPage = ({ route }: { route: any }) => {
 
   const {
     data: cardData,
-    loading: loadingCardData,
-    error: errorCardData,
   } = useCardSetData(documentId);
 
   return (

@@ -2,7 +2,7 @@ import { CardItem } from "./CardItem";
 import { CardsCategoryProps } from "./CardsCategoryProps";
 import { SliderPhoto } from "./SliderPhoto";
 
-export interface CardSetData {
+export type CardSetData = {
   name: string;
   logo: {
     url: string;

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { ReactNode } from "react";
+import React from "react";
 
 const H1Text = ({ text }: { text: string }) => {
   return (

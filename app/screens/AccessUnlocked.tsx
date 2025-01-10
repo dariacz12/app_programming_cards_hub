@@ -1,35 +1,25 @@
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import H2Text from "../components/H2Text";
-import QuizeSecondaryButton from "../components/QuizeComponents/QuizeSeccondaryButton";
 import QuizeActiveButton from "../components/QuizeComponents/QuizeActiveButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animation from "../components/Animation";
 import H3Text from "../components/H3Text";
 import InfoCard from "../components/InfoCard";
-import LanguageLogo from "../components/LanguageLogo";
 import { UPLOADS_URL } from "../context/AuthContext";
-import axios from "axios";
 import useCardSetData from "../hooks/api/useCardSetData";
-import LoadingScreen from "./LoadingScreen";
 
 function AccessUnlocked({ route }: { route?: any }) {
   const { documentId } = route?.params;
   const animationSource = require("../../assets/congratulations.json");
-  const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
 
   const {
     data: cardData,
-    loading: loadingCardData,
-    error: errorCardData,
   } = useCardSetData(documentId);
 
-  // if (loadingCardData) {
-  //   return <LoadingScreen />;
-  // }
   return (
     <>
       {cardData && (

@@ -1,13 +1,9 @@
 import {
   Alert,
-  Button,
   Image,
   Keyboard,
   KeyboardAvoidingView,
-  LayoutAnimation,
   Platform,
-  Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,7 +17,6 @@ import { useForm, Controller } from "react-hook-form";
 import ActiveButton from "../components/ActiveButton";
 import InfoCard from "../components/InfoCard";
 import { AntDesign, Entypo, Feather } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import Line from "../components/Line";
 import SecondaryButton from "../components/SecondaryButton";
@@ -35,16 +30,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import { API_URL } from "../context/AuthContext";
 import useCurrentUser from "../hooks/api/useCurrentUser";
+import { changePassword } from "../actions/changePassword";
+import { FormNameData } from "../types/FormNameData";
+import { FormPasswordData } from "../types/FormPasswordData";
 
-interface Form1Data {
-  name: string;
-}
-
-interface Form2Data {
-  currentPin: string;
-  newPassword: string;
-  repeatNewPassword: string;
-}
 const minLength = 8;
 const notificationsList = [
   "Czas na codzienną dawkę nauki programowania!",
@@ -129,7 +118,7 @@ const Account = () => {
     handleSubmit: handleSubmitForm1,
     control: controlForm1,
     formState: { errors: errorsForm1 },
-  } = useForm<Form1Data>({
+  } = useForm<FormNameData>({
     defaultValues: {
       name: "",
     },
@@ -141,7 +130,7 @@ const Account = () => {
     control: controlForm2,
     formState: { errors: errorsForm2 },
     reset,
-  } = useForm<Form2Data>({
+  } = useForm<FormPasswordData>({
     defaultValues: {
       currentPin: "",
       newPassword: "",
@@ -149,17 +138,17 @@ const Account = () => {
     },
   });
 
-  const onSubmitForm1 = (data: Form1Data) => {
+  const onSubmitForm1 = (data: FormNameData) => {
     console.log("Form 1 Data:", data);
   };
 
-  const onSubmitForm2 = async (data: Form2Data) => {
+  const onSubmitForm2 = async (data: FormPasswordData) => {
     try {
-      const result = await axios.post(`${API_URL}/auth/change-password`, {
-        currentPassword: data.currentPin,
-        password: data.newPassword,
-        passwordConfirmation: data.repeatNewPassword,
-      });
+      const result = await changePassword(
+        data.currentPin,
+        data.newPassword,
+        data.repeatNewPassword,
+      );
       if (result) {
         Alert.alert("", "Hasło zostało pomyślnie zmienione.", [{ text: "OK" }]);
         reset();

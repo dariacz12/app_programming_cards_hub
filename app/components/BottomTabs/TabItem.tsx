@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import React, { FC, useEffect, useState } from "react";
 import Animated, {
   useAnimatedProps,

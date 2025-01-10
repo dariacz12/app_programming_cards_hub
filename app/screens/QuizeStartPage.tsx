@@ -25,8 +25,6 @@ const QuizeStartPage = ({ route }: { route: any }) => {
 
   const {
     data: quizeAttempts,
-    loading: loadingQuizeAttempts,
-    error: errorQuizeAttempts,
   } = useQuizeAttempts(navigation, documentId);
 
   useEffect(() => {

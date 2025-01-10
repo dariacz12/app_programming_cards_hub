@@ -1,11 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../screens/Home";
 import Account from "../screens/Account";
-import Login from "../screens/Login";
-import Registration from "../screens/Registration";
 import CustomBottomTab from "./BottomTabs/CustomBottomTab";
 import QuizeStartPage from "../screens/QuizeStartPage";
-import QuizeQuestion from "../screens/QuizeQuestion";
 import QuizeResultPage from "../screens/QuizeResultPage";
 import Notifications from "../screens/Notifications";
 import CardsStartPage from "../screens/CardsStartPage";

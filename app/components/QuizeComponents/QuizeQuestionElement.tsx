@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View } from "react-native";
+import {  View } from "react-native";
 import H3Text from "../H3Text";
 
 const QuizeQuestionElement = ({ question }: { question: string }) => {

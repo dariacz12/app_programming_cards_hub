@@ -2,7 +2,6 @@ import React, { FC, useEffect, useMemo, useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
-  interpolateColor,
   runOnJS,
   useAnimatedProps,
   useAnimatedStyle,

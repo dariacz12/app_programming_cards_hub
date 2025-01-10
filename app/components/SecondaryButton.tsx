@@ -1,8 +1,5 @@
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
-
-type Props = {};
 
 const SecondaryButton = ({
   text,

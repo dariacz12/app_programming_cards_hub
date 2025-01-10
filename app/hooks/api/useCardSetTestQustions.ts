@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { API_URL } from "../../context/AuthContext";
-import { QuizeSetData } from "../../types/QuizeSetData";
 import { CardSetData } from "../../types/CardSetData";
-interface ErrorResponse {
-  msg: string;
-}
+import { ErrorResponse } from "../../types/ErrorResponse";
+
 const useCardSetTestQustions = (documentId: string, cardTest: boolean) => {
   const [data, setData] = useState<CardSetData>();
   const [loading, setLoading] = useState(true);

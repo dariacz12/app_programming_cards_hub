@@ -2,14 +2,13 @@ import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { API_URL } from "../../context/AuthContext";
 import { Quiz } from "../../types/Quize";
-interface ErrorResponse {
-  msg: string;
-}
+import { ErrorResponse } from "../../types/ErrorResponse";
+
 const useQuizeList = (navigation: any) => {
   const [data, setData] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+console.log("111111", data)
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       const fetchData = async () => {

@@ -1,6 +1,7 @@
-import { CardsAttempt } from "../screens/CardsStudyPage";
+import { CardsAttempt } from "./CardAttempt";
 
-export interface Card {
+
+export type Card = {
   documentId: string;
   access: boolean;
   logo: string;

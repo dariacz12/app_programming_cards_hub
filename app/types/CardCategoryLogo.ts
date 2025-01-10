@@ -1,4 +1,4 @@
-interface CardCategoryLogo {
+export type CardCategoryLogo = {
   documentId: string;
   url: string;
 }

@@ -4,7 +4,7 @@ import { CardsAttempt } from "../types/CardAttempt";
 import { CardItem } from "../types/CardItem";
 import { UserCardAnswer } from "../types/UserCardAnswer";
 import { API_URL } from "../context/AuthContext";
-import { getCombinedAnswers } from "../utilus/getCombinedAnswers";
+import { getCombinedAnswers } from "../utils/getCombinedAnswers";
 
 export const saveCardsAttempt = async (
   currentUserAnswers: UserCardAnswer[],

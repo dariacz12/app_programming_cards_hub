@@ -1,7 +1,7 @@
 import { QuestionItem } from "./QuizeItem";
 import { SliderPhoto } from "./SliderPhoto";
 
-export interface QuizeSetData {
+export type QuizeSetData = {
   quiz_questions_elements: QuestionItem[];
   sliderPhotos: SliderPhoto[];
   name: string;

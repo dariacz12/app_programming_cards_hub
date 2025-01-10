@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { API_URL } from "../../context/AuthContext";
 import { QuizeSetData } from "../../types/QuizeSetData";
-interface ErrorResponse {
-  msg: string;
-}
+import { ErrorResponse } from "../../types/ErrorResponse";
+
 const useQuizeSetData = (documentId: string) => {
   const [data, setData] = useState<QuizeSetData>();
   const [loading, setLoading] = useState(true);

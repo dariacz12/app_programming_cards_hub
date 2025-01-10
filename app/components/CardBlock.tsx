@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import H3Text from "./H3Text";
 import LanguageLogo from "./LanguageLogo";
-import { Card } from "../screens/Home";
+import { Card } from "../types/Card";
 
 const CardBlock = (block: Card) => {
   const navigation = useNavigation<any>();

@@ -1,22 +1,9 @@
-import { Asset } from "expo-asset";
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Image, View } from "react-native";
 import { UPLOADS_URL } from "../context/AuthContext";
 
-type Props = {};
-
 const LanguageLogo = ({ logo, isQuize }: { logo: any; isQuize: boolean }) => {
-  // const [languageLogo, setLanguageLogo] = React.useState<any>();
 
-  // React.useEffect(() => {
-  //   const loadAsset = async () => {
-  //     const asset = await Asset.loadAsync(require(`../../assets/${logo}.png`));
-  //     setLanguageLogo(asset);
-  //   };
-  //   loadAsset();
-  // }, [logo]);
-
-  // return languageLogo ? (
   return (
     <View>
       {isQuize ? (
@@ -36,7 +23,6 @@ const LanguageLogo = ({ logo, isQuize }: { logo: any; isQuize: boolean }) => {
       )}
     </View>
   );
-  //   ): null;
 };
 
 export default LanguageLogo;

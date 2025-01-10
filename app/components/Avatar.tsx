@@ -1,7 +1,5 @@
 import React from "react";
-import { Image, Text, View } from "react-native";
-
-type Props = {};
+import { Image } from "react-native";
 
 const Avatar = ({ homeScreen }: { homeScreen: Boolean }) => {
   const avatarplaceholder = require("../../assets/avatarplaceholder.jpg");

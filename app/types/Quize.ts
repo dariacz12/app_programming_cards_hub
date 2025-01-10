@@ -1,6 +1,6 @@
 import { QuizAttempt } from "./QuizeAttempt";
 
-export interface Quiz {
+export type Quiz = {
   circleProgressColor: string;
   logo: string;
   description: string;

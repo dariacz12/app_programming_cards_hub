@@ -1,5 +1,5 @@
-import React, { ReactNode, useState } from "react";
-import { Alert, Modal, TouchableOpacity, View } from "react-native";
+import React, { ReactNode } from "react";
+import { Alert, Modal, TouchableOpacity} from "react-native";
 
 type Props = {};
 
@@ -16,7 +16,6 @@ const ModalPopup = ({
 }) => {
   return (
     <Modal
-      // className='flex-1 h-68  mx-5 mt-6 mb-5 py-7 pt-7   border border-borderColorSemiTransparent rounded-3x'
       animationType="slide"
       transparent={true}
       visible={modalVisible}

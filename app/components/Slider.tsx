@@ -1,6 +1,6 @@
 import React from "react";
 import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
-import { API_URL, UPLOADS_URL } from "../context/AuthContext";
+import { UPLOADS_URL } from "../context/AuthContext";
 
 const { width, height } = Dimensions.get("screen");
 

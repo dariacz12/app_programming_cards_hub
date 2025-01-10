@@ -1,7 +1,7 @@
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import H2Text from "../components/H2Text";
 import QuizeSecondaryButton from "../components/QuizeComponents/QuizeSeccondaryButton";
 import QuizeActiveButton from "../components/QuizeComponents/QuizeActiveButton";
@@ -12,15 +12,12 @@ import InfoCard from "../components/InfoCard";
 import ProgressCircular from "../components/ProgressCircular";
 import { resetCards } from "../actions/resetCards";
 import useCardSetData from "../hooks/api/useCardSetData";
-import LoadingScreen from "./LoadingScreen";
 import useCardsAttempts from "../hooks/api/useCardsAttempts";
 import { CardsAttempt } from "../types/CardAttempt";
 
 function CardsResultPage({ route }: any) {
-  const userId = route.params?.userId;
   const documentId = route.params?.documentId;
   const animationSource = require("../../assets/congratulations.json");
-  const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
   const [lastCardsAttemptsResult, setLastCardsAttemptsResult] =
     useState<CardsAttempt>();
@@ -43,15 +40,11 @@ function CardsResultPage({ route }: any) {
   }, [lastCardsAttemptsResult, documentId]);
   const {
     data: cardData,
-    loading: loadingCardData,
-    error: errorCardData,
   } = useCardSetData(documentId);
   console.log("cardData", cardData);
 
   const {
     data: allAttemtsResults,
-    loading: loadingAllAttemtsResults,
-    error: errorAllAttemtsResults,
   } = useCardsAttempts(documentId);
   useEffect(() => {
     if (allAttemtsResults?.length > 0) {

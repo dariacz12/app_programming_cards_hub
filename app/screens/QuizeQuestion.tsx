@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { ScrollView, TouchableOpacity, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { AntDesign } from "@expo/vector-icons";
 import H2Text from "../components/H2Text";
 import QuizeAnswerElement from "../components/QuizeComponents/QuizeAnswerElement";
 import QuizeExplanationElement from "../components/QuizeComponents/QuizeExplanationElement";
@@ -9,10 +9,7 @@ import ProgressBar from "../components/ProgressBar";
 import QuizeQuestionElement from "../components/QuizeComponents/QuizeQuestionElement";
 import QuizeSecondaryButton from "../components/QuizeComponents/QuizeSeccondaryButton";
 import QuizeActiveButton from "../components/QuizeComponents/QuizeActiveButton";
-import { API_URL } from "../context/AuthContext";
-import axios, { AxiosError } from "axios";
 import useCurrentUser from "../hooks/api/useCurrentUser";
-import LoadingScreen from "./LoadingScreen";
 import useQuizeSetData from "../hooks/api/useQuizeSetData";
 import useQuizeAttempts from "../hooks/api/useQuizeAttempts";
 import { QuizAttempt } from "../types/QuizeAttempt";
@@ -20,6 +17,7 @@ import { AnswerAttemt } from "../types/AnswerAttemt";
 import { QuestionItem } from "../types/QuizeItem";
 import { UserQuizeAnswer } from "../types/UserQuizeAnswer";
 import { AnswerAttemptQuize } from "../types/AnswerAttemptQuize";
+import { saveQuizAttempt } from "../actions/saveQuizeAttempt";
 
 const QuizeQuestion = ({ route }: { route: any }) => {
   const { documentId, reset } = route?.params;
@@ -65,14 +63,10 @@ const QuizeQuestion = ({ route }: { route: any }) => {
 
   const {
     data: userData,
-    loading: loadingUser,
-    error: errorUser,
   } = useCurrentUser();
 
   const {
     data: quizeSetData,
-    loading: loadingQuizeSetData,
-    error: errorQuizeSetData,
   } = useQuizeSetData(documentId);
 
   const activeQuestionsList: QuestionItem[] = isFirstAttempt
@@ -136,17 +130,31 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     currentQuestion > 0 && changeCurrentQuestion(currentQuestion - 1);
   };
 
-  const nextQuestion = (chosenAnswer: string) => {
+  const nextQuestion =async (chosenAnswer: string) => {
     if (chosenAnswer || chosenAnswersArray[currentQuestion]) {
       if (currentQuestion < activeQuestionsList.length - 1) {
         changeCurrentQuestion(currentQuestion + 1);
       } else {
-        saveQuizResult();
-        navigation.navigate("QuizeResultPage", {
+        try {
+          let response;
+          correctAnswers && quizeSetData && lastQuizAttemptsResult &&
+          (response = await saveQuizAttempt(
+          userAnswers,
+          correctAnswers,
+          quizeSetData,
+          lastQuizAttemptsResultAnswers,
+          lastQuizAttemptsResult,
+          documentId,
+        ));
+      if (response?.status === 200) {
+         navigation.navigate("QuizeResultPage", {
           documentId: documentId,
           userId: userData?.id,
           questionsList: quizeSetData?.quiz_questions_elements,
         });
+      }
+    } catch {}
+       
       }
       if (chosenAnswer) {
         setChosenAnswerArray([...chosenAnswersArray, chosenAnswer]);
@@ -154,35 +162,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     }
     setChosenAnswer(null);
   };
-
-  const getCombinedAnswers = (answersResultCurrentAttempt: AnswerAttemt[]) => {
-    const lastAttemptAnswers =
-      lastQuizAttemptsResultAnswers.length > 0
-        ? lastQuizAttemptsResultAnswers
-        : [];
-
-    const currentAttemptAnswers = answersResultCurrentAttempt;
-    const correctAnswersFromLastAttempt = lastAttemptAnswers.filter(
-      (answer) => answer.isCorrect,
-    );
-    const correctAnswersFromSecondLastAttempt = currentAttemptAnswers.filter(
-      (answer) => answer.isCorrect,
-    );
-    const incorrectAnswersFromLastAttempt = lastAttemptAnswers.filter(
-      (answer) => !answer.isCorrect,
-    );
-    const combinedAnswersResults = [
-      ...correctAnswersFromLastAttempt,
-      ...correctAnswersFromSecondLastAttempt,
-      ...incorrectAnswersFromLastAttempt,
-    ];
-    const uniqueAnswers = combinedAnswersResults.filter(
-      (answer, index, self) =>
-        index === self.findIndex((a) => a.question === answer.question),
-    );
-
-    return uniqueAnswers;
-  };
+  
   useEffect(() => {
     const correctAnswers: UserQuizeAnswer[] = activeQuestionsList
       ?.map((question) => {
@@ -200,74 +180,6 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       .filter((answer) => answer !== null) as UserQuizeAnswer[];
     setCorrectAnswers(correctAnswers);
   }, [documentId, activeQuestionsList]);
-
-  const saveQuizResult = async () => {
-    try {
-      let score = 0;
-      let incorrect = 0;
-      const answersResultCurrentAttempt = userAnswers.map((userAnswer) => {
-        const isCorrect =
-          correctAnswers?.some(
-            (correctAnswer) =>
-              correctAnswer.questionId === userAnswer.questionId &&
-              correctAnswer.answerId === userAnswer.answerId,
-          ) || false;
-
-        if (isCorrect) {
-          score++;
-        } else {
-          incorrect++;
-        }
-
-        return {
-          question: userAnswer.questionId,
-          isCorrect,
-        };
-      });
-
-      const totalQuestions = quizeSetData?.quiz_questions_elements?.length;
-      let answersString;
-      if (
-        Array.isArray(lastQuizAttemptsResultAnswers) &&
-        lastQuizAttemptsResultAnswers?.length > 0
-      ) {
-        const combinedanswers = getCombinedAnswers(answersResultCurrentAttempt);
-        answersString = JSON.stringify(combinedanswers);
-        lastQuizAttemptsResult &&
-          (score = score + lastQuizAttemptsResult?.score);
-      } else {
-        answersString = JSON.stringify(answersResultCurrentAttempt);
-      }
-      const quizAttempt = {
-        data: {
-          quize: documentId,
-          answers: answersString,
-          score,
-          totalQuestions,
-          incorrectAnswers: incorrect,
-        },
-      };
-      const response = await axios.post(
-        `${API_URL}/quize-attempts`,
-        quizAttempt,
-      );
-      if (response.status === 200) {
-        console.log("Wynik quizu zapisany:", response.data);
-      } else {
-        console.error("Failed to save quiz result, status:", response.status);
-        console.error("Error response:", response.data);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Error response data:", error.response?.data);
-        console.error("Error response status:", error.response?.status);
-      } else if (error instanceof Error) {
-        console.error("Error message:", error.message);
-      } else {
-        console.error("Unexpected error:", error);
-      }
-    }
-  };
 
   return (
     <>
