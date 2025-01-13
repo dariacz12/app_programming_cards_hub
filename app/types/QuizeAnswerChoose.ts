@@ -1,8 +1,8 @@
-import { AnswerComponent } from "./AnswerComponents";
+import { AnswerAttemptQuize } from "./AnswerAttemptQuize";
 
 export type QuizeAnswerChoose = {
-    answer: AnswerComponent;
-    chosenAnswer: string;
-    chosenAnswersArray: [string];
-    currentQuestion: number;
-  }
+  answer: AnswerAttemptQuize;
+  chosenAnswer: string;
+  chosenAnswersArray: [string];
+  currentQuestion: number;
+};

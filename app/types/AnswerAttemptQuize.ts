@@ -3,4 +3,5 @@ export type AnswerAttemptQuize = {
   isCorrect: boolean;
   answerLetter: string;
   status: boolean;
+  answerName: string;
 };

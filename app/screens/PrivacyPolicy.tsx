@@ -3,7 +3,7 @@ import React from "react";
 import H1Text from "../components/H1Text";
 import Animation from "../components/Animation";
 import InfoCard from "../components/InfoCard";
-import Dots from "../components/Dots";;
+import Dots from "../components/Dots";
 import ActiveButton from "../components/ActiveButton";
 import { useNavigation } from "@react-navigation/native";
 import ArrowBack from "../components/ArrowBack";

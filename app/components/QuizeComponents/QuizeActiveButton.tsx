@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { Text, TouchableOpacity} from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const QuizeActiveButton = ({

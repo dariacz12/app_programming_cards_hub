@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { View} from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const LoadingScreen = () => {
@@ -8,8 +8,7 @@ const LoadingScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 justi bg-primary ">
-      <View className="flex-1 flex justify-center items-center ">
-      </View>
+      <View className="flex-1 flex justify-center items-center "></View>
     </SafeAreaView>
   );
 };

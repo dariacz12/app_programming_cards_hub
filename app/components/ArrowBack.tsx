@@ -2,7 +2,6 @@ import React from "react";
 import { TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-
 const ArrowBack = ({ onPress }: { onPress: () => unknown }) => {
   return (
     <TouchableOpacity

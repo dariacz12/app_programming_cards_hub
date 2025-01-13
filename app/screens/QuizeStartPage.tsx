@@ -12,8 +12,9 @@ import useCurrentUser from "../hooks/api/useCurrentUser";
 import useQuizeSetData from "../hooks/api/useQuizeSetData";
 import useQuizeAttempts from "../hooks/api/useQuizeAttempts";
 import { QuizAttempt } from "../types/QuizeAttempt";
+import { Route } from "../types/Route";
 
-const QuizeStartPage = ({ route }: { route: any }) => {
+const QuizeStartPage = ({ route }: Route<{ documentId: string }>) => {
   const { documentId } = route?.params;
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();
@@ -23,9 +24,7 @@ const QuizeStartPage = ({ route }: { route: any }) => {
   const { data: userData } = useCurrentUser();
   const { data: quizeSetData } = useQuizeSetData(documentId);
 
-  const {
-    data: quizeAttempts,
-  } = useQuizeAttempts(navigation, documentId);
+  const { data: quizeAttempts } = useQuizeAttempts(navigation, documentId);
 
   useEffect(() => {
     if (quizeAttempts && quizeAttempts.length > 0) {

@@ -12,14 +12,17 @@ import QuizeActiveButton from "../components/QuizeComponents/QuizeActiveButton";
 import useCurrentUser from "../hooks/api/useCurrentUser";
 import useQuizeSetData from "../hooks/api/useQuizeSetData";
 import useQuizeAttempts from "../hooks/api/useQuizeAttempts";
-import { QuizAttempt } from "../types/QuizeAttempt";
 import { AnswerAttemt } from "../types/AnswerAttemt";
 import { QuestionItem } from "../types/QuizeItem";
 import { UserQuizeAnswer } from "../types/UserQuizeAnswer";
 import { AnswerAttemptQuize } from "../types/AnswerAttemptQuize";
 import { saveQuizAttempt } from "../actions/saveQuizeAttempt";
+import { Route } from "../types/Route";
+import { LastQuizAttemptsResult } from "../types/lastQuizAttemptsResult";
 
-const QuizeQuestion = ({ route }: { route: any }) => {
+const QuizeQuestion = ({
+  route,
+}: Route<{ documentId: string; reset: boolean }>) => {
   const { documentId, reset } = route?.params;
   const [chosenAnswersArray, setChosenAnswerArray] = useState<any>([]);
   const scrollView = useRef<ScrollView>(null);
@@ -36,7 +39,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
   const [lastQuizAttemptsResultAnswers, setLastQuizAttemptsResultsAnswers] =
     useState<AnswerAttemt[]>([]);
   const [lastQuizAttemptsResult, setLastQuizAttemptsResult] =
-    useState<QuizAttempt>();
+    useState<LastQuizAttemptsResult>();
 
   useEffect(() => {
     if (reset) {
@@ -49,6 +52,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
   }, [lastQuizAttemptsResultAnswers, reset]);
 
   const { data: quizeAttempts } = useQuizeAttempts(navigation, documentId);
+  console.log("quizeAttempts ", quizeAttempts);
 
   useEffect(() => {
     if (quizeAttempts?.length > 0) {
@@ -58,16 +62,13 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       setLastQuizAttemptsResult(quizeAttempts[quizeAttempts.length - 1]);
     } else {
       setLastQuizAttemptsResultsAnswers([]);
+      setLastQuizAttemptsResult({ score: 0 });
     }
   }, [documentId, quizeAttempts]);
 
-  const {
-    data: userData,
-  } = useCurrentUser();
+  const { data: userData } = useCurrentUser();
 
-  const {
-    data: quizeSetData,
-  } = useQuizeSetData(documentId);
+  const { data: quizeSetData } = useQuizeSetData(documentId);
 
   const activeQuestionsList: QuestionItem[] = isFirstAttempt
     ? quizeSetData?.quiz_questions_elements || []
@@ -120,7 +121,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
       const isShowExplanation =
         activeQuestionsList &&
         activeQuestionsList[currentQuestion].quiz_answer_options.find(
-          (answer: any) => answer.answerLetter === chosenAnswer,
+          ({ answerLetter }) => answerLetter === chosenAnswer,
         );
       setShowExplanation(isShowExplanation?.isCorrect ? false : true);
     }
@@ -130,31 +131,34 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     currentQuestion > 0 && changeCurrentQuestion(currentQuestion - 1);
   };
 
-  const nextQuestion =async (chosenAnswer: string) => {
+  const nextQuestion = async (chosenAnswer: string) => {
     if (chosenAnswer || chosenAnswersArray[currentQuestion]) {
       if (currentQuestion < activeQuestionsList.length - 1) {
         changeCurrentQuestion(currentQuestion + 1);
       } else {
         try {
           let response;
-          correctAnswers && quizeSetData && lastQuizAttemptsResult &&
-          (response = await saveQuizAttempt(
-          userAnswers,
-          correctAnswers,
-          quizeSetData,
-          lastQuizAttemptsResultAnswers,
-          lastQuizAttemptsResult,
-          documentId,
-        ));
-      if (response?.status === 200) {
-         navigation.navigate("QuizeResultPage", {
-          documentId: documentId,
-          userId: userData?.id,
-          questionsList: quizeSetData?.quiz_questions_elements,
-        });
-      }
-    } catch {}
-       
+          correctAnswers &&
+            quizeSetData &&
+            lastQuizAttemptsResult &&
+            (response = await saveQuizAttempt(
+              userAnswers,
+              correctAnswers,
+              quizeSetData,
+              lastQuizAttemptsResultAnswers,
+              lastQuizAttemptsResult,
+              documentId,
+            ));
+          if (response?.status === 200) {
+            navigation.navigate("QuizeResultPage", {
+              documentId: documentId,
+              userId: userData?.id,
+              questionsList: quizeSetData?.quiz_questions_elements,
+            });
+          }
+        } catch (error) {
+          console.error("Error saving quiz attempt:", error);
+        }
       }
       if (chosenAnswer) {
         setChosenAnswerArray([...chosenAnswersArray, chosenAnswer]);
@@ -162,7 +166,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
     }
     setChosenAnswer(null);
   };
-  
+
   useEffect(() => {
     const correctAnswers: UserQuizeAnswer[] = activeQuestionsList
       ?.map((question) => {
@@ -215,7 +219,7 @@ const QuizeQuestion = ({ route }: { route: any }) => {
             )}
             <View>
               {activeQuestionsList[currentQuestion]?.quiz_answer_options.map(
-                (answer: any, index: any) => {
+                (answer: AnswerAttemptQuize, index: number) => {
                   return (
                     <TouchableOpacity
                       disabled={isButtonDisabled}

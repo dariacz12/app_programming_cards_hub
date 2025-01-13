@@ -70,17 +70,19 @@ const Home = () => {
   //   return <LoadingScreen />;
   // }
 
-  quizeList && console.log(
-    quizeList[curentQuizeCircle]?.quize_attempts &&
-    quizeList[curentQuizeCircle]?.quize_attempts.length > 0
-      ? (quizeList[curentQuizeCircle]?.quize_attempts[
-          quizeList[curentQuizeCircle]?.quize_attempts.length - 1
-        ].score *
-          100) /
-        quizeList[curentQuizeCircle]?.quize_attempts[
-          quizeList[curentQuizeCircle]?.quize_attempts.length - 1
-        ]?.totalQuestions
-      : 0)
+  quizeList &&
+    console.log(
+      quizeList[curentQuizeCircle]?.quize_attempts &&
+        quizeList[curentQuizeCircle]?.quize_attempts.length > 0
+        ? (quizeList[curentQuizeCircle]?.quize_attempts[
+            quizeList[curentQuizeCircle]?.quize_attempts.length - 1
+          ].score *
+            100) /
+            quizeList[curentQuizeCircle]?.quize_attempts[
+              quizeList[curentQuizeCircle]?.quize_attempts.length - 1
+            ]?.totalQuestions
+        : 0,
+    );
   return (
     <>
       <ScrollView className="bg-primary">

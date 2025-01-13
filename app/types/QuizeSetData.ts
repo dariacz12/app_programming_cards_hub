@@ -7,4 +7,4 @@ export type QuizeSetData = {
   name: string;
   circleProgressColor: string;
   description: string;
-}
+};

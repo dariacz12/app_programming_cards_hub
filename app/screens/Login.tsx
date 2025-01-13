@@ -20,7 +20,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import { FormData } from "../types/FormData";
 
-
 const minLength = 8;
 
 const Login = () => {

@@ -23,10 +23,11 @@ import { CardsCategoryProps } from "../types/CardsCategoryProps";
 import useCardsAttempts from "../hooks/api/useCardsAttempts";
 import LoadingScreen from "./LoadingScreen";
 import useCardSetData from "../hooks/api/useCardSetData";
+import { Route } from "../types/Route";
 type FormData = {
   kod: string;
 };
-const UnlockedCardsPage = ({ route }: { route: any }) => {
+const UnlockedCardsPage = ({ route }: Route<{ documentId: string }>) => {
   const { documentId } = route?.params;
   const scrollView = useRef<ScrollView>(null);
   const navigation = useNavigation<any>();

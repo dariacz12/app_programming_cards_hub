@@ -3,11 +3,13 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   LayoutAnimation,
+  NativeSyntheticEvent,
   Platform,
   SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
+  TextInputChangeEventData,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -87,7 +89,7 @@ const Registration = () => {
     }
   };
 
-  const onChange = (arg: any) => {
+  const onChange = (arg: NativeSyntheticEvent<TextInputChangeEventData>) => {
     return {
       value: arg.nativeEvent.text,
     };

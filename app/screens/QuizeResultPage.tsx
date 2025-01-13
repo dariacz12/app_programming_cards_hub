@@ -13,8 +13,17 @@ import ProgressCircular from "../components/ProgressCircular";
 import { resetQuize } from "../actions/resetQuize";
 import useQuizeAttempts from "../hooks/api/useQuizeAttempts";
 import { QuizAttempt } from "../types/QuizeAttempt";
+import { Route } from "../types/Route";
+import { QuestionItem } from "../types/QuizeItem";
 
-function QuizeResultPage({ route }: { route: any }) {
+function QuizeResultPage({
+  route,
+}: Route<{
+  documentId: string;
+  reset: boolean;
+  userId: number;
+  questionsList: QuestionItem[];
+}>) {
   const { documentId, userId, questionsList } = route?.params;
   const animationSource = require("../../assets/congratulations.json");
   const navigation = useNavigation<any>();

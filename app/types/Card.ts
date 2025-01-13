@@ -1,6 +1,5 @@
 import { CardsAttempt } from "./CardAttempt";
 
-
 export type Card = {
   documentId: string;
   access: boolean;
@@ -9,4 +8,4 @@ export type Card = {
   circleProgressColor: string;
   description: string;
   cards_attempts: CardsAttempt[];
-}
+};

@@ -1,5 +1,5 @@
- export type AnswerComponent = {
-    answerName: string;
-    isCorrect: boolean;
-    answerLetter: string;
-  }
+export type AnswerComponent = {
+  answerName: string;
+  isCorrect: boolean;
+  answerLetter: string;
+};

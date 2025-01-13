@@ -10,22 +10,21 @@ import {
 import H2Text from "../components/H2Text";
 import ProgressBar from "../components/ProgressBar";
 import { useNavigation } from "@react-navigation/native";
-import  {
-  useSharedValue,
-} from "react-native-reanimated";
+import { useSharedValue } from "react-native-reanimated";
 import FlipCard from "../components/FlipCard";
-import {
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { CardItem } from "../types/CardItem";
 import { CardsAttempt } from "../types/CardAttempt";
 import { AnswerAttemt } from "../types/AnswerAttemt";
 import { UserCardAnswer } from "../types/UserCardAnswer";
 import useCardsAttempts from "../hooks/api/useCardsAttempts";
 import useCardSetData from "../hooks/api/useCardSetData";
+import { Route } from "../types/Route";
 
-const CardsStudyPage = ({ route }: { route: any }) => {
-  const { documentId, reset, cardCategoryId, cardTest } = route?.params;
+const CardsStudyPage = ({
+  route,
+}: Route<{ documentId: string; reset: boolean }>) => {
+  const { documentId, reset } = route?.params;
   const navigation = useNavigation<any>();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<any>(0);
   const [score, setScore] = useState<number>(0);
@@ -33,9 +32,7 @@ const CardsStudyPage = ({ route }: { route: any }) => {
   const [userAnswers, setUserAnswers] = useState<UserCardAnswer[]>([]);
   const animatedValue = useSharedValue(0);
 
-  const {
-    data: cardData,
-  } = useCardSetData(documentId);
+  const { data: cardData } = useCardSetData(documentId);
 
   const [isFirstAttempt, setIsFirstAttempt] = useState(true);
   const [filteredQuestionsList, setFilteredQuestionsList] =
@@ -64,9 +61,7 @@ const CardsStudyPage = ({ route }: { route: any }) => {
     setNewData(activeQuestionsList);
   }, [activeQuestionsList]);
 
-  const {
-    data: allAttemtsResults,
-  } = useCardsAttempts(documentId);
+  const { data: allAttemtsResults } = useCardsAttempts(documentId);
 
   useEffect(() => {
     const getQuizData = async () => {

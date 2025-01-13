@@ -1,3 +1,3 @@
 export type FormNameData = {
-    name: string;
-  }
+  name: string;
+};

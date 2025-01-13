@@ -3,4 +3,4 @@ export type CardItem = {
   answerImage: { url: string }[];
   documentId: string;
   toTest: boolean;
-}
+};

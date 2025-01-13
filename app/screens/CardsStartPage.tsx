@@ -25,10 +25,11 @@ import CategoryElement from "../components/CategoryElement";
 import ProgressCircular from "../components/ProgressCircular";
 import useCardSetData from "../hooks/api/useCardSetData";
 import { CardsCategoryProps } from "../types/CardsCategoryProps";
+import { Route } from "../types/Route";
 type FormData = {
   kod: string;
 };
-const CardsStartPage = ({ route }: { route: any }) => {
+const CardsStartPage = ({ route }: Route<{ documentId: string }>) => {
   const { documentId } = route?.params;
 
   const scrollView = useRef<ScrollView>(null);
@@ -56,9 +57,7 @@ const CardsStartPage = ({ route }: { route: any }) => {
     }
   };
 
-  const {
-    data: cardData,
-  } = useCardSetData(documentId);
+  const { data: cardData } = useCardSetData(documentId);
 
   return (
     <>

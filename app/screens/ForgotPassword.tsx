@@ -59,7 +59,7 @@ const ForgotPassword = () => {
     control,
     reset,
     formState: { errors },
-  } = useForm<{email: string}>({
+  } = useForm<{ email: string }>({
     defaultValues: {
       email: "",
     },
@@ -67,7 +67,7 @@ const ForgotPassword = () => {
   const [noEmail, setNoEmail] = useState<boolean>(false);
   const [email, setEmail] = useState("");
 
-  const resetuserPassword = async ({ email}:{email:string}) => {
+  const resetuserPassword = async ({ email }: { email: string }) => {
     try {
       const result = await resetPassword(email);
       return result;

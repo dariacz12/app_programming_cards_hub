@@ -1,4 +1,4 @@
-import { StyleSheet, Text} from "react-native";
+import { StyleSheet, Text } from "react-native";
 import React from "react";
 
 const H3Text = ({

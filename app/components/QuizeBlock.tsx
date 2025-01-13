@@ -8,8 +8,8 @@ import H3Text from "./H3Text";
 import LanguageLogo from "./LanguageLogo";
 import { Quiz } from "../types/Quize";
 
-
 const QuizeBlock = (quiz: Quiz) => {
+  console.log("quizeblock", quiz);
   return (
     <View className="flex-row  mx-4 p-3 px-6 bg-primary rounded-full">
       <View className="flex-row flex-1">

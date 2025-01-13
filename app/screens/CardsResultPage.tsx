@@ -14,8 +14,11 @@ import { resetCards } from "../actions/resetCards";
 import useCardSetData from "../hooks/api/useCardSetData";
 import useCardsAttempts from "../hooks/api/useCardsAttempts";
 import { CardsAttempt } from "../types/CardAttempt";
+import { Route } from "../types/Route";
 
-function CardsResultPage({ route }: any) {
+function CardsResultPage({
+  route,
+}: Route<{ documentId: string; reset: boolean }>) {
   const documentId = route.params?.documentId;
   const animationSource = require("../../assets/congratulations.json");
   const navigation = useNavigation<any>();
@@ -38,14 +41,10 @@ function CardsResultPage({ route }: any) {
           lastCardsAttemptsResult.incorrectAnswers,
       );
   }, [lastCardsAttemptsResult, documentId]);
-  const {
-    data: cardData,
-  } = useCardSetData(documentId);
+  const { data: cardData } = useCardSetData(documentId);
   console.log("cardData", cardData);
 
-  const {
-    data: allAttemtsResults,
-  } = useCardsAttempts(documentId);
+  const { data: allAttemtsResults } = useCardsAttempts(documentId);
   useEffect(() => {
     if (allAttemtsResults?.length > 0) {
       setLastCardsAttemptsResult(

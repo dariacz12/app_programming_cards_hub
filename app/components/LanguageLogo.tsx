@@ -1,9 +1,9 @@
 import React from "react";
 import { Image, View } from "react-native";
 import { UPLOADS_URL } from "../context/AuthContext";
+import { Logo } from "../types/Logo";
 
-const LanguageLogo = ({ logo, isQuize }: { logo: any; isQuize: boolean }) => {
-
+const LanguageLogo = ({ logo, isQuize }: { logo: Logo; isQuize: boolean }) => {
   return (
     <View>
       {isQuize ? (

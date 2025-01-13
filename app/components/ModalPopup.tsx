@@ -1,7 +1,5 @@
 import React, { ReactNode } from "react";
-import { Alert, Modal, TouchableOpacity} from "react-native";
-
-type Props = {};
+import { Alert, Modal, TouchableOpacity } from "react-native";
 
 const ModalPopup = ({
   children,
@@ -11,8 +9,8 @@ const ModalPopup = ({
 }: {
   children: ReactNode;
   modalVisible: boolean;
-  setModalVisible: any;
-  hideModal: any;
+  setModalVisible: (value: React.SetStateAction<boolean>) => void;
+  hideModal: () => void;
 }) => {
   return (
     <Modal

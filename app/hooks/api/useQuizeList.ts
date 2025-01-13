@@ -8,7 +8,7 @@ const useQuizeList = (navigation: any) => {
   const [data, setData] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-console.log("111111", data)
+  console.log("111111", data);
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       const fetchData = async () => {

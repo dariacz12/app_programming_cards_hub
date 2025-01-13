@@ -3,4 +3,4 @@ export type User = {
   documentId: string;
   email: string;
   id: number;
-}
+};

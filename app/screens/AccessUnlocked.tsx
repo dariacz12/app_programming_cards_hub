@@ -10,15 +10,14 @@ import H3Text from "../components/H3Text";
 import InfoCard from "../components/InfoCard";
 import { UPLOADS_URL } from "../context/AuthContext";
 import useCardSetData from "../hooks/api/useCardSetData";
+import { Route } from "../types/Route";
 
-function AccessUnlocked({ route }: { route?: any }) {
+function AccessUnlocked({ route }: Route<{ documentId: string }>) {
   const { documentId } = route?.params;
   const animationSource = require("../../assets/congratulations.json");
   const navigation = useNavigation<any>();
 
-  const {
-    data: cardData,
-  } = useCardSetData(documentId);
+  const { data: cardData } = useCardSetData(documentId);
 
   return (
     <>

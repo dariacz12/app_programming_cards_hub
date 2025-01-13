@@ -1,6 +1,5 @@
-
 export type FormPasswordData = {
-    currentPin: string;
-    newPassword: string;
-    repeatNewPassword: string;
-  }
+  currentPin: string;
+  newPassword: string;
+  repeatNewPassword: string;
+};
