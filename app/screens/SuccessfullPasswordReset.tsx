@@ -1,12 +1,8 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import H1Text from "../components/H1Text";
 import Animation from "../components/Animation";
 import InfoCard from "../components/InfoCard";
-import Dots from "../components/Dots";
-import SecondaryButton from "../components/SecondaryButton";
 import ActiveButton from "../components/ActiveButton";
 import { useAuth } from "../context/AuthContext";
 

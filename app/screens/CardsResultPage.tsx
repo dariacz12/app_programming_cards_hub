@@ -26,7 +26,6 @@ function CardsResultPage({
     useState<CardsAttempt>();
   const [percentage, setPercentage] = useState<number>(0);
   const [remainingQuestions, setRemainingQuestions] = useState<number>(0);
-  console.log("lastaCardttempt", lastCardsAttemptsResult);
   useEffect(() => {
     lastCardsAttemptsResult &&
       cardData &&
@@ -42,7 +41,6 @@ function CardsResultPage({
       );
   }, [lastCardsAttemptsResult, documentId]);
   const { data: cardData } = useCardSetData(documentId);
-  console.log("cardData", cardData);
 
   const { data: allAttemtsResults } = useCardsAttempts(documentId);
   useEffect(() => {
@@ -52,7 +50,6 @@ function CardsResultPage({
       );
     }
   }, [allAttemtsResults]);
-  console.log("allAttemtsResults", allAttemtsResults);
 
   const handleReset = async () => {
     try {

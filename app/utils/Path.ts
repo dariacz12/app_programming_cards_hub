@@ -1,4 +1,5 @@
-import { parse } from "react-native-redash";
+import { parse, Path } from "react-native-redash";
+
 export const getPathXCenter = (currentPath: string) => {
   const curves = parse(currentPath).curves;
   const startPoint = curves[0].to;
@@ -6,7 +7,7 @@ export const getPathXCenter = (currentPath: string) => {
   const centerX = (startPoint.x + endPoint.x) / 2;
   return centerX;
 };
-export const getPathXCenterByIndex = (tabPaths: any[], index: number) => {
+export const getPathXCenterByIndex = (tabPaths: Path[], index: number) => {
   let curves = tabPaths[index]?.curves;
   if (!curves) {
     curves = tabPaths[0]?.curves;

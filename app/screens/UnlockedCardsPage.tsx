@@ -21,7 +21,6 @@ import { CardsAttempt } from "../types/CardAttempt";
 import { CardSetData } from "../types/CardSetData";
 import { CardsCategoryProps } from "../types/CardsCategoryProps";
 import useCardsAttempts from "../hooks/api/useCardsAttempts";
-import LoadingScreen from "./LoadingScreen";
 import useCardSetData from "../hooks/api/useCardSetData";
 import { Route } from "../types/Route";
 type FormData = {
@@ -54,7 +53,6 @@ const UnlockedCardsPage = ({ route }: Route<{ documentId: string }>) => {
     error: errorCardData,
   } = useCardSetData(documentId);
 
-  console.log("cardData", cardData);
   useEffect(() => {
     lastCardsAttemptsResult &&
       setPercentage(

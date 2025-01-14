@@ -3,63 +3,63 @@ import React, { useRef } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import H2Text from "../components/H2Text";
 import { useNavigation } from "@react-navigation/native";
-import Tabbar from "../components/Tabbar";
 import NotifictionItem from "../components/NotifictionItem";
+import { Notification } from "../types/Notification";
 
 const Notifications = () => {
   const navigation = useNavigation<any>();
   const scrollView = useRef<ScrollView>(null);
-  const notifications = [
-    {
-      id: "0",
-      title: "Gotowy na nowe wyzwanie?",
-      text: "Czas start",
-    },
-    {
-      id: "1",
-      title: "Czas na kodowanie!",
-      text: "Rozwiąż quiz z React Native i sprawdź swoje umiejętności!",
-    },
-    {
-      id: "2",
-      title: "Nie poddawaj się!",
-      text: " Pamiętaj, że nauka wymaga czasu i wytrwałości. Kontynuuj i osiągnij swoje cele!",
-    },
-    {
-      id: "3",
-      title: "Codzienna dawka kodu!",
-      text: "Rozwiąż quiz z JavaScript i utrwal zdobytą wiedzę.",
-    },
-    {
-      id: "4",
-      title: "Sprawdź swoje umiejętności!",
-      text: "Quiz z Javy już czeka na Ciebie.",
-    },
-    {
-      id: "5",
-      title: "Gotowy na nowe wyzwanie?",
-      text: "Czas start",
-    },
-    {
-      id: "6",
-      title: "Czas na kodowanie!",
-      text: "Rozwiąż quiz z React Native i sprawdź swoje umiejętności!",
-    },
-    {
-      id: "7",
-      title: "Nie poddawaj się!",
-      text: " Pamiętaj, że nauka wymaga czasu i wytrwałości. Kontynuuj i osiągnij swoje cele!",
-    },
-    {
-      id: "8",
-      title: "Codzienna dawka kodu!",
-      text: "Rozwiąż quiz z JavaScript i utrwal zdobytą wiedzę.",
-    },
-    {
-      id: "9",
-      title: "Sprawdź swoje umiejętności!",
-      text: "Quiz z Javy już czeka na Ciebie.",
-    },
+  const notifications: Notification[] = [
+    // {
+    //   id: "0",
+    //   title: "Gotowy na nowe wyzwanie?",
+    //   text: "Czas start",
+    // },
+    // {
+    //   id: "1",
+    //   title: "Czas na kodowanie!",
+    //   text: "Rozwiąż quiz z React Native i sprawdź swoje umiejętności!",
+    // },
+    // {
+    //   id: "2",
+    //   title: "Nie poddawaj się!",
+    //   text: " Pamiętaj, że nauka wymaga czasu i wytrwałości. Kontynuuj i osiągnij swoje cele!",
+    // },
+    // {
+    //   id: "3",
+    //   title: "Codzienna dawka kodu!",
+    //   text: "Rozwiąż quiz z JavaScript i utrwal zdobytą wiedzę.",
+    // },
+    // {
+    //   id: "4",
+    //   title: "Sprawdź swoje umiejętności!",
+    //   text: "Quiz z Javy już czeka na Ciebie.",
+    // },
+    // {
+    //   id: "5",
+    //   title: "Gotowy na nowe wyzwanie?",
+    //   text: "Czas start",
+    // },
+    // {
+    //   id: "6",
+    //   title: "Czas na kodowanie!",
+    //   text: "Rozwiąż quiz z React Native i sprawdź swoje umiejętności!",
+    // },
+    // {
+    //   id: "7",
+    //   title: "Nie poddawaj się!",
+    //   text: " Pamiętaj, że nauka wymaga czasu i wytrwałości. Kontynuuj i osiągnij swoje cele!",
+    // },
+    // {
+    //   id: "8",
+    //   title: "Codzienna dawka kodu!",
+    //   text: "Rozwiąż quiz z JavaScript i utrwal zdobytą wiedzę.",
+    // },
+    // {
+    //   id: "9",
+    //   title: "Sprawdź swoje umiejętności!",
+    //   text: "Quiz z Javy już czeka na Ciebie.",
+    // },
   ];
   return (
     <>
@@ -83,10 +83,14 @@ const Notifications = () => {
           <View className="mx-8 mb-4  bg-block h-1 rounded-lg " />
         </View>
         <View className="mb-32 flex-1">
-          {!notifications ? (
+          {notifications.length === 0 ? (
+            <View className="items-center justify-center h-[600] flex-1 ">
+              <Text className="text-secondary"> Brak powiadomień</Text>
+            </View>
+          ) : (
             notifications.map(({ id, title, text }) => {
               return (
-                <NotifictionItem>
+                <NotifictionItem key={id}>
                   <Text className="leading-5 text-base text-secondary px-4">
                     <Text className="font-bold text-primary">{title}</Text>{" "}
                     {text}
@@ -94,10 +98,6 @@ const Notifications = () => {
                 </NotifictionItem>
               );
             })
-          ) : (
-            <View className="items-center justify-center h-[600] flex-1 ">
-              <Text className="text-secondary"> Brak powiadomień</Text>
-            </View>
           )}
         </View>
       </ScrollView>

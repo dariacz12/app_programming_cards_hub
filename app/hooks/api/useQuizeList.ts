@@ -3,12 +3,21 @@ import axios, { AxiosError } from "axios";
 import { API_URL } from "../../context/AuthContext";
 import { Quiz } from "../../types/Quize";
 import { ErrorResponse } from "../../types/ErrorResponse";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const useQuizeList = (navigation: any) => {
+type RootStackParamList = {
+  QuizeStartPage: {
+    documentId: string;
+  };
+};
+type NavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "QuizeStartPage"
+>;
+const useQuizeList = (navigation: NavigationProp) => {
   const [data, setData] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  console.log("111111", data);
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       const fetchData = async () => {

@@ -1,6 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import H2Text from "../components/H2Text";
 import QuizeSecondaryButton from "../components/QuizeComponents/QuizeSeccondaryButton";

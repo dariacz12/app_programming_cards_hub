@@ -52,7 +52,6 @@ const QuizeQuestion = ({
   }, [lastQuizAttemptsResultAnswers, reset]);
 
   const { data: quizeAttempts } = useQuizeAttempts(navigation, documentId);
-  console.log("quizeAttempts ", quizeAttempts);
 
   useEffect(() => {
     if (quizeAttempts?.length > 0) {

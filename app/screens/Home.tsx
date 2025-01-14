@@ -1,6 +1,5 @@
 import {
   ScrollView,
-  ScrollViewBase,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -8,8 +7,6 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import H1Text from "../components/H1Text";
 import H4Text from "../components/H4Text";
 import Avatar from "../components/Avatar";
 import { useNavigation } from "@react-navigation/native";
@@ -18,7 +15,6 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { Rings } from "../components/SkiaProgressComponents/Rings";
 import H3Text from "../components/H3Text";
 import CardBlock from "../components/CardBlock";
 import Tabbar from "../components/Tabbar";
@@ -26,16 +22,11 @@ import QuizeBlock from "../components/QuizeBlock";
 import ModalPopup from "../components/ModalPopup";
 import { LinearGradient } from "expo-linear-gradient";
 import ProgressCircular from "../components/ProgressCircular";
-import ArrowBack from "../components/ArrowBack";
 import { eventEmitter } from "../components/BottomTabs/CustomBottomTab";
-import LoadingScreen from "./LoadingScreen";
-import useCardListData from "../hooks/api/useCardList";
 import useCardList from "../hooks/api/useCardList";
 import useQuizeList from "../hooks/api/useQuizeList";
 import useCurrentUser from "../hooks/api/useCurrentUser";
-// color: "#9E4784",
-//  color: "#66347F",
-//  color: "#37306B",
+import LoadingScreen from "./LoadingScreen";
 
 const Home = () => {
   const navigation = useNavigation<any>();
@@ -43,12 +34,8 @@ const Home = () => {
   const [notifications, setNotifications] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshAnimation, setRefreshAnimation] = useState(false);
-  const {
-    data: userData,
-    loading: loadingUser,
-    error: errorUser,
-  } = useCurrentUser();
-  console.log("userData", userData);
+  const { data: userData } = useCurrentUser();
+
   useEffect(() => {
     if (refreshAnimation) {
       setRefreshAnimation(false);
@@ -66,23 +53,10 @@ const Home = () => {
     error: errorCardList,
   } = useCardList();
 
-  // if (loadingQuizeList || loadingCardlist || loadingUser) {
-  //   return <LoadingScreen />;
-  // }
+  if (loadingQuizeList || loadingCardlist) {
+    return <LoadingScreen />;
+  }
 
-  quizeList &&
-    console.log(
-      quizeList[curentQuizeCircle]?.quize_attempts &&
-        quizeList[curentQuizeCircle]?.quize_attempts.length > 0
-        ? (quizeList[curentQuizeCircle]?.quize_attempts[
-            quizeList[curentQuizeCircle]?.quize_attempts.length - 1
-          ].score *
-            100) /
-            quizeList[curentQuizeCircle]?.quize_attempts[
-              quizeList[curentQuizeCircle]?.quize_attempts.length - 1
-            ]?.totalQuestions
-        : 0,
-    );
   return (
     <>
       <ScrollView className="bg-primary">

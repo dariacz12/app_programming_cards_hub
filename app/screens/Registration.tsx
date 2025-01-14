@@ -5,7 +5,6 @@ import {
   LayoutAnimation,
   NativeSyntheticEvent,
   Platform,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
