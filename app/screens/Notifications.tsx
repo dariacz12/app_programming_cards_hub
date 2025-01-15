@@ -1,66 +1,34 @@
 import { AntDesign } from "@expo/vector-icons";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import H2Text from "../components/H2Text";
 import { useNavigation } from "@react-navigation/native";
 import NotifictionItem from "../components/NotifictionItem";
-import { Notification } from "../types/Notification";
+import useNotificationsList from "../hooks/api/useNotificationsList";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Notifications = () => {
   const navigation = useNavigation<any>();
   const scrollView = useRef<ScrollView>(null);
-  const notifications: Notification[] = [
-    // {
-    //   id: "0",
-    //   title: "Gotowy na nowe wyzwanie?",
-    //   text: "Czas start",
-    // },
-    // {
-    //   id: "1",
-    //   title: "Czas na kodowanie!",
-    //   text: "Rozwiąż quiz z React Native i sprawdź swoje umiejętności!",
-    // },
-    // {
-    //   id: "2",
-    //   title: "Nie poddawaj się!",
-    //   text: " Pamiętaj, że nauka wymaga czasu i wytrwałości. Kontynuuj i osiągnij swoje cele!",
-    // },
-    // {
-    //   id: "3",
-    //   title: "Codzienna dawka kodu!",
-    //   text: "Rozwiąż quiz z JavaScript i utrwal zdobytą wiedzę.",
-    // },
-    // {
-    //   id: "4",
-    //   title: "Sprawdź swoje umiejętności!",
-    //   text: "Quiz z Javy już czeka na Ciebie.",
-    // },
-    // {
-    //   id: "5",
-    //   title: "Gotowy na nowe wyzwanie?",
-    //   text: "Czas start",
-    // },
-    // {
-    //   id: "6",
-    //   title: "Czas na kodowanie!",
-    //   text: "Rozwiąż quiz z React Native i sprawdź swoje umiejętności!",
-    // },
-    // {
-    //   id: "7",
-    //   title: "Nie poddawaj się!",
-    //   text: " Pamiętaj, że nauka wymaga czasu i wytrwałości. Kontynuuj i osiągnij swoje cele!",
-    // },
-    // {
-    //   id: "8",
-    //   title: "Codzienna dawka kodu!",
-    //   text: "Rozwiąż quiz z JavaScript i utrwal zdobytą wiedzę.",
-    // },
-    // {
-    //   id: "9",
-    //   title: "Sprawdź swoje umiejętności!",
-    //   text: "Quiz z Javy już czeka na Ciebie.",
-    // },
-  ];
+
+  const { data: notifications } = useNotificationsList(navigation);
+  console.log("notifications", notifications);
+  console.log("ostatni element ", notifications[notifications.length - 1]);
+  useEffect(() => {
+    const storeData = async () => {
+      try {
+        await AsyncStorage.setItem(
+          "@MyNotifications:key",
+          JSON.stringify(notifications[notifications.length - 1]), // Convert object to JSON string
+        );
+        console.log("Data saved successfully");
+      } catch (error) {
+        console.error("Error saving data", error);
+      }
+    };
+    storeData();
+  }, [notifications]);
+
   return (
     <>
       <ScrollView ref={scrollView} className="bg-semi-transparent flex flex-1">
@@ -88,16 +56,19 @@ const Notifications = () => {
               <Text className="text-secondary"> Brak powiadomień</Text>
             </View>
           ) : (
-            notifications.map(({ id, title, text }) => {
-              return (
-                <NotifictionItem key={id}>
-                  <Text className="leading-5 text-base text-secondary px-4">
-                    <Text className="font-bold text-primary">{title}</Text>{" "}
-                    {text}
-                  </Text>
-                </NotifictionItem>
-              );
-            })
+            notifications
+              .slice()
+              .reverse()
+              .map(({ id, title, text }) => {
+                return (
+                  <NotifictionItem key={id}>
+                    <Text className="leading-5 text-base text-secondary px-4">
+                      <Text className="font-bold text-primary">{title}</Text>{" "}
+                      {text}
+                    </Text>
+                  </NotifictionItem>
+                );
+              })
           )}
         </View>
       </ScrollView>

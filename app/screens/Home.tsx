@@ -26,21 +26,36 @@ import { eventEmitter } from "../components/BottomTabs/CustomBottomTab";
 import useCardList from "../hooks/api/useCardList";
 import useQuizeList from "../hooks/api/useQuizeList";
 import useCurrentUser from "../hooks/api/useCurrentUser";
-import LoadingScreen from "./LoadingScreen";
-
+import useNotificationsList from "../hooks/api/useNotificationsList";
+import { Notification } from "../types/Notification";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const Home = () => {
   const navigation = useNavigation<any>();
   const [curentQuizeCircle, setCurentQuizeCircle] = useState<number>(0);
-  const [notifications, setNotifications] = useState<boolean>(false);
+  const [newNotifications, setNewNotifications] = useState<Notification>();
+  const [lastNotifications, setLastNotifications] = useState<any>();
   const [modalVisible, setModalVisible] = useState(false);
-  const [refreshAnimation, setRefreshAnimation] = useState(false);
+  const [refreshAnimation, setRefreshAnimation] = useState(1);
   const { data: userData } = useCurrentUser();
+  const { data: notifications } = useNotificationsList(navigation);
+  useEffect(() => {
+    setNewNotifications(notifications?.[notifications.length - 1]);
+  }, [notifications]);
 
   useEffect(() => {
-    if (refreshAnimation) {
-      setRefreshAnimation(false);
-    }
-  }, [refreshAnimation]);
+    const getData = async () => {
+      try {
+        const value = await AsyncStorage.getItem("@MyNotifications:key");
+        if (value !== null) {
+          setLastNotifications(JSON.parse(value));
+        }
+      } catch (error) {
+        console.error("Error retrieving data", error);
+      }
+    };
+
+    getData();
+  }, [notifications]);
 
   const {
     data: quizeList,
@@ -53,9 +68,9 @@ const Home = () => {
     error: errorCardList,
   } = useCardList();
 
-  if (loadingQuizeList || loadingCardlist) {
-    return <LoadingScreen />;
-  }
+  useEffect(() => {
+    setRefreshAnimation(Math.random());
+  }, [quizeList]);
 
   return (
     <>
@@ -94,9 +109,10 @@ const Home = () => {
                     size={24}
                     color="ghostwhite"
                   />
-                  {notifications && (
-                    <View className="absolute top-0 right-0.5  rounded-full bg-yellowColor w-2 h-2"></View>
-                  )}
+                  {newNotifications &&
+                    newNotifications.id !== lastNotifications?.id && (
+                      <View className="absolute top-0 right-0.5 rounded-full bg-yellowColor w-2 h-2"></View>
+                    )}
                 </View>
               </TouchableOpacity>
             </View>
@@ -134,33 +150,32 @@ const Home = () => {
                 </View>
               </TouchableOpacity>
             </View>
-            <View className="  h-10 top-28 ">
-              {quizeList.length > 0 && quizeList[curentQuizeCircle] ? (
+            <View className="h-10 top-28 " key={refreshAnimation}>
+              {quizeList.length && (
                 <ProgressCircular
                   isHome={true}
-                  name={quizeList[curentQuizeCircle].name}
+                  name={quizeList?.[curentQuizeCircle]?.name ?? "-"}
                   percentage={
-                    quizeList[curentQuizeCircle].quize_attempts &&
-                    quizeList[curentQuizeCircle].quize_attempts.length > 0
-                      ? (quizeList[curentQuizeCircle].quize_attempts[
-                          quizeList[curentQuizeCircle].quize_attempts.length - 1
+                    quizeList[curentQuizeCircle]?.quize_attempts &&
+                    quizeList[curentQuizeCircle]?.quize_attempts.length > 0
+                      ? (quizeList[curentQuizeCircle]?.quize_attempts[
+                          quizeList[curentQuizeCircle]?.quize_attempts.length -
+                            1
                         ].score *
                           100) /
-                        quizeList[curentQuizeCircle].quize_attempts[
-                          quizeList[curentQuizeCircle].quize_attempts.length - 1
+                        quizeList[curentQuizeCircle]?.quize_attempts[
+                          quizeList[curentQuizeCircle]?.quize_attempts.length -
+                            1
                         ].totalQuestions
                       : 0
                   }
                   radius={40}
                   strokeWidth={14}
                   duration={500}
-                  color={quizeList[curentQuizeCircle].circleProgressColor}
+                  color={quizeList[curentQuizeCircle]?.circleProgressColor}
                   delay={0}
                   max={100}
-                  key={refreshAnimation ? "true" : "false"}
                 />
-              ) : (
-                <Text className="text-white">Loading...</Text>
               )}
             </View>
           </View>
