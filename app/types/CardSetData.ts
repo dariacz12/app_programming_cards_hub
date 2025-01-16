@@ -13,4 +13,5 @@ export type CardSetData = {
   description: string;
   circleProgressColor: string;
   cards_categories: CardsCategoryProps[];
+  blurHash: string;
 };

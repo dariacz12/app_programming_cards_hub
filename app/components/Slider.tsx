@@ -1,7 +1,7 @@
 import React from "react";
-import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
+import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { UPLOADS_URL } from "../context/AuthContext";
-
+import { Image } from "expo-image";
 const { width, height } = Dimensions.get("screen");
 
 interface QuizPhoto {
@@ -10,10 +10,11 @@ interface QuizPhoto {
 }
 
 interface QuizPhotosProps {
-  photos: QuizPhoto[];
+  photos?: QuizPhoto[];
+  blurHash?: string;
 }
 
-const Slider = ({ photos }: QuizPhotosProps) => {
+const Slider = ({ photos, blurHash }: QuizPhotosProps) => {
   return (
     <View>
       <FlatList
@@ -29,6 +30,7 @@ const Slider = ({ photos }: QuizPhotosProps) => {
               <Image
                 source={{ uri: `${UPLOADS_URL}${item.url}` }}
                 style={styles.image}
+                placeholder={{ blurHash }}
               />
             </View>
           );

@@ -15,7 +15,9 @@ const useCurrentUser = () => {
       setError(null);
 
       try {
-        const response = await axios.get(`${API_URL}/users/me`);
+        const response = await axios.get(
+          `${API_URL}/users/me?populate[avatar]=*`,
+        );
         setData(response.data);
       } catch (err) {
         const axiosError = err as AxiosError<ErrorResponse>;

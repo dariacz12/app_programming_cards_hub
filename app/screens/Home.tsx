@@ -37,6 +37,7 @@ const Home = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshAnimation, setRefreshAnimation] = useState(1);
   const { data: userData } = useCurrentUser();
+  console.log("userData", userData);
   const { data: notifications } = useNotificationsList(navigation);
   useEffect(() => {
     setNewNotifications(notifications?.[notifications.length - 1]);
@@ -61,7 +62,7 @@ const Home = () => {
     data: quizeList,
     loading: loadingQuizeList,
     error: erroQuizList,
-  } = useQuizeList(navigation);
+  } = useQuizeList(navigation, userData?.documentId);
   const {
     data: cardList,
     loading: loadingCardlist,
@@ -89,7 +90,7 @@ const Home = () => {
                     eventEmitter.emit("animateTab", 2);
                   }}
                 >
-                  <Avatar homeScreen={true} />
+                  <Avatar homeScreen={true} avatar={userData?.avatar?.url} />
                 </TouchableOpacity>
               </View>
               <View className="justify-center ml-3">

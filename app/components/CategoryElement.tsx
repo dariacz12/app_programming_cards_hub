@@ -1,14 +1,16 @@
 import React, { ReactNode } from "react";
-import { Image, View } from "react-native";
+import { View } from "react-native";
 import H4Text from "./H4Text";
 import { UPLOADS_URL } from "../context/AuthContext";
-
+import { Image } from "expo-image";
 const CategoryElement = ({
   url,
   nameCategory,
+  blurHash,
 }: {
   url: string;
   nameCategory: string;
+  blurHash: string;
 }) => {
   return (
     <View className="flex justify-start items-center p-1.5 ">
@@ -18,6 +20,7 @@ const CategoryElement = ({
         <Image
           source={{ uri: `${UPLOADS_URL}${url}` }}
           className={`rounded-ful w-14 h-14`}
+          placeholder={{ blurHash }}
         />
       </View>
       <View className="w-20 pt-3">

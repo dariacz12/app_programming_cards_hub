@@ -14,7 +14,7 @@ type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   "QuizeStartPage"
 >;
-const useQuizeList = (navigation: NavigationProp) => {
+const useQuizeList = (navigation: NavigationProp, documentId?: string) => {
   const [data, setData] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +40,7 @@ const useQuizeList = (navigation: NavigationProp) => {
       fetchData();
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, documentId]);
 
   return { data, loading, error };
 };

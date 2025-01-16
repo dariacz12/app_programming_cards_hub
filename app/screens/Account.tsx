@@ -36,6 +36,7 @@ import useCurrentUser from "../hooks/api/useCurrentUser";
 import { changePassword } from "../actions/changePassword";
 import { FormNameData } from "../types/FormNameData";
 import { FormPasswordData } from "../types/FormPasswordData";
+import * as ImagePicker from "expo-image-picker";
 const minLength = 8;
 const notificationsList = [
   "Czas na codzienną dawkę nauki programowania!",
@@ -197,6 +198,101 @@ const Account = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalUploadPhotoVisible, setModalUploadPhotoVisible] = useState(false);
+
+  const [image, setImage] = useState<string | null>(null);
+  console.log("zdjęcie", image);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const uploadPhoto = async (imageUri: string) => {
+    try {
+      const formData = new FormData();
+      formData.append("files", {
+        uri: imageUri,
+        name: `${userData?.username}.png`,
+        type: "image/png",
+      } as any);
+      const response = await axios.post(`${API_URL}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error(
+        "Error uploading image:",
+        error.response?.data || error.message,
+      );
+      throw error;
+    }
+  };
+
+  const [newPhotoUrl, setNewPhotoUrl] = useState<string>();
+  console.log("newPhotoUrl", newPhotoUrl);
+  const assignPhotoToUser = async () => {
+    if (!image) {
+      console.warn("No image selected");
+      return;
+    }
+
+    try {
+      const result = await uploadPhoto(image);
+      console.log("Image uploaded successfully:", result[0].url);
+      setNewPhotoUrl(result[0].url);
+    } catch (error) {
+      console.error("Error assigning photo:", error);
+    }
+  };
+
+  useEffect(() => {
+    const updateUserPhoto = async (newPhotoUrl?: string) => {
+      try {
+        if (!newPhotoUrl || !userData?.documentId) {
+          console.warn("Missing photo URL or user ID");
+          return;
+        }
+        const response = await axios.put(
+          `${API_URL}/users/me`,
+          { avatar: newPhotoUrl },
+          {
+            headers: {
+              Authorization: `Bearer ${newPhotoUrl}`,
+            },
+          },
+        );
+
+        console.log("User photo updated successfully:", response.data);
+        return response;
+      } catch (error: any) {
+        console.error(
+          "Error updating image:",
+          error.response?.data || error.message,
+        );
+        throw error;
+      }
+    };
+
+    if (newPhotoUrl) {
+      updateUserPhoto(newPhotoUrl);
+    }
+  }, [newPhotoUrl, userData?.documentId]);
+
+  console.log("Document ID:", userData?.documentId);
+  console.log("avatar1111:", userData);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -207,7 +303,7 @@ const Account = () => {
           <View className="flex-1 flex items-center justify-start pt-12 pb-36 ">
             <Image source={logo} className="w-64 h-12" />
             <View className="mt-6 relative">
-              <Avatar homeScreen={false} />
+              <Avatar homeScreen={false} avatar={userData?.avatar?.url} />
               <TouchableOpacity
                 className="absolute left-20 top-20"
                 onPress={() => setModalUploadPhotoVisible(true)}
@@ -232,29 +328,29 @@ const Account = () => {
                     <Text className="text-white font-bold text-base mr-48 mb-6">
                       Prześlij zdjęcie
                     </Text>
-                    <View className="flex w-64 py-7 mb-6 justify-center items-center border-dashed border-2 border-whiteColor rounded-xl">
-                      <Feather name="upload" size={36} color="white" />
-                      <Text
-                        style={styles.modalText}
-                        className="text-whiteColor mt-4"
-                      >
-                        <Text className="text-activeColor font-bold">
-                          Wybierz
-                        </Text>{" "}
-                        zdjęcie
-                      </Text>
-                      <Text
-                        style={styles.modalText}
-                        className="text-whiteColor"
-                      >
-                        Dozwolone formaty: {"\n"} zip, image, pdf lub ms.word
-                      </Text>
-                    </View>
+                    <TouchableOpacity onPress={pickImage}>
+                      <View className="flex w-64 py-7 mb-6 justify-center items-center border-dashed border-2 border-whiteColor rounded-xl">
+                        <Feather name="upload" size={36} color="white" />
+                        <Text
+                          style={styles.modalText}
+                          className="text-whiteColor mt-4"
+                        >
+                          <Text className="text-activeColor font-bold">
+                            Wybierz
+                          </Text>{" "}
+                          zdjęcie
+                        </Text>
+                        <Text
+                          style={styles.modalText}
+                          className="text-whiteColor"
+                        >
+                          Dozwolone formaty: {"\n"} zip, image, pdf lub ms.word
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
                     <View className="flex flex-row justify-center">
                       <ActiveButton
-                        onPress={() =>
-                          setModalUploadPhotoVisible(!modalUploadPhotoVisible)
-                        }
+                        onPress={assignPhotoToUser}
                         text={"Prześlij"}
                       ></ActiveButton>
                     </View>
