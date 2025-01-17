@@ -319,6 +319,7 @@ const flipCardStyles = StyleSheet.create({
   regularCard: {
     position: "absolute",
     zIndex: 1,
+    backfaceVisibility: "hidden",
   },
   flippedCard: {
     backfaceVisibility: "hidden",
