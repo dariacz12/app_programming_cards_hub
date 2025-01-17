@@ -37,6 +37,8 @@ import { changePassword } from "../actions/changePassword";
 import { FormNameData } from "../types/FormNameData";
 import { FormPasswordData } from "../types/FormPasswordData";
 import * as ImagePicker from "expo-image-picker";
+import useUpdateUserPhoto from "../hooks/api/useUpdateUserPhoto";
+import { uploadPhoto } from "../actions/uploadPhoto";
 const minLength = 8;
 const notificationsList = [
   "Czas na codzienną dawkę nauki programowania!",
@@ -217,32 +219,8 @@ const Account = () => {
     }
   };
 
-  const uploadPhoto = async (imageUri: string) => {
-    try {
-      const formData = new FormData();
-      formData.append("files", {
-        uri: imageUri,
-        name: `${userData?.username}.png`,
-        type: "image/png",
-      } as any);
-      const response = await axios.post(`${API_URL}/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      return response.data;
-    } catch (error: any) {
-      console.error(
-        "Error uploading image:",
-        error.response?.data || error.message,
-      );
-      throw error;
-    }
-  };
-
   const [newPhotoUrl, setNewPhotoUrl] = useState<string>();
-  console.log("newPhotoUrl", newPhotoUrl);
+
   const assignPhotoToUser = async () => {
     if (!image) {
       console.warn("No image selected");
@@ -250,49 +228,19 @@ const Account = () => {
     }
 
     try {
-      const result = await uploadPhoto(image);
+      const result = await uploadPhoto(image, userData?.username);
       console.log("Image uploaded successfully:", result[0].url);
       setNewPhotoUrl(result[0].url);
     } catch (error) {
       console.error("Error assigning photo:", error);
     }
   };
+  const {
+    data: photoData,
+    loading: loadingPhoto,
+    error: errorPhoto,
+  } = useUpdateUserPhoto(newPhotoUrl);
 
-  useEffect(() => {
-    const updateUserPhoto = async (newPhotoUrl?: string) => {
-      try {
-        if (!newPhotoUrl || !userData?.documentId) {
-          console.warn("Missing photo URL or user ID");
-          return;
-        }
-        const response = await axios.put(
-          `${API_URL}/users/me`,
-          { avatar: newPhotoUrl },
-          {
-            headers: {
-              Authorization: `Bearer ${newPhotoUrl}`,
-            },
-          },
-        );
-
-        console.log("User photo updated successfully:", response.data);
-        return response;
-      } catch (error: any) {
-        console.error(
-          "Error updating image:",
-          error.response?.data || error.message,
-        );
-        throw error;
-      }
-    };
-
-    if (newPhotoUrl) {
-      updateUserPhoto(newPhotoUrl);
-    }
-  }, [newPhotoUrl, userData?.documentId]);
-
-  console.log("Document ID:", userData?.documentId);
-  console.log("avatar1111:", userData);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
