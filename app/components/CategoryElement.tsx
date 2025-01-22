@@ -1,8 +1,8 @@
 import React, { ReactNode } from "react";
 import { View } from "react-native";
-import H4Text from "./H4Text";
 import { UPLOADS_URL } from "../context/AuthContext";
 import { Image } from "expo-image";
+import H5Text from "./H5Text";
 const CategoryElement = ({
   url,
   nameCategory,
@@ -24,7 +24,7 @@ const CategoryElement = ({
         />
       </View>
       <View className="w-20 pt-3">
-        <H4Text text={nameCategory} />
+        <H5Text text={nameCategory} />
       </View>
     </View>
   );

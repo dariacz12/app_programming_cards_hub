@@ -97,7 +97,7 @@ const CardsStudyPage = ({
             <View className="flex mt-6 mb-7  mx-10 flex-row ">
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate("CardsStartPage", {
+                  navigation.navigate("UnlockedCardsPage", {
                     documentId: documentId,
                   })
                 }

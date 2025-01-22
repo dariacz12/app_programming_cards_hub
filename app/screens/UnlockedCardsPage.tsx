@@ -90,7 +90,7 @@ const UnlockedCardsPage = ({ route }: Route<{ documentId: string }>) => {
   return (
     <>
       <ScrollView ref={scrollView} className="bg-primary ">
-        <View className=" pb-[60] mb-4 ">
+        <View className=" pb-[60] mb-4 " key={documentId}>
           <View className="flex relative">
             <TouchableOpacity
               className="absolute z-10 p-2 left-10 top-16"
@@ -181,6 +181,7 @@ const UnlockedCardsPage = ({ route }: Route<{ documentId: string }>) => {
                           }}
                         >
                           <CategoryElement
+                            key={cardCategory.documentId}
                             nameCategory={cardCategory.nameCategory}
                             url={cardCategory.iconCategory.url}
                             blurHash={cardData?.blurHash}
