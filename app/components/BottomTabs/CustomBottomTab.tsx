@@ -31,23 +31,30 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const progress = useSharedValue(1);
 
   const navigationState = useNavigationState((state) => state);
+  const [activeIndex, setActiveIndex] = useState("Home");
+  console.log("activeIndex", activeIndex);
 
   useEffect(() => {
     const subscription = eventEmitter.addListener(
       "updateActiveTab",
-      (index) => {},
+      (index) => {
+        setActiveIndex(state.routes[index]?.name);
+      },
     );
+
     const animationSubscription = eventEmitter.addListener(
       "animateTab",
       (index) => {
-        progress.value = withTiming(index);
+        progress.value = withTiming(index + 1);
       },
     );
+    setActiveIndex(state.routes[state.index]?.name);
+
     return () => {
       subscription.remove();
       animationSubscription.remove();
     };
-  }, [navigationState.index]);
+  }, [state]);
 
   const handleMoveCircle = (currentPath: string) => {
     circleXCoordinate.value = getPathXCenter(currentPath);
@@ -74,32 +81,21 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
       d: `${containerPath} ${currentPath}`,
     };
   });
-  const [activeIndex, setActiveIndex] = useState("Home");
-  const [isNavigating, setIsNavigating] = useState(false); // New state to track navigation
+
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const handleTabPress = (index: number, tab: string) => {
-    setActiveIndex(tab); // Set the active index
-    setIsNavigating(true); // Trigger navigation state
+    setActiveIndex(tab);
+    setIsNavigating(true);
     navigation.navigate(tab);
     progress.value = withTiming(index + 1);
   };
-
-  // Effect to perform actions after activeIndex changes
   useEffect(() => {
     if (isNavigating) {
-      // Perform any additional actions here after activeIndex has changed
       console.log(`Active index set to: ${activeIndex}`);
-
-      // Reset isNavigating after actions are performed
       setIsNavigating(false);
     }
   }, [activeIndex, isNavigating]);
-  // const handleTabPress = (index: number, tab: string) => {
-  //   setActiveIndex(tab);
-  //   navigation.navigate(tab);
-  //   progress.value = withTiming(index+1);
-
-  // };
 
   const opacity = useSharedValue(0.9);
   const animatedStyle = useAnimatedStyle(() => ({
@@ -109,7 +105,6 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const blurredStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
-  // console.log("al", state.routes);
 
   const isCurvedTabScreen =
     state.routes[state.index].name === "Home" ||
@@ -126,7 +121,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
           zIndex: 2,
         }}
         source={require("../../../assets/bbblurry.png")}
-        preserveAspectRatio="xMidYMid slice"
+        // preserveAspectRatio="xMidYMid slice"
       />
       <Animated.View
         style={[
@@ -173,8 +168,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
                 key={route.name}
                 label={label as string}
                 icon={selectIcon(route.name)}
-                activeIndex={index + 1}
-                activeRoute={activeIndex}
+                activeRoute={state.routes[state.index]?.name}
                 index={index}
                 onTabPress={() => handleTabPress(index, route.name)}
               />
