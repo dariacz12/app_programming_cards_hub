@@ -23,8 +23,8 @@ import { Route } from "../types/Route";
 
 const CardsStudyPage = ({
   route,
-}: Route<{ documentId: string; reset: boolean }>) => {
-  const { documentId, reset } = route?.params;
+}: Route<{ documentId: string; reset: boolean; cardTest: boolean }>) => {
+  const { documentId, reset, cardTest } = route?.params;
   const navigation = useNavigation<any>();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<any>(0);
   const [score, setScore] = useState<number>(0);
@@ -97,9 +97,13 @@ const CardsStudyPage = ({
             <View className="flex mt-6 mb-7  mx-10 flex-row ">
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate("UnlockedCardsPage", {
-                    documentId: documentId,
-                  })
+                  cardTest
+                    ? navigation.navigate("CardsStartPage", {
+                        documentId: documentId,
+                      })
+                    : navigation.navigate("UnlockedCardsPage", {
+                        documentId: documentId,
+                      })
                 }
               >
                 <AntDesign name="left" size={24} color="ghostwhite" />
