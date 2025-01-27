@@ -146,7 +146,7 @@ const UnlockedCardsPage = ({ route }: Route<{ documentId: string }>) => {
                 </View>
                 <View>
                   <View className="items-start ml-6 mb-3 mt-7 ">
-                    <H3Text text={"Mixuj pytania z rónych kategorii"} />
+                    <H3Text text={"Mixuj pytania z różnych kategorii"} />
                   </View>
 
                   <View className="flex-1 py-5 justify-center items-center w-full">

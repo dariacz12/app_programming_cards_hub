@@ -20,6 +20,7 @@ import { UserCardAnswer } from "../types/UserCardAnswer";
 import useCardsAttempts from "../hooks/api/useCardsAttempts";
 import useCardSetData from "../hooks/api/useCardSetData";
 import { Route } from "../types/Route";
+import FlipCardHorisontal from "../components/FlipCardHorisontal";
 
 const CardsStudyPage = ({
   route,
@@ -109,7 +110,7 @@ const CardsStudyPage = ({
                 <AntDesign name="left" size={24} color="ghostwhite" />
               </TouchableOpacity>
               <View className=" flex-1 items-center pr-4">
-                <H2Text textCenter={true} text={"React"} />
+                <H2Text textCenter={true} text={cardData?.name} />
               </View>
             </View>
             <ProgressBar
@@ -140,32 +141,70 @@ const CardsStudyPage = ({
                           key={index}
                           style={{ zIndex: activeQuestionsList.length - index }}
                         >
-                          {cardData && (
-                            <FlipCard
-                              documentId={documentId}
-                              cardStyle={styles.flipCard}
-                              currentCard={item}
-                              index={index}
-                              key={index}
-                              dataLength={activeQuestionsList.length}
-                              maxVisibleItem={MAX}
-                              currentIndex={currentQuestionIndex}
-                              animatedValue={animatedValue}
-                              setCurrentQuestionIndex={setCurrentQuestionIndex}
-                              setNewData={setNewData}
-                              activeQuestionsList={activeQuestionsList}
-                              userAnswers={userAnswers}
-                              setUserAnswers={setUserAnswers}
-                              score={score}
-                              setScore={setScore}
-                              incorrect={incorrect}
-                              setIncorrect={setIncorrect}
-                              cardData={cardData.cards_items}
-                              lastCardsAttemptsResultAnswers={
-                                lastCardsAttemptsResultAnswers
-                              }
-                              lastCardsAttemptsResult={lastCardsAttemptsResult}
-                            />
+                          {cardData?.horizontal ? (
+                            <View className="mt-24">
+                              <FlipCardHorisontal
+                                documentId={documentId}
+                                cardStyle={styles.flipCardHorisontal}
+                                currentCard={item}
+                                index={index}
+                                key={index}
+                                dataLength={activeQuestionsList.length}
+                                maxVisibleItem={MAX}
+                                currentIndex={currentQuestionIndex}
+                                animatedValue={animatedValue}
+                                setCurrentQuestionIndex={
+                                  setCurrentQuestionIndex
+                                }
+                                setNewData={setNewData}
+                                activeQuestionsList={activeQuestionsList}
+                                userAnswers={userAnswers}
+                                setUserAnswers={setUserAnswers}
+                                score={score}
+                                setScore={setScore}
+                                incorrect={incorrect}
+                                setIncorrect={setIncorrect}
+                                cardData={cardData.cards_items}
+                                lastCardsAttemptsResultAnswers={
+                                  lastCardsAttemptsResultAnswers
+                                }
+                                lastCardsAttemptsResult={
+                                  lastCardsAttemptsResult
+                                }
+                              />
+                            </View>
+                          ) : (
+                            cardData && (
+                              <FlipCard
+                                documentId={documentId}
+                                cardStyle={styles.flipCard}
+                                currentCard={item}
+                                index={index}
+                                key={index}
+                                dataLength={activeQuestionsList.length}
+                                maxVisibleItem={MAX}
+                                currentIndex={currentQuestionIndex}
+                                animatedValue={animatedValue}
+                                setCurrentQuestionIndex={
+                                  setCurrentQuestionIndex
+                                }
+                                setNewData={setNewData}
+                                activeQuestionsList={activeQuestionsList}
+                                userAnswers={userAnswers}
+                                setUserAnswers={setUserAnswers}
+                                score={score}
+                                setScore={setScore}
+                                incorrect={incorrect}
+                                setIncorrect={setIncorrect}
+                                cardData={cardData.cards_items}
+                                lastCardsAttemptsResultAnswers={
+                                  lastCardsAttemptsResultAnswers
+                                }
+                                lastCardsAttemptsResult={
+                                  lastCardsAttemptsResult
+                                }
+                              />
+                            )
                           )}
                         </View>
                       );
@@ -213,5 +252,9 @@ const styles = StyleSheet.create({
   flipCard: {
     width: 320,
     height: 500,
+  },
+  flipCardHorisontal: {
+    width: 500,
+    height: 320,
   },
 });

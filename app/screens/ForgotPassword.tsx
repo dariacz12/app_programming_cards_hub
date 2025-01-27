@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -17,6 +18,7 @@ import InfoCard from "../components/InfoCard";
 import { useNavigation } from "@react-navigation/native";
 import H2Text from "../components/H2Text";
 import { resetPassword } from "../actions/resetPassword";
+import { forgotPassword } from "../actions/forgotPassword";
 
 const minLength = 8;
 
@@ -65,11 +67,15 @@ const ForgotPassword = () => {
     },
   });
   const [noEmail, setNoEmail] = useState<boolean>(false);
-  const [email, setEmail] = useState("");
 
   const resetuserPassword = async ({ email }: { email: string }) => {
+    console.log("emailold", email);
     try {
-      const result = await resetPassword(email);
+      const result = await forgotPassword(email);
+      if (result) {
+        Alert.alert("", "Email został wysłany.", [{ text: "OK" }]);
+        reset();
+      }
       return result;
     } catch (e) {
       setNoEmail(true);
