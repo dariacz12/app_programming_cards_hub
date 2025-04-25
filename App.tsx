@@ -19,6 +19,7 @@ import AccessUnlocked from "./app/screens/AccessUnlocked";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { usePushNotifications } from "./app/hooks/usePushNotifications";
 import LoadingScreen from "./app/screens/LoadingScreen";
+import * as Linking from "expo-linking";
 
 AppRegistry.registerComponent("main", () => App);
 if (Platform.OS === "web") {
@@ -27,6 +28,14 @@ if (Platform.OS === "web") {
   AppRegistry.runApplication("main", { rootTag });
 }
 
+const linking = {
+  prefixes: [Linking.createURL("/")], // automatycznie zwróci np. exp://192.168.0.2:19000
+  config: {
+    screens: {
+      NewPassword: "new-password", // np. ekran /reset-password
+    },
+  },
+};
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -47,7 +56,7 @@ export const Layout = () => {
   }
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         <Stack.Navigator>
           {authState?.authenticated ? (
             <React.Fragment>

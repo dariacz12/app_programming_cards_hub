@@ -122,7 +122,7 @@ const QuizeStartPage = ({ route }: Route<{ documentId: string }>) => {
                   <View className="justify-center items-start ">
                     <H1Text text={quizeSetData.name} />
                     <Text className="text-sm  text-secondary">
-                      rozwiązano 65 z 100 pytań
+                      {`rozwiązano ${!quizAttemptResult ? "0" : quizAttemptResult.score} z ${quizeSetData.quiz_questions_elements.length} pytań`}
                     </Text>
                   </View>
                 </View>

@@ -19,10 +19,28 @@ import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import H2Text from "../components/H2Text";
 import { FormNewPasswordData } from "../types/FormNewPasswordData";
+import * as Linking from "expo-linking";
+import { useAuth } from "../context/AuthContext";
 
 const minLength = 8;
 
 const NewPassword = () => {
+  const [code, setCode] = useState<string>(
+    "5c484bd091a522092b0e7a2831495e1db3f018b0517ac143b9aacf1758f12055c003e4e64a0348907743b201d41d4ce887de082441c33672af4c595d3a92dd14",
+  );
+
+  useEffect(() => {
+    const getInitialUrl = async () => {
+      const url = await Linking.getInitialURL();
+      const { queryParams } = Linking.parse(url ?? "");
+      if (queryParams?.code) {
+        console.log("Kod resetu hasła:", queryParams.code);
+        // ustaw kod w stanie, pokaż formularz, itp.
+      }
+    };
+    getInitialUrl();
+  }, []);
+
   const navigation = useNavigation<any>();
   const [hasKeyboard, setHasKeyboard] = useState(false);
 
@@ -52,9 +70,10 @@ const NewPassword = () => {
   const togglePassword = () => {
     setShowPassword(!showPasword);
   };
-  const [showRepeatPasword, setShowReapeatPassword] = useState<boolean>(true);
+  const [showPasswordConfirmation, setShowPasswordConfirmation] =
+    useState<boolean>(true);
   const toggleReapeatPassword = () => {
-    setShowReapeatPassword(!showRepeatPasword);
+    setShowPasswordConfirmation(!showPasswordConfirmation);
   };
   const logo = require("../../assets/logo.png");
   const {
@@ -67,16 +86,33 @@ const NewPassword = () => {
     formState: { errors },
   } = useForm<FormNewPasswordData>({
     defaultValues: {
-      password_repeat: "",
       password: "",
+      passwordConfirmation: "",
     },
   });
-  // const [password_repeat, setPassword_repeat] = useState("");
-  // const [password, setPassword] = useState<any>("");
+
   const password = useRef({});
   password.current = watch("password", "");
-  const createNewPassword = async () => {};
 
+  const { onChangePassword } = useAuth();
+
+  const createNewPassword = async (data: FormNewPasswordData) => {
+    const { password, passwordConfirmation } = data;
+    if (code) {
+      const result = await onChangePassword!(
+        password,
+        passwordConfirmation,
+        code,
+      );
+      if (result && result.error) {
+        alert(result.msg);
+      } else {
+        navigation.navigate("Login");
+      }
+    } else {
+      alert("Brak kodu resetu!");
+    }
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -91,7 +127,7 @@ const NewPassword = () => {
           <Image source={logo} className="w-64 h-12" />
 
           <View
-            className={`mx-4  items-center ${hasKeyboard ? "pt-4" : errors.password || errors.password_repeat ? "pt-4" : "pt-9 pb-2"}`}
+            className={`mx-4  items-center ${hasKeyboard ? "pt-4" : errors.password || errors.passwordConfirmation ? "pt-4" : "pt-9 pb-2"}`}
           >
             <H2Text textCenter={true} text={"Ustaw nowe hasło"} />
           </View>
@@ -148,14 +184,14 @@ const NewPassword = () => {
                     control={control}
                     render={({ field: { onChange, onBlur, value } }) => (
                       <TextInput
-                        className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errors.password_repeat && "border border-redError"} ${value?.length >= minLength && "border border-greanColor"}`}
+                        className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errors.passwordConfirmation && "border border-redError"} ${value?.length >= minLength && "border border-greanColor"}`}
                         onBlur={onBlur}
                         onChangeText={(value) => onChange(value)}
                         value={value}
-                        secureTextEntry={showRepeatPasword}
+                        secureTextEntry={showPasswordConfirmation}
                       />
                     )}
-                    name="password_repeat"
+                    name="passwordConfirmation"
                     rules={{
                       required: "Pole wymagane",
                       validate: (value) =>
@@ -173,19 +209,18 @@ const NewPassword = () => {
                     )}
                   </TouchableOpacity>
                 </View>
-                {errors.password_repeat && (
+                {errors.passwordConfirmation && (
                   <Text className="text-red-600 pt-2 pl-5">
-                    {errors.password_repeat.message}
+                    {errors.passwordConfirmation.message}
                   </Text>
                 )}
               </View>
             </InfoCard>
           </View>
           <View>
-            {/* <ActiveButton text="Resetuj hasło" onPress={handleSubmit(createNewPassword)} /> */}
             <ActiveButton
-              text="Zaloguj się"
-              onPress={() => navigation.navigate("SuccessfullPasswordReset")}
+              text="Zapisz"
+              onPress={handleSubmit(createNewPassword)}
             />
           </View>
         </View>

@@ -13,6 +13,11 @@ interface AuthProps {
   onRegister?: (name: string, email: string, password: string) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
+  onChangePassword?: (
+    password: string,
+    passwordConfirmation: string,
+    code: string,
+  ) => Promise<any>;
   loading?: boolean;
 }
 const TOKEN_KEY = "my-jwt";
@@ -109,7 +114,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const changePassword = async (
+    password: string,
+    passwordConfirmation: string,
+    code: string,
+  ) => {
+    try {
+      return await axios.post(`${API_URL}/auth/reset-password`, {
+        password,
+        passwordConfirmation,
+        code,
+      });
+    } catch (e) {
+      return {
+        error: true,
+        msg: (e as any).response?.error?.message || "An unknown error occurred",
+      };
+    }
+  };
+
   const value = {
+    onChangePassword: changePassword,
     onRegister: register,
     onLogin: login,
     onLogout: logout,
