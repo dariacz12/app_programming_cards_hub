@@ -25,9 +25,7 @@ import { useAuth } from "../context/AuthContext";
 const minLength = 8;
 
 const NewPassword = () => {
-  const [code, setCode] = useState<string>(
-    "5c484bd091a522092b0e7a2831495e1db3f018b0517ac143b9aacf1758f12055c003e4e64a0348907743b201d41d4ce887de082441c33672af4c595d3a92dd14",
-  );
+  const [code, setCode] = useState<string | null>(null);
 
   useEffect(() => {
     const getInitialUrl = async () => {
@@ -35,7 +33,7 @@ const NewPassword = () => {
       const { queryParams } = Linking.parse(url ?? "");
       if (queryParams?.code) {
         console.log("Kod resetu hasła:", queryParams.code);
-        // ustaw kod w stanie, pokaż formularz, itp.
+        setCode(String(queryParams.code))
       }
     };
     getInitialUrl();
