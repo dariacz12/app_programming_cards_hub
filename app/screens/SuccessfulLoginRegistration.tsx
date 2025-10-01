@@ -51,7 +51,7 @@ const SuccessfulLoginRegistration = ({
             </Text>
           </Text>
         </InfoCard>
-        <View className="flex-row mt-10 px-2 justify-center items-center">
+        <View testID="startButton" className="flex-row mt-10 px-2 justify-center items-center">
           <ActiveButton onPress={login} text={"Rozpocznij"} />
         </View>
       </View>

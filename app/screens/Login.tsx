@@ -96,7 +96,7 @@ const Login = () => {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         {/* <SafeAreaView className="flex-1 items-center bg-primary"> */}
-        <View className="flex-1 flex justify-start items-center py-12 ">
+        <View testID="screenBackground"  className="flex-1 flex justify-start items-center py-12 ">
           <Image source={logo} className="w-64 h-12" />
 
           <View
@@ -111,13 +111,16 @@ const Login = () => {
                   <Controller
                     control={control}
                     render={({ field: { onChange, onBlur, value } }) => (
+                        <View testID="inputEmail">
                       <TextInput
                         className={`bg-primary rounded-2xl h-12 w-80 px-5 text-primary ${errors.email && "border border-redError"}`}
                         onBlur={onBlur}
                         onChangeText={(value) => onChange(value)}
                         value={value}
                       />
+                       </View>
                     )}
+                   
                     name="email"
                     rules={{
                       required: "Pole wymagane",
@@ -142,6 +145,7 @@ const Login = () => {
                   <Controller
                     control={control}
                     render={({ field: { onChange, onBlur, value } }) => (
+                        <View testID="inputPassword">
                       <TextInput
                         className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errors.password && "border border-redError"} ${value.length >= minLength && "border border-greanColor"}`}
                         onBlur={onBlur}
@@ -149,6 +153,7 @@ const Login = () => {
                         value={value}
                         secureTextEntry={showPasword}
                       />
+                      </View>
                     )}
                     name="password"
                     rules={{
@@ -193,7 +198,8 @@ const Login = () => {
             </InfoCard>
           </View>
           <View>
-            {/* <ActiveButton text="Załóż konto"  onPress={() => navigation.navigate("SuccesfullLoginRegistration")} /> */}
+           
+             <View testID="loginButton"></View>
             <ActiveButton text="Zaloguj się" onPress={handleSubmit(login)} />
           </View>
         </View>

@@ -33,7 +33,6 @@ const TabItem: FC<TabProps> = ({
   const { curvedPaths } = usePath();
 
   const iconPosition = getPathXCenterByIndex(curvedPaths, index);
-  console.log("1111111111activeRoute", activeRoute);
   const animatedActiveIndex = useSharedValue(activeRoute === "Home" ? 1 : 2);
   const [storedRoute, setStoredRoute] = useState<string | null>(null);
 

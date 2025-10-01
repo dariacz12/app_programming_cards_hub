@@ -10,7 +10,7 @@ const Avatar = ({
   avatar?: string;
 }) => {
   const avatarplaceholder = require("../../assets/avatarplaceholder.jpg");
-  console.log("avatar", avatar);
+
 
   return (
     <Image

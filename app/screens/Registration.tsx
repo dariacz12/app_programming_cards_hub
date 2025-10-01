@@ -100,14 +100,14 @@ const Registration = () => {
       className="flex-1 flex items-center bg-primary py-10"
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View className="flex-1 flex justify-start items-center py-12 ">
+        <View  testID="screenBackground" className="flex-1 flex justify-start items-center py-12 ">
           <Image source={logo} className="w-64 h-12" />
 
           <View
             className={`flex-row justify-center ${!hasKeyboard ? "py-10" : errors.password || errors.email ? "py-0" : "py-3"}  `}
           >
-            <InfoCard welcomeScreen={false}>
-              <View className="mb-5">
+            <InfoCard  welcomeScreen={false}>
+              <View   className="mb-5">
                 <Text className="leading-5 px-5 text-sm text-secondary mb-2 ">
                   Imię
                 </Text>
@@ -115,12 +115,15 @@ const Registration = () => {
                   <Controller
                     control={control}
                     render={({ field: { onChange, onBlur, value } }) => (
+                      <View testID="inputName">
                       <TextInput
                         className={`bg-primary rounded-2xl h-12 w-80 px-5 text-primary ${errors.name && "border border-redError"}`}
                         onBlur={onBlur}
                         onChangeText={(value) => onChange(value)}
                         value={value}
+                       
                       />
+                      </View>
                     )}
                     name="name"
                     rules={{
@@ -146,12 +149,14 @@ const Registration = () => {
                   <Controller
                     control={control}
                     render={({ field: { onChange, onBlur, value } }) => (
+                       <View testID="inputEmail">
                       <TextInput
                         className={`bg-primary rounded-2xl h-12 w-80 px-5 text-primary ${errors.email && "border border-redError"}`}
                         onBlur={onBlur}
                         onChangeText={(value) => onChange(value)}
                         value={value}
                       />
+                      </View>
                     )}
                     name="email"
                     rules={{
@@ -177,6 +182,7 @@ const Registration = () => {
                   <Controller
                     control={control}
                     render={({ field: { onChange, onBlur, value } }) => (
+                       <View testID="inputPassword">
                       <TextInput
                         className={`bg-primary rounded-2xl h-12 w-80  px-5 text-primary ${errors.password && "border border-redError"} ${value.length >= minLength && "border border-greanColor"}`}
                         onBlur={onBlur}
@@ -184,6 +190,7 @@ const Registration = () => {
                         value={value}
                         secureTextEntry={showPasword}
                       />
+                      </View>
                     )}
                     name="password"
                     rules={{
@@ -213,7 +220,7 @@ const Registration = () => {
               </View>
             </InfoCard>
           </View>
-          <View>
+            <View testID="createAccountButton">
             <ActiveButton
               text="Załóż konto"
               onPress={handleSubmit(registerUser)}

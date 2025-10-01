@@ -1,0 +1,13 @@
+appId: "com.daria-czupreta.app-programming-cards-hub"
+---
+- launchApp
+- tapOn: "Zaloguj się"
+- assertVisible: {id: "inputEmail"}
+- tapOn: {id: "inputEmail"}
+- inputText: "logintest@gmail.com"
+- assertVisible: {id: "inputPassword"}
+- tapOn: {id: "inputPassword"}
+- inputText: "LoginTest123"
+- tapOn: {id: "screenBackground"} 
+- tapOn: {id: "loginButton"}
+- assertVisible: "Dzień dobry!.*"
