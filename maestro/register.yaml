@@ -1,0 +1,25 @@
+appId: "com.daria-czupreta.app-programming-cards-hub"
+env:
+  TEST_NAME: ${TEST_NAME}
+  TEST_EMAIL: ${TEST_EMAIL}
+  TEST_PASSWORD: ${TEST_PASSWORD}
+---
+- launchApp
+- tapOn: "Zarejestruj się"
+- assertVisible: "Dbamy o prywatność i bezpieczeństwo.*"
+- tapOn: "Zgadzam się"
+- assertVisible: "Regulamin.*"
+- tapOn: "Zgadzam się"
+- assertVisible: {id: "inputName"}
+- tapOn: {id: "inputName"}
+- inputText: ${TEST_NAME}
+- assertVisible: {id: "inputEmail"}
+- tapOn: {id: "inputEmail"}
+- inputText: ${TEST_EMAIL}
+- assertVisible: {id: "inputPassword"}
+- tapOn: {id: "inputPassword"}
+- inputText: ${TEST_PASSWORD}
+- tapOn: {id: "screenBackground"} 
+- tapOn: {id: "createAccountButton"}
+- assertVisible: "Rejestracja przebiegła pomyślnie!.*"
+- tapOn: {id: "startButton"} 

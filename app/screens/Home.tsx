@@ -79,7 +79,7 @@ const Home = () => {
         <View className=" py-[60] mb-14 bg-primary">
           <View className="flex-row justify-between  mx-10">
             <View style={{ flexDirection: "row", height: 60, width: 156 }}>
-              <View className="flex-1 ">
+              <View testID="avatarImage" className="">
                 <TouchableOpacity
                   className=""
                   onPress={() => {
@@ -93,7 +93,7 @@ const Home = () => {
                   <Avatar homeScreen={true} avatar={userData?.avatar?.url} />
                 </TouchableOpacity>
               </View>
-              <View className="justify-center ml-3">
+              <View className="justify-center items-start pl-2">
                 <H4Text text={"Dzień dobry!"} />
                 <Text className="text-sm  text-secondary">
                   {userData?.username}
@@ -104,7 +104,7 @@ const Home = () => {
               <TouchableOpacity
                 onPress={() => navigation.navigate("Notifications")}
               >
-                <View className="relative">
+                <View testID="notifications" className="relative">
                   <MaterialIcons
                     name="notifications"
                     size={24}
@@ -138,6 +138,7 @@ const Home = () => {
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
+            
                 onPress={() =>
                   setCurentQuizeCircle(
                     curentQuizeCircle === quizeList.length - 1
@@ -146,7 +147,7 @@ const Home = () => {
                   )
                 }
               >
-                <View className="w-16 h-10 items-center justify-center">
+                <View  testID="rightArrowButton" className="w-16 h-10 items-center justify-center">
                   <AntDesign name="right" size={24} color="white" />
                 </View>
               </TouchableOpacity>
@@ -232,8 +233,8 @@ const Home = () => {
                   </TouchableWithoutFeedback>
                 </View>
               </ModalPopup>
-              <View className="flex-row ju ml-10 mt-7">
-                <H3Text text={"Karty fizyczne"} />
+              <View testID="cardsH1" className="flex-row ju ml-10 mt-7">
+                <H3Text  text={"Karty fizyczne"} />
                 <TouchableOpacity
                   className="px-2 justify-center items-center flex"
                   onPress={() => setModalVisible(!modalVisible)}

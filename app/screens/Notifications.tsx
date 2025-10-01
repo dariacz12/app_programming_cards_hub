@@ -33,15 +33,18 @@ const Notifications = () => {
     <>
       <ScrollView ref={scrollView} className="bg-semi-transparent flex flex-1">
         <View className="flex-1 ">
-          <View className=" flex-1 mt-20 mb-8 mx-10">
-            <View className="flex-1 items-center flex-row ">
+          <View  className=" flex-1 mt-20 mb-8 mx-10">
+            <View  className="flex-1 items-center flex-row ">
               <TouchableOpacity
                 className="p-1"
                 onPress={() =>
                   navigation.navigate("Tabbar", { screen: "Home" })
                 }
               >
-                <AntDesign name="left" size={24} color="ghostwhite" />
+                <View testID="arrowBack">
+                   <AntDesign name="left" size={24} color="ghostwhite" />
+                </View>
+
               </TouchableOpacity>
               <View className="justify-center flex-1 items-center pr-4">
                 <H2Text textCenter={true} text={"Powiadomienia"} />

@@ -1,4 +1,14 @@
-appId: "com.daria-czupreta.app_programming_cards_hub"
+appId: "com.daria-czupreta.app-programming-cards-hub"
 ---
-- launchApp
+- assertVisible: "Dzień dobry!.*"
+- tapOn: {id: "rightArrowButton"}
+- tapOn: {id: "rightArrowButton"}
 - scroll
+- scrollUntilVisible:
+    element:
+      id: "notifications" 
+    direction: UP
+- tapOn: {id: "notifications"}
+- tapOn: {id: "arrowBack"}
+- tapOn: {id: "avatarImage"}
+
