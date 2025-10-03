@@ -11,7 +11,6 @@ const Avatar = ({
 }) => {
   const avatarplaceholder = require("../../assets/avatarplaceholder.jpg");
 
-
   return (
     <Image
       source={avatar ? { uri: `${UPLOADS_URL}${avatar}` } : avatarplaceholder}

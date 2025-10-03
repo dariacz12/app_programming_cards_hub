@@ -93,128 +93,124 @@ const CardsStudyPage = ({
   return (
     <>
       {activeQuestionsList && (
-        <SafeAreaView className="flex-1  bg-primary ">
-          <View>
-            <View className="flex mt-6 mb-7  mx-10 flex-row ">
-              <TouchableOpacity
-                onPress={() =>
-                  cardTest
-                    ? navigation.navigate("CardsStartPage", {
-                        documentId: documentId,
-                      })
-                    : navigation.navigate("UnlockedCardsPage", {
-                        documentId: documentId,
-                      })
-                }
-              >
-                <AntDesign name="left" size={24} color="ghostwhite" />
-              </TouchableOpacity>
-              <View className=" flex-1 items-center pr-4">
-                <H2Text textCenter={true} text={cardData?.name} />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaView className="flex-1  bg-primary ">
+            <View>
+              <View className="flex mt-6 mb-7  mx-10 flex-row ">
+                <TouchableOpacity
+                  onPress={() =>
+                    cardTest
+                      ? navigation.navigate("CardsStartPage", {
+                          documentId: documentId,
+                        })
+                      : navigation.navigate("UnlockedCardsPage", {
+                          documentId: documentId,
+                        })
+                  }
+                >
+                  <AntDesign name="left" size={24} color="ghostwhite" />
+                </TouchableOpacity>
+                <View className=" flex-1 items-center pr-4">
+                  <H2Text textCenter={true} text={cardData?.name} />
+                </View>
+              </View>
+              <ProgressBar
+                completedQuestions={currentQuestionIndex}
+                allQuestions={activeQuestionsList.length}
+              />
+              <View className="flex mt-1 mb-16 flex-row justify-between relative">
+                <View className="absolute right-[325] mr-2 w-20 h-12 border-2 border-redError rounded-full flex items-end pr-5 justify-center">
+                  <Text className="font-bold text-white">{incorrect}</Text>
+                </View>
+                <View className="absolute left-[335] mr-2 w-20 h-12 border-2 border-greanColor rounded-full flex items-start pl-5 justify-center">
+                  <Text className="font-bold text-white">{score}</Text>
+                </View>
+              </View>
+              <View className="flex justify-center items-center">
+                <View style={styles.deckContainer}>
+                  {newData.map((item: CardItem, index: number) => {
+                    if (
+                      index > currentQuestionIndex + MAX ||
+                      index < currentQuestionIndex
+                    ) {
+                      return null;
+                    }
+
+                    return (
+                      <View
+                        key={index}
+                        style={{
+                          position: "absolute",
+
+                          top: (index - currentQuestionIndex) * 40,
+                          zIndex: MAX - (index - currentQuestionIndex),
+                        }}
+                      >
+                        {cardData?.horizontal ? (
+                          <View className="mt-24">
+                            <FlipCardHorisontal
+                              documentId={documentId}
+                              cardStyle={styles.flipCardHorisontal}
+                              currentCard={item}
+                              index={index}
+                              key={index}
+                              dataLength={activeQuestionsList.length}
+                              maxVisibleItem={MAX}
+                              currentIndex={currentQuestionIndex}
+                              animatedValue={animatedValue}
+                              setCurrentQuestionIndex={setCurrentQuestionIndex}
+                              setNewData={setNewData}
+                              activeQuestionsList={activeQuestionsList}
+                              userAnswers={userAnswers}
+                              setUserAnswers={setUserAnswers}
+                              score={score}
+                              setScore={setScore}
+                              incorrect={incorrect}
+                              setIncorrect={setIncorrect}
+                              cardData={cardData.cards_items}
+                              lastCardsAttemptsResultAnswers={
+                                lastCardsAttemptsResultAnswers
+                              }
+                              lastCardsAttemptsResult={lastCardsAttemptsResult}
+                            />
+                          </View>
+                        ) : (
+                          cardData && (
+                            <FlipCard
+                              documentId={documentId}
+                              cardStyle={styles.flipCard}
+                              currentCard={item}
+                              index={index}
+                              key={index}
+                              dataLength={activeQuestionsList.length}
+                              maxVisibleItem={MAX}
+                              currentIndex={currentQuestionIndex}
+                              animatedValue={animatedValue}
+                              setCurrentQuestionIndex={setCurrentQuestionIndex}
+                              setNewData={setNewData}
+                              activeQuestionsList={activeQuestionsList}
+                              userAnswers={userAnswers}
+                              setUserAnswers={setUserAnswers}
+                              score={score}
+                              setScore={setScore}
+                              incorrect={incorrect}
+                              setIncorrect={setIncorrect}
+                              cardData={cardData.cards_items}
+                              lastCardsAttemptsResultAnswers={
+                                lastCardsAttemptsResultAnswers
+                              }
+                              lastCardsAttemptsResult={lastCardsAttemptsResult}
+                            />
+                          )
+                        )}
+                      </View>
+                    );
+                  })}
+                </View>
               </View>
             </View>
-            <ProgressBar
-              completedQuestions={currentQuestionIndex}
-              allQuestions={activeQuestionsList.length}
-            />
-            <View className="flex mt-1 mb-16 flex-row justify-between relative">
-              <View className="absolute right-[325] mr-2 w-20 h-12 border-2 border-redError rounded-full flex items-end pr-5 justify-center">
-                <Text className="font-bold text-white">{incorrect}</Text>
-              </View>
-              <View className="absolute left-[335] mr-2 w-20 h-12 border-2 border-greanColor rounded-full flex items-start pl-5 justify-center">
-                <Text className="font-bold text-white">{score}</Text>
-              </View>
-            </View>
-            <View className="flex justify-center items-center">
-              <GestureHandlerRootView>
-                <SafeAreaView>
-                  <View style={styles.cardContainer}>
-                    {newData.map((item: CardItem, index: number) => {
-                      if (
-                        index > currentQuestionIndex + MAX ||
-                        index < currentQuestionIndex
-                      ) {
-                        return null;
-                      }
-                      return (
-                        <View
-                          key={index}
-                          style={{ zIndex: activeQuestionsList.length - index }}
-                        >
-                          {cardData?.horizontal ? (
-                            <View className="mt-24">
-                              <FlipCardHorisontal
-                                documentId={documentId}
-                                cardStyle={styles.flipCardHorisontal}
-                                currentCard={item}
-                                index={index}
-                                key={index}
-                                dataLength={activeQuestionsList.length}
-                                maxVisibleItem={MAX}
-                                currentIndex={currentQuestionIndex}
-                                animatedValue={animatedValue}
-                                setCurrentQuestionIndex={
-                                  setCurrentQuestionIndex
-                                }
-                                setNewData={setNewData}
-                                activeQuestionsList={activeQuestionsList}
-                                userAnswers={userAnswers}
-                                setUserAnswers={setUserAnswers}
-                                score={score}
-                                setScore={setScore}
-                                incorrect={incorrect}
-                                setIncorrect={setIncorrect}
-                                cardData={cardData.cards_items}
-                                lastCardsAttemptsResultAnswers={
-                                  lastCardsAttemptsResultAnswers
-                                }
-                                lastCardsAttemptsResult={
-                                  lastCardsAttemptsResult
-                                }
-                              />
-                            </View>
-                          ) : (
-                            cardData && (
-                              <FlipCard
-                                documentId={documentId}
-                                cardStyle={styles.flipCard}
-                                currentCard={item}
-                                index={index}
-                                key={index}
-                                dataLength={activeQuestionsList.length}
-                                maxVisibleItem={MAX}
-                                currentIndex={currentQuestionIndex}
-                                animatedValue={animatedValue}
-                                setCurrentQuestionIndex={
-                                  setCurrentQuestionIndex
-                                }
-                                setNewData={setNewData}
-                                activeQuestionsList={activeQuestionsList}
-                                userAnswers={userAnswers}
-                                setUserAnswers={setUserAnswers}
-                                score={score}
-                                setScore={setScore}
-                                incorrect={incorrect}
-                                setIncorrect={setIncorrect}
-                                cardData={cardData.cards_items}
-                                lastCardsAttemptsResultAnswers={
-                                  lastCardsAttemptsResultAnswers
-                                }
-                                lastCardsAttemptsResult={
-                                  lastCardsAttemptsResult
-                                }
-                              />
-                            )
-                          )}
-                        </View>
-                      );
-                    })}
-                  </View>
-                </SafeAreaView>
-              </GestureHandlerRootView>
-            </View>
-          </View>
-        </SafeAreaView>
+          </SafeAreaView>
+        </GestureHandlerRootView>
       )}
     </>
   );
@@ -229,7 +225,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  cardContainer: {
+
+  deckContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

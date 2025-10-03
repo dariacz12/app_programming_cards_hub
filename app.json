@@ -40,7 +40,11 @@
         "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["android.permission.RECORD_AUDIO"]
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.dariaczupreta.appprogrammingcardshub"
     },
     "web": {
       "favicon": "./assets/welcomeAnimation.json"

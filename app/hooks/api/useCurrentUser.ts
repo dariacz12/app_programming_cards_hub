@@ -15,7 +15,6 @@ const useCurrentUser = () => {
       setError(null);
 
       try {
-        console.log("testttt", axios.defaults.headers.common["Authorization"]);
         const response = await axios.get(`${API_URL}/users/me`);
         setData(response.data);
       } catch (err) {

@@ -1,3 +1,5 @@
+import "react-native-reanimated";
+import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { AppRegistry, Platform } from "react-native";
 import { AuthProvider, useAuth } from "./app/context/AuthContext";
@@ -29,10 +31,10 @@ if (Platform.OS === "web") {
 }
 
 const linking = {
-  prefixes: [Linking.createURL("/")], // automatycznie zwróci np. exp://192.168.0.2:19000
+  prefixes: [Linking.createURL("/")],
   config: {
     screens: {
-      NewPassword: "new-password", // np. ekran /reset-password
+      NewPassword: "new-password",
     },
   },
 };

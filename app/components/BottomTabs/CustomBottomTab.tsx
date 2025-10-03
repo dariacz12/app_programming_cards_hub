@@ -33,7 +33,6 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const navigationState = useNavigationState((state) => state);
   const [activeIndex, setActiveIndex] = useState("Home");
 
-
   useEffect(() => {
     const subscription = eventEmitter.addListener(
       "updateActiveTab",
@@ -92,7 +91,6 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   };
   useEffect(() => {
     if (isNavigating) {
-
       setIsNavigating(false);
     }
   }, [activeIndex, isNavigating]);

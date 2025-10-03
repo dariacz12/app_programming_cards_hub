@@ -10,16 +10,16 @@ env:
 - tapOn: "Zgadzam się"
 - assertVisible: "Regulamin.*"
 - tapOn: "Zgadzam się"
-- assertVisible: {id: "inputName"}
-- tapOn: {id: "inputName"}
+- assertVisible: { id: "inputName" }
+- tapOn: { id: "inputName" }
 - inputText: ${TEST_NAME}
-- assertVisible: {id: "inputEmail"}
-- tapOn: {id: "inputEmail"}
+- assertVisible: { id: "inputEmail" }
+- tapOn: { id: "inputEmail" }
 - inputText: ${TEST_EMAIL}
-- assertVisible: {id: "inputPassword"}
-- tapOn: {id: "inputPassword"}
+- assertVisible: { id: "inputPassword" }
+- tapOn: { id: "inputPassword" }
 - inputText: ${TEST_PASSWORD}
-- tapOn: {id: "screenBackground"} 
-- tapOn: {id: "createAccountButton"}
+- tapOn: { id: "screenBackground" }
+- tapOn: { id: "createAccountButton" }
 - assertVisible: "Rejestracja przebiegła pomyślnie!.*"
-- tapOn: {id: "startButton"} 
+- tapOn: { id: "startButton" }

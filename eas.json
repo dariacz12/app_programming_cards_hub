@@ -13,7 +13,7 @@
     },
     "production": {
       "autoIncrement": true
-    }, 
+    },
     "build-and-maestro-test": {
       "developmentClient": true,
       "distribution": "internal",

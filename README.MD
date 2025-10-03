@@ -1,4 +1,5 @@
-# how to start register.yaml test : 
+# how to start register.yaml test :
+
 export TEST_NAME=User$(LC_ALL=C tr -dc a-z </dev/urandom | head -c 8)
 export TEST_EMAIL=test$(date +%s)@mail.com
 export TEST_PASSWORD=Pass$(date +%s)!

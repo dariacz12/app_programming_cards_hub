@@ -37,7 +37,7 @@ const Home = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshAnimation, setRefreshAnimation] = useState(1);
   const { data: userData } = useCurrentUser();
-  console.log("userData", userData);
+
   const { data: notifications } = useNotificationsList(navigation);
   useEffect(() => {
     setNewNotifications(notifications?.[notifications.length - 1]);
@@ -138,7 +138,6 @@ const Home = () => {
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
-            
                 onPress={() =>
                   setCurentQuizeCircle(
                     curentQuizeCircle === quizeList.length - 1
@@ -147,7 +146,10 @@ const Home = () => {
                   )
                 }
               >
-                <View  testID="rightArrowButton" className="w-16 h-10 items-center justify-center">
+                <View
+                  testID="rightArrowButton"
+                  className="w-16 h-10 items-center justify-center"
+                >
                   <AntDesign name="right" size={24} color="white" />
                 </View>
               </TouchableOpacity>
@@ -234,7 +236,7 @@ const Home = () => {
                 </View>
               </ModalPopup>
               <View testID="cardsH1" className="flex-row ju ml-10 mt-7">
-                <H3Text  text={"Karty fizyczne"} />
+                <H3Text text={"Karty fizyczne"} />
                 <TouchableOpacity
                   className="px-2 justify-center items-center flex"
                   onPress={() => setModalVisible(!modalVisible)}

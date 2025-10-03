@@ -202,7 +202,6 @@ const Account = () => {
   const [modalUploadPhotoVisible, setModalUploadPhotoVisible] = useState(false);
 
   const [image, setImage] = useState<string | null>(null);
-  console.log("zdjęcie", image);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({

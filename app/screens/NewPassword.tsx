@@ -32,8 +32,7 @@ const NewPassword = () => {
       const url = await Linking.getInitialURL();
       const { queryParams } = Linking.parse(url ?? "");
       if (queryParams?.code) {
-        console.log("Kod resetu hasła:", queryParams.code);
-        setCode(String(queryParams.code))
+        setCode(String(queryParams.code));
       }
     };
     getInitialUrl();
